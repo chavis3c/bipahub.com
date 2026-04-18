@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BIPA Hub — VSG Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -22,7 +22,7 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
 .user-badge{background:rgba(244,166,32,0.15);border:1px solid rgba(244,166,32,0.4);color:var(--gold);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;}
 .page{display:none;max-width:1000px;margin:0 auto;padding:24px 20px 60px;}
 .page.active{display:block;}
-.home-hero{background:linear-gradient(135deg,var(--dark-navy),var(--navy));border-radius:16px;padding:36px 32px;color:var(--white);margin-bottom:24px;border:2px solid var(--gold);position:relative;overflow:hidden;}
+.home-hero{background:linear-gradient(135deg,var(--dark-navy),var(--navy));border-radius:16px;padding:36px 32px;color:var(--white);margin-bottom:24px;border:2px solid var(--gold);}
 .home-hero-label{color:var(--gold);font-size:10px;letter-spacing:4px;margin-bottom:8px;font-weight:600;}
 .home-hero h1{font-family:'DM Serif Display',serif;font-size:32px;margin-bottom:8px;line-height:1.2;}
 .home-hero p{color:#B8D4F0;font-size:14px;max-width:500px;line-height:1.7;}
@@ -36,13 +36,12 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
 .module-icon{font-size:28px;margin-bottom:8px;}
 .module-name{font-weight:700;font-size:14px;color:var(--navy);margin-bottom:3px;}
 .module-sub{font-size:11px;color:#888;}
-.module-badge{display:inline-block;margin-top:8px;background:#EEF4FA;color:var(--navy);font-size:10px;padding:2px 8px;border-radius:5px;font-weight:600;}
+.module-badge{display:inline-block;margin-top:8px;font-size:10px;padding:2px 8px;border-radius:5px;font-weight:600;background:#EEF4FA;color:var(--navy);}
 .module-badge.live{background:#E8F8EE;color:#1A7A4A;}
 .module-badge.building{background:#FFF8E8;color:#7A5000;}
 .phase-header{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:12px;cursor:pointer;transition:all 0.2s;margin-bottom:2px;}
 .phase-header.open{border-radius:12px 12px 0 0;}
-.phase-icon{font-size:26px;}
-.phase-meta{flex:1;}
+.phase-icon{font-size:26px;}.phase-meta{flex:1;}
 .phase-title{font-weight:700;font-size:15px;}
 .phase-sub{font-size:12px;margin-top:2px;opacity:0.8;}
 .phase-tags{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;}
@@ -55,26 +54,20 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
 .tasks-container{border-radius:0 0 12px 12px;overflow:hidden;display:none;}
 .tasks-container.open{display:block;}
 .task-row{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid #EEF2F6;}
-.task-row:last-child{border-bottom:none;}
-.task-row:hover{background:#F5F9FF;}
-.task-row.done{background:#F0FFF4;}
+.task-row:last-child{border-bottom:none;}.task-row:hover{background:#F5F9FF;}.task-row.done{background:#F0FFF4;}
 .task-checkbox{width:22px;height:22px;min-width:22px;border-radius:5px;border:2px solid #C0CCD8;background:var(--white);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--white);margin-top:2px;transition:all 0.2s;}
 .task-checkbox.checked{background:var(--green);border-color:var(--green);}
 .owner-badge{min-width:68px;max-width:68px;border-radius:6px;padding:4px 6px;text-align:center;}
-.owner-avatar{font-size:16px;}
-.owner-name{font-size:9px;font-weight:700;margin-top:1px;}
-.task-body{flex:1;}
-.task-text{font-size:13px;color:#222;line-height:1.5;}
+.owner-avatar{font-size:16px;}.owner-name{font-size:9px;font-weight:700;margin-top:1px;}
+.task-body{flex:1;}.task-text{font-size:13px;color:#222;line-height:1.5;}
 .task-chips{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;}
 .chip{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:500;}
-.chip-output{background:#EEF4FA;color:var(--navy);}
-.chip-time{background:#FFF8E8;color:#7A5000;}
+.chip-output{background:#EEF4FA;color:var(--navy);}.chip-time{background:#FFF8E8;color:#7A5000;}
 .staff-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .staff-btn{background:var(--white);border:2px solid #D0DCE8;border-radius:20px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:500;color:#555;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
 .staff-btn.active{font-weight:700;color:var(--white);}
 .my-task-card{background:var(--white);border-radius:10px;border:1px solid #D0DCE8;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;display:flex;gap:12px;}
-.my-task-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08);}
-.my-task-card.done{background:#F0FFF4;border-color:#A8D8B9;}
+.my-task-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08);}.my-task-card.done{background:#F0FFF4;border-color:#A8D8B9;}
 .phase-dot{width:10px;height:10px;min-width:10px;border-radius:50%;margin-top:5px;}
 .launch-banner{background:linear-gradient(135deg,var(--dark-navy),var(--navy));border-radius:12px;padding:20px 24px;text-align:center;border:3px solid var(--gold);margin-top:16px;}
 .launch-banner h2{font-family:'DM Serif Display',serif;color:var(--gold);font-size:22px;margin:8px 0 4px;}
@@ -83,27 +76,19 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
 .progress-track{background:#E8EDF2;border-radius:6px;height:12px;overflow:hidden;margin:8px 0;}
 .progress-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--navy),var(--light-navy));transition:width 0.4s ease;}
 .team-card{background:var(--white);border-radius:12px;padding:20px;margin-bottom:14px;border:1px solid #D0DCE8;display:flex;gap:16px;align-items:flex-start;}
-.team-avatar{font-size:40px;width:60px;text-align:center;}
-.team-info{flex:1;}
-.team-name{font-weight:700;font-size:17px;margin-bottom:2px;}
-.team-role{font-size:12px;color:#888;margin-bottom:10px;}
+.team-avatar{font-size:40px;width:60px;text-align:center;}.team-info{flex:1;}
+.team-name{font-weight:700;font-size:17px;margin-bottom:2px;}.team-role{font-size:12px;color:#888;margin-bottom:10px;}
 .deliverable-tags{display:flex;flex-wrap:wrap;gap:6px;}
 .del-tag{font-size:11px;padding:3px 10px;border-radius:5px;font-weight:500;}
-.team-score{text-align:center;min-width:60px;}
-.score-num{font-size:22px;font-weight:800;}
-.score-lbl{font-size:10px;color:#aaa;margin-top:2px;}
-.timeline{margin-top:20px;}
-.tl-row{display:flex;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid #EEF0F3;}
-.tl-row:last-child{border-bottom:none;}
-.tl-day{min-width:90px;font-size:12px;font-weight:700;color:var(--navy);}
-.tl-time{min-width:95px;font-size:11px;color:#888;}
-.tl-label{flex:1;font-size:13px;color:#333;}
+.team-score{text-align:center;min-width:60px;}.score-num{font-size:22px;font-weight:800;}.score-lbl{font-size:10px;color:#aaa;margin-top:2px;}
+.timeline{margin-top:20px;}.tl-row{display:flex;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid #EEF0F3;}
+.tl-row:last-child{border-bottom:none;}.tl-day{min-width:90px;font-size:12px;font-weight:700;color:var(--navy);}
+.tl-time{min-width:95px;font-size:11px;color:#888;}.tl-label{flex:1;font-size:13px;color:#333;}
 .tl-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;color:var(--white);}
 </style>
 </head>
 <body>
-<nav>
-<div class="nav-inner">
+<nav><div class="nav-inner">
 <div class="nav-brand"><div class="nav-logo">B</div><div class="nav-title">BIPA<span>Hub</span></div></div>
 <div class="nav-tabs">
 <button class="nav-tab active" onclick="showPage('home')">🏠 Home</button>
@@ -112,60 +97,53 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
 <button class="nav-tab" onclick="showPage('team')">👥 Team</button>
 </div>
 <div class="user-badge">VSG · BIPA 2026</div>
-</div>
-</nav>
+</div></nav>
 <div class="page active" id="page-home">
 <div class="home-hero">
 <div class="home-hero-label">VSG · BIPA PLATFORM · APR 2026</div>
 <h1>VSG SaaS Platform<br/>Build Command Center</h1>
-<p>CEO + 4 BIPA members building VSG's unified monitoring platform. Track progress, complete tasks, and launch by Thursday 14:00.</p>
+<p>Chavis + Bob, Lisa, Tony, Leo building VSG's unified platform. Launch Thursday 23 Apr 14:00.</p>
 <div class="hero-stats">
 <div class="hero-stat"><div class="hero-stat-val" id="stat-done">0</div><div class="hero-stat-lbl">TASKS DONE</div></div>
 <div class="hero-stat"><div class="hero-stat-val" id="stat-total">0</div><div class="hero-stat-lbl">TOTAL TASKS</div></div>
 <div class="hero-stat"><div class="hero-stat-val" id="stat-pct">0%</div><div class="hero-stat-lbl">COMPLETE</div></div>
 <div class="hero-stat"><div class="hero-stat-val">Thu 14:00</div><div class="hero-stat-lbl">LAUNCH TIME</div></div>
-</div>
-</div>
+</div></div>
 <div style="font-weight:700;color:var(--navy);font-size:15px;margin-bottom:12px;">📦 Platform Modules</div>
 <div class="module-grid">
-<div class="module-card" onclick="showPage('schedule')"><div class="module-icon">📅</div><div class="module-name">Build Schedule</div><div class="module-sub">5 phases · 26 tasks</div><div class="module-badge live">LIVE NOW</div></div>
-<div class="module-card" onclick="showPage('mytasks')"><div class="module-icon">✅</div><div class="module-name">My Tasks</div><div class="module-sub">View by team member</div><div class="module-badge live">LIVE NOW</div></div>
+<div class="module-card" onclick="showPage('schedule')"><div class="module-icon">📅</div><div class="module-name">Build Schedule</div><div class="module-sub">5 phases · 35 tasks</div><div class="module-badge live">LIVE NOW</div></div>
+<div class="module-card" onclick="showPage('mytasks')"><div class="module-icon">✅</div><div class="module-name">My Tasks</div><div class="module-sub">Filter by name</div><div class="module-badge live">LIVE NOW</div></div>
 <div class="module-card" onclick="showPage('team')"><div class="module-icon">👥</div><div class="module-name">BIPA Team</div><div class="module-sub">Roles &amp; deliverables</div><div class="module-badge live">LIVE NOW</div></div>
 <div class="module-card"><div class="module-icon">📊</div><div class="module-name">CEO Dashboard</div><div class="module-sub">P&amp;L · RAG · KPIs</div><div class="module-badge building">PHASE 2</div></div>
 <div class="module-card"><div class="module-icon">💰</div><div class="module-name">Finance</div><div class="module-sub">AR/AP · Cash · P&amp;L</div><div class="module-badge building">PHASE 2</div></div>
 <div class="module-card"><div class="module-icon">🤖</div><div class="module-name">BIPA AI</div><div class="module-sub">n8n · Claude · Telegram</div><div class="module-badge building">PHASE 3</div></div>
 </div>
 <div style="background:var(--white);border-radius:12px;border:1px solid #D0DCE8;padding:18px 20px;">
-<div style="font-weight:700;color:var(--navy);font-size:14px;margin-bottom:12px;">📅 This Week's Meeting Schedule</div>
+<div style="font-weight:700;color:var(--navy);font-size:14px;margin-bottom:12px;">📅 This Week</div>
 <div class="timeline" id="home-timeline"></div>
-</div>
-</div>
+</div></div>
 <div class="page" id="page-schedule">
 <div style="margin-bottom:16px;">
 <div style="font-size:10px;color:var(--gold);letter-spacing:3px;font-weight:600;margin-bottom:4px;">BIPA TEAM · SAT–THU · APR 18–23</div>
 <div style="font-family:'DM Serif Display',serif;font-size:24px;color:var(--navy);">Build Schedule &amp; Task Tracker</div>
-<div style="font-size:13px;color:#666;margin-top:4px;">Tap any phase to expand · Tick tasks as completed</div>
+<div style="font-size:13px;color:#666;margin-top:4px;">Tap any phase · Tick tasks as done</div>
 </div>
 <div class="overall-progress">
 <div style="display:flex;justify-content:space-between;align-items:center;">
 <div style="font-weight:700;color:var(--navy);font-size:14px;">Overall Progress</div>
-<div style="font-size:14px;font-weight:800;color:var(--navy);" id="prog-label">0 / 0 tasks</div>
+<div style="font-size:14px;font-weight:800;color:var(--navy);" id="prog-label">0/0</div>
 </div>
 <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
-<div style="font-size:11px;color:#888;">Tap checkboxes to mark tasks complete</div>
 </div>
 <div id="phases-container"></div>
-<div class="launch-banner">
-<div style="font-size:36px;">🚀</div>
+<div class="launch-banner"><div style="font-size:36px;">🚀</div>
 <h2>LAUNCH: Thursday 23 Apr · 14:00</h2>
-<p>All 9 VSG staff try the platform · CEO demos CEO dashboard live</p>
-<p style="margin-top:4px;color:var(--soft-gold);">Completion deadline: 12:00 · 2-hour buffer before launch</p>
-</div>
+<p>All 9 VSG staff try the platform live · CEO demos CEO dashboard</p></div>
 </div>
 <div class="page" id="page-mytasks">
 <div style="margin-bottom:16px;">
 <div style="font-family:'DM Serif Display',serif;font-size:24px;color:var(--navy);">My Tasks</div>
-<div style="font-size:13px;color:#666;margin-top:4px;">Select your name to see only your tasks</div>
+<div style="font-size:13px;color:#666;margin-top:4px;">Select your name</div>
 </div>
 <div class="staff-selector" id="staff-selector"></div>
 <div id="my-tasks-list"></div>
@@ -173,120 +151,176 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
 <div class="page" id="page-team">
 <div style="margin-bottom:16px;">
 <div style="font-family:'DM Serif Display',serif;font-size:24px;color:var(--navy);">BIPA Team</div>
-<div style="font-size:13px;color:#666;margin-top:4px;">Each member owns one platform module</div>
+<div style="font-size:13px;color:#666;margin-top:4px;">Each member owns one module</div>
 </div>
 <div id="team-cards"></div>
 <div style="background:var(--white);border-radius:12px;border:1px solid #D0DCE8;padding:18px 20px;margin-top:4px;">
-<div style="font-weight:700;color:var(--navy);font-size:14px;margin-bottom:14px;">📅 Full Meeting Timeline</div>
+<div style="font-weight:700;color:var(--navy);font-size:14px;margin-bottom:14px;">📅 Full Timeline</div>
 <div class="timeline" id="team-timeline"></div>
-</div>
-</div>
+</div></div>
 <script>
-const NAVY="#1F4E79",GOLD="#F4A620",GREEN="#27AE60",RED="#C0392B",PURPLE="#8E44AD",ORANGE="#E67E22",BLUE="#2E86C1";
-const TEAM=[{id:"chavis",name:"Chavis",role:"CEO · Decision Maker",color:NAVY,avatar:"👔"},{id:"b1",name:"BIPA-1",role:"Platform Setup Lead",color:GREEN,avatar:"⚙️"},{id:"b2",name:"BIPA-2",role:"Finance & Data Module",color:RED,avatar:"📊"},{id:"b3",name:"BIPA-3",role:"Dashboard & CEO Board",color:PURPLE,avatar:"🖥️"},{id:"b4",name:"BIPA-4",role:"Automation & n8n Bridge",color:ORANGE,avatar:"🤖"}];
-const PHASES=[{id:"p0",phase:"Phase 0",day:"TODAY — Saturday 18 Apr",time:"Now",type:"Decision",color:GOLD,textColor:"#163a5c",icon:"🏛️",mode:"CEO Solo",desc:"Chavis selects platform, confirms budget, sets team briefing schedule",tasks:[{id:"t01",owner:"chavis",text:"Review 5-platform comparison — decide: Hybrid $89/mo OR Zoho One $333/mo",output:"Platform decision made",dur:"30 min"},{id:"t02",owner:"chavis",text:"Confirm monthly budget with CFO",output:"Budget approved",dur:"15 min"},{id:"t03",owner:"chavis",text:"Share bipahub.com link to BIPA team via Zalo",output:"Team notified",dur:"10 min"},{id:"t04",owner:"chavis",text:"Assign BIPA-1/2/3/4 names to roles and confirm Monday 11:00 meeting",output:"Roles confirmed",dur:"15 min"}]},{id:"p1",phase:"Phase 1",day:"Monday 20 Apr",time:"11:00 – 12:00",type:"Online Briefing",color:BLUE,textColor:"#fff",icon:"💻",mode:"Online · Google Meet / Zalo",desc:"Chavis briefs the full plan. Each BIPA member receives Phase 1 tasks. Work begins immediately.",tasks:[{id:"t11",owner:"chavis",text:"11:00 — Open meeting. Present platform decision + total cost to team",output:"Team aligned on plan",dur:"20 min"},{id:"t12",owner:"chavis",text:"11:20 — Walk through 3-phase assignment using this schedule on bipahub.com",output:"Everyone knows their role",dur:"15 min"},{id:"t13",owner:"b1",text:"ASSIGNED: Register platform (Softr Pro OR Zoho One). Add 9 users with Google SSO",output:"Platform live, 9 logins working",dur:"3 hrs"},{id:"t14",owner:"b2",text:"ASSIGNED: Set up Finance module. Import 102 tenants. Build P&L + AR/AP dashboard draft",output:"Finance dashboard draft live",dur:"3 hrs"},{id:"t15",owner:"b3",text:"ASSIGNED: Build CEO RAG board layout. Create EIP task tracker with 6 dept workspaces",output:"CEO dashboard structure ready",dur:"3 hrs"},{id:"t16",owner:"b4",text:"ASSIGNED: Map all notification triggers. Design double-notification logic (Dept → CEO)",output:"Notification blueprint documented",dur:"3 hrs"},{id:"t17",owner:"chavis",text:"12:00 — Confirm all assignments clear. Close meeting. Check-in 17:00 via Telegram",output:"Meeting closed, work started",dur:"15 min"}]},{id:"p2",phase:"Phase 2",day:"Tuesday 21 Apr",time:"11:00 – 12:00",type:"Online Review",color:GREEN,textColor:"#fff",icon:"🔗",mode:"Online · Google Meet / Zalo",desc:"Phase 1 review by each member. Chavis approves. Phase 2 integration tasks assigned.",tasks:[{id:"t21",owner:"b1",text:"11:00 — Report: Platform setup complete? All 9 users logged in?",output:"Setup status confirmed",dur:"10 min"},{id:"t22",owner:"b2",text:"11:10 — Demo Finance dashboard. Show P&L + AR screen to Chavis",output:"Finance module approved",dur:"10 min"},{id:"t23",owner:"b3",text:"11:20 — Demo CEO RAG board draft. Show EIP tracker structure",output:"CEO board approved",dur:"10 min"},{id:"t24",owner:"b4",text:"11:30 — Walk through notification logic. Show Layer 1 + Layer 2 flow",output:"Notification design approved",dur:"10 min"},{id:"t25",owner:"chavis",text:"11:40 — Review all 4 modules. Approve or request changes",output:"Go/No-go per module",dur:"10 min"},{id:"t26",owner:"b1",text:"ASSIGNED Phase 2: Connect Sales/CRM module + configure dept privacy walls",output:"CRM module in progress",dur:"4 hrs"},{id:"t27",owner:"b2",text:"ASSIGNED Phase 2: Activate AR aging alerts (30/60/90d) + cash threshold notifications",output:"Finance alerts live",dur:"4 hrs"},{id:"t28",owner:"b3",text:"ASSIGNED Phase 2: Populate EIP tasks + connect real KPI data to CEO board",output:"CEO board with live data",dur:"4 hrs"},{id:"t29",owner:"b4",text:"ASSIGNED Phase 2: Build n8n workflows — Layer 1 dept alerts + Layer 2 CEO digest",output:"n8n workflows active",dur:"4 hrs"}]},{id:"p3",phase:"Phase 3",day:"Wednesday 22 Apr",time:"11:00 – 12:00",type:"Integration Check",color:PURPLE,textColor:"#fff",icon:"🔄",mode:"Online · Google Meet / Zalo",desc:"All modules reviewed together. Cross-module connections tested. Final prep for Thursday.",tasks:[{id:"t31",owner:"b1",text:"11:00 — Demo full platform login for all 9 users + dept privacy wall test",output:"Privacy confirmed per dept",dur:"10 min"},{id:"t32",owner:"b2",text:"11:10 — Trigger test AR alert — confirm fires to CFO AND CEO Telegram",output:"Double notification confirmed",dur:"10 min"},{id:"t33",owner:"b3",text:"11:20 — Load CEO dashboard with real data — all 6 dept KPIs as RAG",output:"RAG board with live data",dur:"10 min"},{id:"t34",owner:"b4",text:"11:30 — Run full n8n automation test — all workflows fire correctly",output:"BIPA bridge confirmed working",dur:"10 min"},{id:"t35",owner:"chavis",text:"11:40 — Cross-module test: login as CFO, then CEO — confirm different views",output:"Privacy + CEO access verified",dur:"10 min"},{id:"t36",owner:"b1",text:"11:50 — Log all bugs. Each BIPA member fixes before Thursday 10:00",output:"Bug list documented",dur:"10 min"},{id:"t37",owner:"b1",text:"OVERNIGHT Wed→Thu: Each BIPA member fixes bugs before 10:00 Thursday",output:"All modules polished",dur:"Overnight"}]},{id:"p4",phase:"Phase 4",day:"Thursday 23 Apr",time:"10:00–12:00 → LAUNCH 14:00",type:"Face-to-Face + LAUNCH",color:RED,textColor:"#fff",icon:"🚀",mode:"In-Person · VSG Office",desc:"Final 2-hour face-to-face to merge all modules. 12:00 deadline. 14:00 all-staff launch.",tasks:[{id:"t41",owner:"b1",text:"10:00 — Deploy final platform. Confirm all 9 users can log in",output:"Platform live and stable",dur:"20 min"},{id:"t42",owner:"b2",text:"10:20 — Merge Finance data into CEO dashboard — live connection verified",output:"Finance → CEO board connected",dur:"20 min"},{id:"t43",owner:"b4",text:"10:40 — Activate all n8n workflows. Test Telegram digest to @Chavis_ai_bot",output:"BIPA Telegram digest live",dur:"20 min"},{id:"t44",owner:"chavis",text:"11:00 — Full end-to-end test: P&L → AR alert → CEO board → Telegram",output:"Full system approved by CEO",dur:"30 min"},{id:"t45",owner:"b1",text:"11:30 — Prepare staff login credentials + 1-page quick guide for all 9 users",output:"Login guide ready to share",dur:"20 min"},{id:"t46",owner:"chavis",text:"11:50 — Final sign-off. Platform URL confirmed for all staff",output:"✅ SYSTEM APPROVED",dur:"10 min"},{id:"t47",owner:"chavis",text:"🎯 12:00 DEADLINE — All modules complete. Team takes lunch break.",output:"System locked for launch",dur:"—"},{id:"t48",owner:"chavis",text:"🚀 14:00 LAUNCH — All 9 staff log in. Chavis demos CEO dashboard live.",output:"VSG Platform LIVE 🎉",dur:"60 min"}]}];
-const TIMELINE=[{day:"Sat 18 Apr",time:"Today — Now",label:"Platform Decision + Team Notification",type:"Solo",color:GOLD,tc:"#163a5c"},{day:"Mon 20 Apr",time:"11:00 – 12:00",label:"Phase 1 Briefing + Task Assignment",type:"Online",color:BLUE,tc:"#fff"},{day:"Tue 21 Apr",time:"11:00 – 12:00",label:"Phase 2 Review + Integration Launch",type:"Online",color:GREEN,tc:"#fff"},{day:"Wed 22 Apr",time:"11:00 – 12:00",label:"Phase 3 Integration Check + Bug Log",type:"Online",color:PURPLE,tc:"#fff"},{day:"Thu 23 Apr",time:"10:00 – 12:00",label:"Phase 4 Face-to-Face Finalization",type:"In-Person",color:RED,tc:"#fff"},{day:"Thu 23 Apr",time:"14:00 🚀",label:"ALL STAFF LAUNCH",type:"Launch",color:"#163a5c",tc:GOLD}];
-let done=JSON.parse(localStorage.getItem('bipa_done')||'{}');
-let selectedStaff='all',openPhase='p0';
+var NAVY="#1F4E79",GOLD="#F4A620",GREEN="#27AE60",RED="#C0392B",PURPLE="#8E44AD",ORANGE="#E67E22",BLUE="#2E86C1";
+var TEAM=[
+  {id:"chavis",name:"Chavis",role:"CEO · Decision Maker",color:NAVY,avatar:"👔"},
+  {id:"b1",name:"Bob",role:"Platform Setup Lead",color:GREEN,avatar:"⚙️"},
+  {id:"b2",name:"Lisa",role:"Finance & Data Module",color:RED,avatar:"📊"},
+  {id:"b3",name:"Tony",role:"Dashboard & CEO Board",color:PURPLE,avatar:"🖥️"},
+  {id:"b4",name:"Leo",role:"Automation & n8n Bridge",color:ORANGE,avatar:"🤖"}
+];
+var PHASES=[
+  {id:"p0",phase:"Phase 0",day:"TODAY — Sat 18 Apr",time:"Now",color:GOLD,textColor:"#163a5c",icon:"🏛️",mode:"CEO Solo",desc:"Platform decision, budget confirm, team notification",tasks:[
+    {id:"t01",owner:"chavis",text:"Review platforms — decide: Hybrid $89/mo OR Zoho One $333/mo",output:"Platform decision made",dur:"30 min"},
+    {id:"t02",owner:"chavis",text:"Confirm monthly budget with CFO",output:"Budget approved",dur:"15 min"},
+    {id:"t03",owner:"chavis",text:"Share bipahub.com to Bob, Lisa, Tony, Leo via Zalo",output:"Team notified",dur:"10 min"},
+    {id:"t04",owner:"chavis",text:"Confirm roles: Bob=Setup, Lisa=Finance, Tony=Dashboard, Leo=Automation",output:"Roles confirmed",dur:"15 min"}
+  ]},
+  {id:"p1",phase:"Phase 1",day:"Monday 20 Apr",time:"11:00–12:00",color:BLUE,textColor:"#fff",icon:"💻",mode:"Online · Google Meet / Zalo",desc:"Chavis briefs full plan. Each member receives Phase 1 tasks.",tasks:[
+    {id:"t11",owner:"chavis",text:"11:00 — Open meeting. Present platform decision + cost",output:"Team aligned",dur:"20 min"},
+    {id:"t12",owner:"chavis",text:"11:20 — Walk through bipahub.com schedule with team",output:"Everyone knows their role",dur:"15 min"},
+    {id:"t13",owner:"b1",text:"Bob ASSIGNED: Register platform. Add 9 users with Google SSO",output:"Platform live, 9 logins",dur:"3 hrs"},
+    {id:"t14",owner:"b2",text:"Lisa ASSIGNED: Finance module. Import 102 tenants. P&L + AR/AP draft",output:"Finance dashboard draft",dur:"3 hrs"},
+    {id:"t15",owner:"b3",text:"Tony ASSIGNED: CEO RAG board layout. EIP task tracker structure",output:"CEO dashboard structure",dur:"3 hrs"},
+    {id:"t16",owner:"b4",text:"Leo ASSIGNED: Map notification triggers. Double-notification logic",output:"Notification blueprint",dur:"3 hrs"},
+    {id:"t17",owner:"chavis",text:"12:00 — Confirm assignments clear. Check-in 17:00 Telegram",output:"Meeting closed",dur:"15 min"}
+  ]},
+  {id:"p2",phase:"Phase 2",day:"Tuesday 21 Apr",time:"11:00–12:00",color:GREEN,textColor:"#fff",icon:"🔗",mode:"Online · Google Meet / Zalo",desc:"Phase 1 review. Chavis approves. Phase 2 assigned.",tasks:[
+    {id:"t21",owner:"b1",text:"Bob 11:00 — Report: Platform complete? 9 users logged in?",output:"Setup confirmed",dur:"10 min"},
+    {id:"t22",owner:"b2",text:"Lisa 11:10 — Demo Finance dashboard to Chavis",output:"Finance approved",dur:"10 min"},
+    {id:"t23",owner:"b3",text:"Tony 11:20 — Demo CEO RAG board draft",output:"CEO board approved",dur:"10 min"},
+    {id:"t24",owner:"b4",text:"Leo 11:30 — Walk through notification Layer 1 + Layer 2",output:"Notifications approved",dur:"10 min"},
+    {id:"t25",owner:"chavis",text:"11:40 — Review all 4 modules. Approve or revise",output:"Go/No-go per module",dur:"10 min"},
+    {id:"t26",owner:"b1",text:"Bob ASSIGNED Ph2: Sales/CRM + dept privacy walls",output:"CRM live",dur:"4 hrs"},
+    {id:"t27",owner:"b2",text:"Lisa ASSIGNED Ph2: AR aging alerts (30/60/90d) + cash alerts",output:"Finance alerts live",dur:"4 hrs"},
+    {id:"t28",owner:"b3",text:"Tony ASSIGNED Ph2: EIP tasks + real KPI data to CEO board",output:"CEO board with data",dur:"4 hrs"},
+    {id:"t29",owner:"b4",text:"Leo ASSIGNED Ph2: n8n workflows Layer 1 + Layer 2",output:"n8n workflows active",dur:"4 hrs"}
+  ]},
+  {id:"p3",phase:"Phase 3",day:"Wednesday 22 Apr",time:"11:00–12:00",color:PURPLE,textColor:"#fff",icon:"🔄",mode:"Online · Google Meet / Zalo",desc:"All modules reviewed together. Cross-connections tested.",tasks:[
+    {id:"t31",owner:"b1",text:"Bob 11:00 — Demo full login 9 users + privacy wall test",output:"Privacy confirmed",dur:"10 min"},
+    {id:"t32",owner:"b2",text:"Lisa 11:10 — Test AR alert — confirm Layer 1 + Layer 2",output:"Double notification confirmed",dur:"10 min"},
+    {id:"t33",owner:"b3",text:"Tony 11:20 — CEO dashboard with real data — 6 KPIs as RAG",output:"RAG board live",dur:"10 min"},
+    {id:"t34",owner:"b4",text:"Leo 11:30 — Full n8n automation test",output:"BIPA bridge confirmed",dur:"10 min"},
+    {id:"t35",owner:"chavis",text:"11:40 — Login as CFO then CEO — confirm different views",output:"Access verified",dur:"10 min"},
+    {id:"t36",owner:"b1",text:"11:50 — Log all bugs. Fix before Thu 10:00",output:"Bug list done",dur:"10 min"},
+    {id:"t37",owner:"b1",text:"OVERNIGHT: All BIPA fix bugs before Thursday 10:00",output:"Modules polished",dur:"Overnight"}
+  ]},
+  {id:"p4",phase:"Phase 4",day:"Thursday 23 Apr",time:"10:00–12:00 → 14:00",color:RED,textColor:"#fff",icon:"🚀",mode:"In-Person · VSG Office",desc:"Face-to-face final. 12:00 deadline. 14:00 launch.",tasks:[
+    {id:"t41",owner:"b1",text:"Bob 10:00 — Deploy final platform. All 9 logins confirmed",output:"Platform stable",dur:"20 min"},
+    {id:"t42",owner:"b2",text:"Lisa 10:20 — Merge Finance into CEO dashboard",output:"Finance connected",dur:"20 min"},
+    {id:"t43",owner:"b4",text:"Leo 10:40 — Activate n8n. Test @Chavis_ai_bot Telegram",output:"BIPA Telegram live",dur:"20 min"},
+    {id:"t44",owner:"chavis",text:"11:00 — Full test: P&L → AR → CEO board → Telegram",output:"System approved",dur:"30 min"},
+    {id:"t45",owner:"b1",text:"Bob 11:30 — Prepare logins + 1-page guide for 9 staff",output:"Guide ready",dur:"20 min"},
+    {id:"t46",owner:"chavis",text:"11:50 — Final sign-off",output:"APPROVED",dur:"10 min"},
+    {id:"t47",owner:"chavis",text:"12:00 DEADLINE — lunch break",output:"System locked",dur:"—"},
+    {id:"t48",owner:"chavis",text:"14:00 LAUNCH — all 9 staff log in live",output:"VSG Platform LIVE",dur:"60 min"}
+  ]}
+];
+var TIMELINE=[
+  {day:"Sat 18 Apr",time:"Now",label:"Platform Decision",type:"Solo",color:GOLD,tc:"#163a5c"},
+  {day:"Mon 20 Apr",time:"11:00–12:00",label:"Phase 1 Briefing",type:"Online",color:BLUE,tc:"#fff"},
+  {day:"Tue 21 Apr",time:"11:00–12:00",label:"Phase 2 Review",type:"Online",color:GREEN,tc:"#fff"},
+  {day:"Wed 22 Apr",time:"11:00–12:00",label:"Phase 3 Integration",type:"Online",color:PURPLE,tc:"#fff"},
+  {day:"Thu 23 Apr",time:"10:00–12:00",label:"Face-to-Face Final",type:"In-Person",color:RED,tc:"#fff"},
+  {day:"Thu 23 Apr",time:"14:00",label:"ALL STAFF LAUNCH",type:"Launch",color:"#163a5c",tc:GOLD}
+];
+var done=JSON.parse(localStorage.getItem('bipa_done')||'{}'),selStaff='all',openPhase='p0';
 function save(){localStorage.setItem('bipa_done',JSON.stringify(done));}
-function allTasks(){return PHASES.flatMap(p=>p.tasks);}
-function totalDone(){return allTasks().filter(t=>done[t.id]).length;}
-function totalTasks2(){return allTasks().length;}
+function allTasks(){var r=[];PHASES.forEach(function(p){p.tasks.forEach(function(t){r.push(t);});});return r;}
 function updateStats(){
-const d=totalDone(),t=totalTasks2(),pct=t?Math.round(d/t*100):0;
-document.getElementById('stat-done').textContent=d;
-document.getElementById('stat-total').textContent=t;
-document.getElementById('stat-pct').textContent=pct+'%';
-document.getElementById('prog-label').textContent=d+' / '+t+' tasks';
-document.getElementById('prog-fill').style.width=pct+'%';
-PHASES.forEach(ph=>{
-const pd=ph.tasks.filter(t=>done[t.id]).length,pct2=ph.tasks.length?Math.round(pd/ph.tasks.length*100):0;
-const el=document.getElementById('ph-pct-'+ph.id);if(el)el.textContent=pct2+'%';
-const bar=document.getElementById('ph-bar-'+ph.id);if(bar)bar.style.width=pct2+'%';
-const sub=document.getElementById('ph-sub-'+ph.id);if(sub)sub.textContent=pd+'/'+ph.tasks.length;
-});
-TEAM.forEach(m=>{
-const myT=allTasks().filter(t=>t.owner===m.id),myD=myT.filter(t=>done[t.id]).length;
-const el=document.getElementById('team-score-'+m.id);if(el)el.textContent=myD+'/'+myT.length;
-});
+  var d=allTasks().filter(function(t){return done[t.id];}).length,tot=allTasks().length,pct=tot?Math.round(d/tot*100):0;
+  var sd=document.getElementById('stat-done'),st=document.getElementById('stat-total'),sp=document.getElementById('stat-pct');
+  var pl=document.getElementById('prog-label'),pf=document.getElementById('prog-fill');
+  if(sd)sd.textContent=d;if(st)st.textContent=tot;if(sp)sp.textContent=pct+'%';
+  if(pl)pl.textContent=d+'/'+tot;if(pf)pf.style.width=pct+'%';
+  PHASES.forEach(function(ph){
+    var pd=ph.tasks.filter(function(t){return done[t.id];}).length;
+    var p2=ph.tasks.length?Math.round(pd/ph.tasks.length*100):0;
+    var pe=document.getElementById('ph-pct-'+ph.id),pb=document.getElementById('ph-bar-'+ph.id),ps=document.getElementById('ph-sub-'+ph.id);
+    if(pe)pe.textContent=p2+'%';if(pb)pb.style.width=p2+'%';if(ps)ps.textContent=pd+'/'+ph.tasks.length;
+  });
+  TEAM.forEach(function(m){
+    var mt=allTasks().filter(function(t){return t.owner===m.id;}),md=mt.filter(function(t){return done[t.id];}).length;
+    var el=document.getElementById('ts-'+m.id);if(el)el.textContent=md+'/'+mt.length;
+  });
 }
 function toggleTask(id){
-done[id]=!done[id];save();
-['row-','myrow-'].forEach(pfx=>{
-const r=document.getElementById(pfx+id);if(!r)return;
-r.classList.toggle('done',done[id]);
-const cb=r.querySelector('.task-checkbox');if(cb){cb.classList.toggle('checked',done[id]);cb.textContent=done[id]?'✓':'';}
-const tx=r.querySelector('.task-text');if(tx){tx.style.textDecoration=done[id]?'line-through':'none';tx.style.color=done[id]?'#999':'#222';}
-});
-updateStats();
+  done[id]=!done[id];save();
+  var pref=['row-','mr-'];
+  pref.forEach(function(p){
+    var r=document.getElementById(p+id);if(!r)return;
+    r.classList.toggle('done',done[id]);
+    var cb=r.querySelector('.task-checkbox');if(cb){cb.classList.toggle('checked',done[id]);cb.textContent=done[id]?'✓':'';}
+    var tx=r.querySelector('.task-text');if(tx){tx.style.textDecoration=done[id]?'line-through':'none';tx.style.color=done[id]?'#999':'#222';}
+  });
+  updateStats();
 }
-function getOwner(id){return TEAM.find(m=>m.id===id)||{name:id,color:'#888',avatar:'👤'};}
+function getOwner(id){return TEAM.find(function(m){return m.id===id;})||{name:id,color:'#888',avatar:'👤'};}
 function buildPhases(){
-const container=document.getElementById('phases-container');container.innerHTML='';
-PHASES.forEach(ph=>{
-const pd=ph.tasks.filter(t=>done[t.id]).length,pct=ph.tasks.length?Math.round(pd/ph.tasks.length*100):0,isOpen=openPhase===ph.id;
-const wrap=document.createElement('div');wrap.style.marginBottom='14px';
-const hdr=document.createElement('div');
-hdr.className='phase-header'+(isOpen?' open':'');
-hdr.style.cssText='background:'+(isOpen?ph.color:'#fff')+';border:2px solid '+(isOpen?GOLD:'#D0DCE8')+';box-shadow:'+(isOpen?'0 4px 20px '+ph.color+'44':'0 1px 6px rgba(0,0,0,0.06)')+';';
-hdr.innerHTML='<div class="phase-icon">'+ph.icon+'</div><div class="phase-meta"><div class="phase-title" style="color:'+(isOpen?ph.textColor:ph.color)+'">'+ph.phase+': '+ph.day+'</div><div class="phase-sub" style="color:'+(isOpen?(ph.textColor==='#fff'?'#B8D4F0':'#555'):'#777')+'">'+ph.desc+'</div><div class="phase-tags"><span class="phase-tag" style="background:'+(isOpen?'rgba(255,255,255,0.18)':ph.color+'18')+';color:'+(isOpen?ph.textColor:ph.color)+'">'+ph.time+'</span><span class="phase-tag" style="background:'+(isOpen?'rgba(255,255,255,0.12)':'#EEF4FA')+';color:'+(isOpen?(ph.textColor==='#fff'?'#D6EAF8':ph.color):'#555')+'">'+ph.mode+'</span></div></div><div class="phase-prog"><div class="phase-prog-num" id="ph-pct-'+ph.id+'" style="color:'+(isOpen?GOLD:ph.color)+'">'+pct+'%</div><div style="font-size:10px;color:'+(isOpen?'#B8D4F0':'#aaa')+'" id="ph-sub-'+ph.id+'">'+pd+'/'+ph.tasks.length+'</div><div class="phase-prog-bar" style="background:'+(isOpen?'rgba(255,255,255,0.2)':'#E0E8F0')+'"><div class="phase-prog-fill" id="ph-bar-'+ph.id+'" style="width:'+pct+'%;background:'+(isOpen?GOLD:ph.color)+'"></div></div></div><div class="phase-chevron" style="color:'+(isOpen?'#fff':'#aaa')+'">'+(isOpen?'▲':'▼')+'</div>';
-hdr.onclick=()=>{openPhase=(openPhase===ph.id?null:ph.id);buildPhases();};
-const tcon=document.createElement('div');
-tcon.className='tasks-container'+(isOpen?' open':'');
-tcon.style.cssText='border:2px solid '+ph.color+';border-top:none;border-radius:0 0 12px 12px;background:#fff;';
-ph.tasks.forEach(task=>{
-const owner=getOwner(task.owner),isDone=done[task.id];
-const row=document.createElement('div');
-row.className='task-row'+(isDone?' done':'');row.id='row-'+task.id;row.onclick=()=>toggleTask(task.id);
-row.innerHTML='<div class="task-checkbox'+(isDone?' checked':'')+'">'+(isDone?'✓':'')+'</div><div class="owner-badge" style="background:'+owner.color+'18;border:1px solid '+owner.color+'44;"><div class="owner-avatar">'+owner.avatar+'</div><div class="owner-name" style="color:'+owner.color+'">'+owner.name+'</div></div><div class="task-body"><div class="task-text" style="text-decoration:'+(isDone?'line-through':'none')+';color:'+(isDone?'#999':'#222')+'">'+task.text+'</div><div class="task-chips"><span class="chip chip-output">📋 '+task.output+'</span>'+(task.dur!=='—'?'<span class="chip chip-time">⏱ '+task.dur+'</span>':'')+'</div></div>';
-tcon.appendChild(row);
-});
-wrap.appendChild(hdr);wrap.appendChild(tcon);container.appendChild(wrap);
-});
+  var c=document.getElementById('phases-container');c.innerHTML='';
+  PHASES.forEach(function(ph){
+    var pd=ph.tasks.filter(function(t){return done[t.id];}).length;
+    var pct=ph.tasks.length?Math.round(pd/ph.tasks.length*100):0;
+    var isOpen=openPhase===ph.id;
+    var w=document.createElement('div');w.style.marginBottom='14px';
+    var h=document.createElement('div');h.className='phase-header'+(isOpen?' open':'');
+    h.style.cssText='background:'+(isOpen?ph.color:'#fff')+';border:2px solid '+(isOpen?GOLD:'#D0DCE8')+';box-shadow:'+(isOpen?'0 4px 20px '+ph.color+'44':'0 1px 6px rgba(0,0,0,0.06)')+';';
+    h.innerHTML='<div class="phase-icon">'+ph.icon+'</div><div class="phase-meta"><div class="phase-title" style="color:'+(isOpen?ph.textColor:ph.color)+'">'+ph.phase+': '+ph.day+'</div><div class="phase-sub" style="color:'+(isOpen?(ph.textColor==="#fff"?"#B8D4F0":"#555"):'#777')+'">'+ph.desc+'</div><div class="phase-tags"><span class="phase-tag" style="background:'+(isOpen?'rgba(255,255,255,0.18)':ph.color+'18')+';color:'+(isOpen?ph.textColor:ph.color)+'">'+ph.time+'</span><span class="phase-tag" style="background:'+(isOpen?'rgba(255,255,255,0.12)':'#EEF4FA')+';color:'+(isOpen?'#D6EAF8':'#555')+'">'+ph.mode+'</span></div></div><div class="phase-prog"><div class="phase-prog-num" id="ph-pct-'+ph.id+'" style="color:'+(isOpen?GOLD:ph.color)+'">'+pct+'%</div><div style="font-size:10px;color:'+(isOpen?'#B8D4F0':'#aaa')+'" id="ph-sub-'+ph.id+'">'+pd+'/'+ph.tasks.length+'</div><div class="phase-prog-bar" style="background:'+(isOpen?'rgba(255,255,255,0.2)':'#E0E8F0')+'"><div class="phase-prog-fill" id="ph-bar-'+ph.id+'" style="width:'+pct+'%;background:'+(isOpen?GOLD:ph.color)+'"></div></div></div><div class="phase-chevron" style="color:'+(isOpen?'#fff':'#aaa')+'">'+(isOpen?'▲':'▼')+'</div>';
+    h.onclick=function(){openPhase=(openPhase===ph.id?null:ph.id);buildPhases();};
+    var tc=document.createElement('div');tc.className='tasks-container'+(isOpen?' open':'');
+    tc.style.cssText='border:2px solid '+ph.color+';border-top:none;border-radius:0 0 12px 12px;background:#fff;';
+    ph.tasks.forEach(function(task){
+      var ow=getOwner(task.owner),isDone=done[task.id];
+      var row=document.createElement('div');row.className='task-row'+(isDone?' done':'');row.id='row-'+task.id;
+      row.onclick=function(){toggleTask(task.id);};
+      row.innerHTML='<div class="task-checkbox'+(isDone?' checked':'')+'">'+(isDone?'✓':'')+'</div><div class="owner-badge" style="background:'+ow.color+'18;border:1px solid '+ow.color+'44;"><div class="owner-avatar">'+ow.avatar+'</div><div class="owner-name" style="color:'+ow.color+'">'+ow.name+'</div></div><div class="task-body"><div class="task-text" style="text-decoration:'+(isDone?'line-through':'none')+';color:'+(isDone?'#999':'#222')+'">'+task.text+'</div><div class="task-chips"><span class="chip chip-output">📋 '+task.output+'</span>'+(task.dur!=='—'?'<span class="chip chip-time">⏱ '+task.dur+'</span>':'')+'</div></div>';
+      tc.appendChild(row);
+    });
+    w.appendChild(h);w.appendChild(tc);c.appendChild(w);
+  });
 }
-function buildTimeline(elId){
-const el=document.getElementById(elId);if(!el)return;
-el.innerHTML=TIMELINE.map(r=>'<div class="tl-row"><div class="tl-day">'+r.day+'</div><div class="tl-time">'+r.time+'</div><div class="tl-label">'+r.label+'</div><span class="tl-badge" style="background:'+r.color+';color:'+r.tc+'">'+r.type+'</span></div>').join('');
+function buildTimeline(id){
+  var el=document.getElementById(id);if(!el)return;
+  el.innerHTML=TIMELINE.map(function(r){return '<div class="tl-row"><div class="tl-day">'+r.day+'</div><div class="tl-time">'+r.time+'</div><div class="tl-label">'+r.label+'</div><span class="tl-badge" style="background:'+r.color+';color:'+r.tc+'">'+r.type+'</span></div>';}).join('');
 }
 function buildMyTasks(){
-const sel=document.getElementById('staff-selector');sel.innerHTML='';
-const all=document.createElement('button');all.className='staff-btn'+(selectedStaff==='all'?' active':'');
-if(selectedStaff==='all')all.style.background='#555';all.textContent='👀 All Tasks';
-all.onclick=()=>{selectedStaff='all';buildMyTasks();};sel.appendChild(all);
-TEAM.forEach(m=>{
-const btn=document.createElement('button');btn.className='staff-btn'+(selectedStaff===m.id?' active':'');
-if(selectedStaff===m.id){btn.style.background=m.color;btn.style.borderColor=m.color;}
-btn.textContent=m.avatar+' '+m.name;btn.onclick=()=>{selectedStaff=m.id;buildMyTasks();};sel.appendChild(btn);
-});
-const list=document.getElementById('my-tasks-list');list.innerHTML='';
-PHASES.forEach(ph=>{
-const tasks=ph.tasks.filter(t=>selectedStaff==='all'||t.owner===selectedStaff);if(!tasks.length)return;
-const phLabel=document.createElement('div');phLabel.style.cssText='font-size:11px;font-weight:700;color:'+ph.color+';letter-spacing:2px;margin:14px 0 6px;';
-phLabel.textContent=ph.phase+' · '+ph.day;list.appendChild(phLabel);
-tasks.forEach(task=>{
-const owner=getOwner(task.owner),isDone=done[task.id];
-const card=document.createElement('div');card.className='my-task-card'+(isDone?' done':'');card.id='myrow-'+task.id;card.onclick=()=>toggleTask(task.id);
-card.innerHTML='<div class="task-checkbox'+(isDone?' checked':'')+'" style="margin-top:3px">'+(isDone?'✓':'')+'</div><div class="phase-dot" style="background:'+ph.color+'"></div><div style="flex:1"><div style="font-size:13px;color:'+(isDone?'#999':'#222')+';text-decoration:'+(isDone?'line-through':'none')+';line-height:1.5">'+task.text+'</div><div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap"><span style="font-size:10px;background:'+owner.color+'18;color:'+owner.color+';padding:2px 8px;border-radius:4px;font-weight:600">'+owner.avatar+' '+owner.name+'</span><span class="chip chip-output">📋 '+task.output+'</span></div></div>';
-list.appendChild(card);
-});
-});
+  var sel=document.getElementById('staff-selector');sel.innerHTML='';
+  var all=document.createElement('button');all.className='staff-btn'+(selStaff==='all'?' active':'');
+  if(selStaff==='all')all.style.background='#555';all.textContent='👀 All';
+  all.onclick=function(){selStaff='all';buildMyTasks();};sel.appendChild(all);
+  TEAM.forEach(function(m){
+    var btn=document.createElement('button');btn.className='staff-btn'+(selStaff===m.id?' active':'');
+    if(selStaff===m.id){btn.style.background=m.color;btn.style.borderColor=m.color;}
+    btn.textContent=m.avatar+' '+m.name;btn.onclick=function(){selStaff=m.id;buildMyTasks();};sel.appendChild(btn);
+  });
+  var list=document.getElementById('my-tasks-list');list.innerHTML='';
+  PHASES.forEach(function(ph){
+    var tasks=ph.tasks.filter(function(t){return selStaff==='all'||t.owner===selStaff;});if(!tasks.length)return;
+    var lbl=document.createElement('div');lbl.style.cssText='font-size:11px;font-weight:700;color:'+ph.color+';letter-spacing:2px;margin:14px 0 6px;';
+    lbl.textContent=ph.phase+' · '+ph.day;list.appendChild(lbl);
+    tasks.forEach(function(task){
+      var ow=getOwner(task.owner),isDone=done[task.id];
+      var card=document.createElement('div');card.className='my-task-card'+(isDone?' done':'');card.id='mr-'+task.id;
+      card.onclick=function(){toggleTask(task.id);};
+      card.innerHTML='<div class="task-checkbox'+(isDone?' checked':'')+'" style="margin-top:3px">'+(isDone?'✓':'')+'</div><div class="phase-dot" style="background:'+ph.color+'"></div><div style="flex:1"><div style="font-size:13px;color:'+(isDone?'#999':'#222')+';text-decoration:'+(isDone?'line-through':'none')+';line-height:1.5">'+task.text+'</div><div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap"><span style="font-size:10px;background:'+ow.color+'18;color:'+ow.color+';padding:2px 8px;border-radius:4px;font-weight:600">'+ow.avatar+' '+ow.name+'</span><span class="chip chip-output">📋 '+task.output+'</span></div></div>';
+      list.appendChild(card);
+    });
+  });
 }
 function buildTeam(){
-const container=document.getElementById('team-cards');container.innerHTML='';
-TEAM.forEach(m=>{
-const myTasks=allTasks().filter(t=>t.owner===m.id),myDone=myTasks.filter(t=>done[t.id]).length;
-const card=document.createElement('div');card.className='team-card';card.style.borderLeft='5px solid '+m.color;
-card.innerHTML='<div class="team-avatar">'+m.avatar+'</div><div class="team-info"><div class="team-name" style="color:'+m.color+'">'+m.name+'</div><div class="team-role">'+m.role+'</div><div class="deliverable-tags">'+myTasks.map(t=>'<span class="del-tag" style="background:'+m.color+'15;color:'+m.color+';border:1px solid '+m.color+'33">'+(done[t.id]?'✅':'○')+' '+t.output+'</span>').join('')+'</div></div><div class="team-score"><div class="score-num" id="team-score-'+m.id+'" style="color:'+m.color+'">'+myDone+'/'+myTasks.length+'</div><div class="score-lbl">done</div></div>';
-container.appendChild(card);
-});
+  var c=document.getElementById('team-cards');c.innerHTML='';
+  TEAM.forEach(function(m){
+    var mt=allTasks().filter(function(t){return t.owner===m.id;}),md=mt.filter(function(t){return done[t.id];}).length;
+    var card=document.createElement('div');card.className='team-card';card.style.borderLeft='5px solid '+m.color;
+    card.innerHTML='<div class="team-avatar">'+m.avatar+'</div><div class="team-info"><div class="team-name" style="color:'+m.color+'">'+m.name+'</div><div class="team-role">'+m.role+'</div><div class="deliverable-tags">'+mt.map(function(t){return '<span class="del-tag" style="background:'+m.color+'15;color:'+m.color+';border:1px solid '+m.color+'33">'+(done[t.id]?'✅':'○')+' '+t.output+'</span>';}).join('')+'</div></div><div class="team-score"><div class="score-num" id="ts-'+m.id+'" style="color:'+m.color+'">'+md+'/'+mt.length+'</div><div class="score-lbl">done</div></div>';
+    c.appendChild(card);
+  });
 }
 function showPage(id){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-document.getElementById('page-'+id).classList.add('active');
-const tabs={'home':0,'schedule':1,'mytasks':2,'team':3};
-document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
-if(id==='mytasks')buildMyTasks();
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('page-'+id).classList.add('active');
+  var tabs={home:0,schedule:1,mytasks:2,team:3};
+  document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
+  if(id==='mytasks')buildMyTasks();
 }
 buildPhases();buildTimeline('home-timeline');buildTimeline('team-timeline');buildTeam();updateStats();
 </script>
