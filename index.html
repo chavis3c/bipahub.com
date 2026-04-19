@@ -1,314 +1,443 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BIPA Hub — VSG Platform</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BIPAHub — VSG Platform</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{--navy:#1F4E79;--gold:#F4A620;--dark-navy:#163a5c;--light-navy:#2E6DA4;--soft-gold:#FBD07C;--bg:#F0F4F8;--white:#FFFFFF;--green:#27AE60;--red:#C0392B;--purple:#8E44AD;--orange:#E67E22;}
+:root{
+  --navy:#1F3A5F;--gold:#C9A227;--dark-navy:#162A47;--light-navy:#2E6DA4;
+  --soft-gold:#FBD07C;--bg:#F0F4F8;--white:#FFFFFF;--green:#27AE60;
+}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;}
-nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);border-bottom:4px solid var(--gold);padding:0 24px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+
+/* NAV */
+nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);border-bottom:4px solid var(--gold);padding:0 24px;position:sticky;top:0;z-index:100;}
 .nav-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
-.nav-brand{display:flex;align-items:center;gap:10px;}
-.nav-logo{width:36px;height:36px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:var(--dark-navy);}
-.nav-title{font-family:'DM Serif Display',serif;color:var(--white);font-size:20px;}
+.nav-logo{width:36px;height:36px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--navy);}
+.nav-title{font-family:'DM Serif Display',serif;color:var(--white);font-size:20px;letter-spacing:0.5px;}
 .nav-title span{color:var(--gold);}
-.nav-tabs{display:flex;}
-.nav-tab{background:transparent;border:none;color:#B8D4F0;padding:8px 16px;font-size:12px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;transition:all 0.2s;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.nav-tabs{display:flex;gap:0;}
+.nav-tab{background:transparent;border:none;color:#B8D4F0;padding:8px 16px;font-size:12px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;}
 .nav-tab.active{color:var(--gold);border-bottom:3px solid var(--gold);font-weight:700;}
 .nav-tab:hover{color:var(--white);}
-.user-badge{background:rgba(244,166,32,0.15);border:1px solid rgba(244,166,32,0.4);color:var(--gold);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;}
+.user-badge{background:rgba(201,162,39,0.15);border:1px solid rgba(201,162,39,0.4);color:var(--gold);padding:5px 12px;border-radius:20px;font-size:12px;}
+
+/* PAGES */
 .page{display:none;max-width:1000px;margin:0 auto;padding:24px 20px 60px;}
 .page.active{display:block;}
-.home-hero{background:linear-gradient(135deg,var(--dark-navy),var(--navy));border-radius:16px;padding:36px 32px;color:var(--white);margin-bottom:24px;border:2px solid var(--gold);}
+
+/* HOME PAGE */
+.home-hero{background:linear-gradient(135deg,var(--dark-navy),var(--navy));border-radius:16px;padding:36px 32px;color:var(--white);margin-bottom:24px;}
 .home-hero-label{color:var(--gold);font-size:10px;letter-spacing:4px;margin-bottom:8px;font-weight:600;}
 .home-hero h1{font-family:'DM Serif Display',serif;font-size:32px;margin-bottom:8px;line-height:1.2;}
 .home-hero p{color:#B8D4F0;font-size:14px;max-width:500px;line-height:1.7;}
 .hero-stats{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap;}
-.hero-stat{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:12px 20px;text-align:center;}
-.hero-stat-val{font-size:24px;font-weight:800;color:var(--gold);}
-.hero-stat-lbl{font-size:10px;color:#B8D4F0;letter-spacing:1px;margin-top:2px;}
-.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
-.module-card{background:var(--white);border:2px solid #D0DCE8;border-radius:12px;padding:18px 16px;cursor:pointer;transition:all 0.2s;}
-.module-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(31,78,121,0.15);}
-.module-icon{font-size:28px;margin-bottom:8px;}
-.module-name{font-weight:700;font-size:14px;color:var(--navy);margin-bottom:3px;}
-.module-sub{font-size:11px;color:#888;}
-.module-badge{display:inline-block;margin-top:8px;font-size:10px;padding:2px 8px;border-radius:5px;font-weight:600;background:#EEF4FA;color:var(--navy);}
-.module-badge.live{background:#E8F8EE;color:#1A7A4A;}
-.module-badge.building{background:#FFF8E8;color:#7A5000;}
-.phase-header{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:12px;cursor:pointer;transition:all 0.2s;margin-bottom:2px;}
-.phase-header.open{border-radius:12px 12px 0 0;}
-.phase-icon{font-size:26px;}.phase-meta{flex:1;}
-.phase-title{font-weight:700;font-size:15px;}
-.phase-sub{font-size:12px;margin-top:2px;opacity:0.8;}
-.phase-tags{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;}
-.phase-tag{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;}
-.phase-prog{text-align:center;min-width:56px;}
-.phase-prog-num{font-size:20px;font-weight:800;}
-.phase-prog-bar{width:50px;height:5px;border-radius:3px;margin:4px auto 0;overflow:hidden;}
-.phase-prog-fill{height:100%;border-radius:3px;}
-.phase-chevron{font-size:14px;opacity:0.7;}
-.tasks-container{border-radius:0 0 12px 12px;overflow:hidden;display:none;}
-.tasks-container.open{display:block;}
-.task-row{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid #EEF2F6;}
-.task-row:last-child{border-bottom:none;}.task-row:hover{background:#F5F9FF;}.task-row.done{background:#F0FFF4;}
-.task-checkbox{width:22px;height:22px;min-width:22px;border-radius:5px;border:2px solid #C0CCD8;background:var(--white);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--white);margin-top:2px;transition:all 0.2s;}
-.task-checkbox.checked{background:var(--green);border-color:var(--green);}
-.owner-badge{min-width:68px;max-width:68px;border-radius:6px;padding:4px 6px;text-align:center;}
-.owner-avatar{font-size:16px;}.owner-name{font-size:9px;font-weight:700;margin-top:1px;}
-.task-body{flex:1;}.task-text{font-size:13px;color:#222;line-height:1.5;}
-.task-chips{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;}
-.chip{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:500;}
-.chip-output{background:#EEF4FA;color:var(--navy);}.chip-time{background:#FFF8E8;color:#7A5000;}
-.staff-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
-.staff-btn{background:var(--white);border:2px solid #D0DCE8;border-radius:20px;padding:7px 16px;cursor:pointer;font-size:12px;font-weight:500;color:#555;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
-.staff-btn.active{font-weight:700;color:var(--white);}
-.my-task-card{background:var(--white);border-radius:10px;border:1px solid #D0DCE8;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;display:flex;gap:12px;}
-.my-task-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08);}.my-task-card.done{background:#F0FFF4;border-color:#A8D8B9;}
-.phase-dot{width:10px;height:10px;min-width:10px;border-radius:50%;margin-top:5px;}
-.launch-banner{background:linear-gradient(135deg,var(--dark-navy),var(--navy));border-radius:12px;padding:20px 24px;text-align:center;border:3px solid var(--gold);margin-top:16px;}
-.launch-banner h2{font-family:'DM Serif Display',serif;color:var(--gold);font-size:22px;margin:8px 0 4px;}
-.launch-banner p{color:#B8D4F0;font-size:13px;}
-.overall-progress{background:var(--white);border-radius:10px;padding:16px 20px;margin-bottom:20px;border:1px solid #D0DCE8;}
-.progress-track{background:#E8EDF2;border-radius:6px;height:12px;overflow:hidden;margin:8px 0;}
-.progress-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--navy),var(--light-navy));transition:width 0.4s ease;}
-.team-card{background:var(--white);border-radius:12px;padding:20px;margin-bottom:14px;border:1px solid #D0DCE8;display:flex;gap:16px;align-items:flex-start;}
-.team-avatar{font-size:40px;width:60px;text-align:center;}.team-info{flex:1;}
-.team-name{font-weight:700;font-size:17px;margin-bottom:2px;}.team-role{font-size:12px;color:#888;margin-bottom:10px;}
-.deliverable-tags{display:flex;flex-wrap:wrap;gap:6px;}
-.del-tag{font-size:11px;padding:3px 10px;border-radius:5px;font-weight:500;}
-.team-score{text-align:center;min-width:60px;}.score-num{font-size:22px;font-weight:800;}.score-lbl{font-size:10px;color:#aaa;margin-top:2px;}
-.timeline{margin-top:20px;}.tl-row{display:flex;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid #EEF0F3;}
-.tl-row:last-child{border-bottom:none;}.tl-day{min-width:90px;font-size:12px;font-weight:700;color:var(--navy);}
-.tl-time{min-width:95px;font-size:11px;color:#888;}.tl-label{flex:1;font-size:13px;color:#333;}
-.tl-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;color:var(--white);}
-</style></head><body>
-<nav><div class="nav-inner">
-<div class="nav-brand"><div class="nav-logo">B</div><div class="nav-title">BIPA<span>Hub</span></div></div>
-<div class="nav-tabs">
-<button class="nav-tab active" onclick="showPage('home')">🏠 Home</button>
-<button class="nav-tab" onclick="showPage('schedule')">📅 Schedule</button>
-<button class="nav-tab" onclick="showPage('mytasks')">✅ My Tasks</button>
-<button class="nav-tab" onclick="showPage('team')">👥 Team</button>
+.hero-stat{text-align:center;}
+.hero-stat .num{font-size:28px;font-weight:700;color:var(--gold);}
+.hero-stat .lbl{font-size:11px;color:#B8D4F0;text-transform:uppercase;letter-spacing:1px;}
+.hero-meta{font-size:12px;color:#B8D4F0;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);}
+.hero-meta b{color:var(--gold);}
+
+/* MODULE CARDS */
+.section-title{font-size:13px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:1.5px;margin:24px 0 12px;}
+.modules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+.mod-card{background:var(--white);border-radius:12px;padding:16px;border:1px solid #E0E8F0;cursor:pointer;transition:transform .15s,box-shadow .15s;}
+.mod-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(31,58,95,0.12);}
+.mod-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.mod-name{font-size:14px;font-weight:600;color:#1A1A1A;margin-bottom:3px;}
+.mod-desc{font-size:12px;color:#666;line-height:1.4;}
+.mod-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;margin-top:8px;font-weight:600;}
+.badge-live{background:#E8F5E9;color:#2E7D32;}
+.badge-p2{background:#FFF3E0;color:#E65100;}
+.badge-p3{background:#EDE7F6;color:#4527A0;}
+
+/* SCHEDULE PAGE */
+.phase-block{border-radius:12px;overflow:hidden;margin-bottom:16px;border:1px solid #E0E8F0;}
+.phase-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+.phase-header h3{font-size:15px;font-weight:600;color:var(--white);}
+.phase-header p{font-size:12px;color:rgba(255,255,255,0.8);margin-top:2px;}
+.phase-meta{font-size:11px;color:rgba(255,255,255,0.7);}
+.phase-pct{font-size:22px;font-weight:700;color:var(--gold);}
+.phase-tasks{background:var(--white);}
+.task-row{display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid #F0F4F8;}
+.task-row:last-child{border-bottom:none;}
+.task-check{width:18px;height:18px;border-radius:4px;border:2px solid #DDD;flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.task-check.done{background:var(--green);border-color:var(--green);}
+.task-check.done::after{content:'✓';color:#fff;font-size:11px;font-weight:700;}
+.task-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.task-content{flex:1;}
+.task-title{font-size:13px;color:#1A1A1A;line-height:1.4;}
+.task-tags{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;align-items:center;}
+.task-tag{font-size:10px;padding:2px 7px;border-radius:4px;background:#F0F4F8;color:#555;}
+.task-time{font-size:10px;color:#999;display:flex;align-items:center;gap:3px;}
+
+/* TASKS PAGE */
+.member-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.mf-btn{padding:6px 14px;border-radius:20px;border:1px solid #DDD;background:var(--white);font-size:12px;font-weight:500;cursor:pointer;color:#555;}
+.mf-btn.active{background:var(--navy);color:var(--white);border-color:var(--navy);}
+.task-card{background:var(--white);border-radius:10px;padding:14px 16px;border:1px solid #E0E8F0;margin-bottom:10px;}
+.tc-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.tc-name{font-size:13px;font-weight:600;color:#1A1A1A;}
+.tc-role{font-size:11px;color:#888;}
+.tc-desc{font-size:13px;color:#333;line-height:1.5;}
+.tc-footer{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+
+/* TEAM PAGE */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+.person-card{background:var(--white);border-radius:12px;padding:18px;border:1px solid #E0E8F0;text-align:center;}
+.person-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;margin:0 auto 12px;}
+.person-name{font-size:14px;font-weight:600;color:#1A1A1A;}
+.person-en{font-size:12px;color:#888;margin-bottom:4px;}
+.person-role{font-size:12px;color:#555;line-height:1.4;margin-bottom:8px;}
+.person-dept{font-size:10px;padding:3px 10px;border-radius:10px;font-weight:600;}
+.bipa-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;background:#FFF3E0;color:#E65100;font-weight:600;margin-top:4px;}
+
+/* PROGRESS BAR */
+.prog-bar{height:4px;background:#E0E8F0;border-radius:2px;overflow:hidden;margin-top:4px;}
+.prog-fill{height:100%;background:var(--gold);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="nav-logo">B</div>
+      <span class="nav-title">BIPA<span>Hub</span></span>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('home',this)">&#127968; Home</button>
+      <button class="nav-tab" onclick="showPage('schedule',this)">&#128197; Schedule</button>
+      <button class="nav-tab" onclick="showPage('tasks',this)">&#9989; My Tasks</button>
+      <button class="nav-tab" onclick="showPage('team',this)">&#128106; Team</button>
+    </div>
+    <div class="user-badge">VSG · BIPA 2026</div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════ HOME ═══════════════════════ -->
+<div id="home" class="page active">
+  <div class="home-hero">
+    <div class="home-hero-label">VSG · BIPA PLATFORM · APR 2026</div>
+    <h1>VSG SaaS Platform<br>Build Command Center</h1>
+    <p>CEO + 4 BIPA members building VSG's unified monitoring platform for Vietson Infrastructure Development SHC. Track progress, complete tasks, and launch by Thursday 14:00.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num" id="stat-done">0</div><div class="lbl">Tasks done</div></div>
+      <div class="hero-stat"><div class="num">31</div><div class="lbl">Total tasks</div></div>
+      <div class="hero-stat"><div class="num" id="stat-pct">0%</div><div class="lbl">Complete</div></div>
+      <div class="hero-stat"><div class="num">Thu 14:00</div><div class="lbl">Launch time</div></div>
+    </div>
+    <div class="hero-meta">
+      5 departments &nbsp;·&nbsp; 9 VSG staff &nbsp;·&nbsp; 102 industrial tenants &nbsp;·&nbsp;
+      <b>Operations (COO Jane)</b> &nbsp;·&nbsp; <b>Finance (CFO Henry)</b> &nbsp;·&nbsp;
+      <b>Technical (CTO Tuan)</b> &nbsp;·&nbsp; <b>Data Mgmt (CDO Boa)</b> &nbsp;·&nbsp;
+      <b>Sales & Mktg (Chavis acting)</b>
+    </div>
+  </div>
+
+  <div class="section-title">Platform Modules</div>
+  <div class="modules-grid">
+    <div class="mod-card" onclick="showPage('schedule',document.querySelectorAll('.nav-tab')[1])">
+      <div class="mod-icon" style="background:#E3F2FD;">&#128197;</div>
+      <div class="mod-name">Build Schedule</div>
+      <div class="mod-desc">5 phases · 31 tasks. Full 4-day build plan for BIPA team.</div>
+      <span class="mod-badge badge-live">LIVE NOW</span>
+    </div>
+    <div class="mod-card" onclick="showPage('tasks',document.querySelectorAll('.nav-tab')[2])">
+      <div class="mod-icon" style="background:#E8F5E9;">&#9989;</div>
+      <div class="mod-name">My Tasks</div>
+      <div class="mod-desc">View tasks by team member. Boa · Tu · Tuan · Ngon · Chavis.</div>
+      <span class="mod-badge badge-live">LIVE NOW</span>
+    </div>
+    <div class="mod-card" onclick="showPage('team',document.querySelectorAll('.nav-tab')[3])">
+      <div class="mod-icon" style="background:#F3E5F5;">&#128106;</div>
+      <div class="mod-name">BIPA Team</div>
+      <div class="mod-desc">9 VSG staff roles, deliverables, and accountability.</div>
+      <span class="mod-badge badge-live">LIVE NOW</span>
+    </div>
+    <div class="mod-card">
+      <div class="mod-icon" style="background:#FFF3E0;">&#128202;</div>
+      <div class="mod-name">CEO Dashboard</div>
+      <div class="mod-desc">RAG board · 5 dept KPIs · EIP task tracker. Built by Tuan.</div>
+      <span class="mod-badge badge-p2">PHASE 2</span>
+    </div>
+    <div class="mod-card">
+      <div class="mod-icon" style="background:#E8F5E9;">&#128180;</div>
+      <div class="mod-name">Finance</div>
+      <div class="mod-desc">102 tenants · AR/AP · P&L · Service fees & utilities. Built by Tu.</div>
+      <span class="mod-badge badge-p2">PHASE 2</span>
+    </div>
+    <div class="mod-card">
+      <div class="mod-icon" style="background:#EDE7F6;">&#129302;</div>
+      <div class="mod-name">BIPA AI</div>
+      <div class="mod-desc">n8n · Dept alerts · CEO Telegram digest → @Chavis_ai_bot. Built by Ngon.</div>
+      <span class="mod-badge badge-p3">PHASE 3</span>
+    </div>
+  </div>
+
+  <div class="section-title">This Week's Meeting Schedule</div>
+  <div style="background:var(--white);border-radius:12px;border:1px solid #E0E8F0;overflow:hidden;">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);">
+      <div style="padding:14px 16px;border-right:1px solid #F0F4F8;">
+        <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Sat 18 Apr</div>
+        <div style="font-size:13px;font-weight:600;color:#1A1A1A;">Phase 0</div>
+        <div style="font-size:12px;color:#666;margin-top:2px;">CEO solo prep</div>
+        <div style="font-size:11px;color:#999;margin-top:4px;">Platform decision · Budget · Team brief</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid #F0F4F8;background:#F0F8FF;">
+        <div style="font-size:10px;color:#1565C0;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Mon 20 Apr ← TODAY</div>
+        <div style="font-size:13px;font-weight:600;color:#1A1A1A;">Phase 1 · 11:00</div>
+        <div style="font-size:12px;color:#666;margin-top:2px;">Team kickoff</div>
+        <div style="font-size:11px;color:#999;margin-top:4px;">Platform live · Finance draft · CEO board · Automation blueprint</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid #F0F4F8;">
+        <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Tue 21 Apr</div>
+        <div style="font-size:13px;font-weight:600;color:#1A1A1A;">Phase 2 · 11:00</div>
+        <div style="font-size:12px;color:#666;margin-top:2px;">Live data build</div>
+        <div style="font-size:11px;color:#999;margin-top:4px;">CRM · AR alerts · n8n workflows · CEO board with real KPIs</div>
+      </div>
+      <div style="padding:14px 16px;">
+        <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Wed–Thu 22–23 Apr</div>
+        <div style="font-size:13px;font-weight:600;color:#1A1A1A;">Phase 3–4</div>
+        <div style="font-size:12px;color:#666;margin-top:2px;">Integration · Launch</div>
+        <div style="font-size:11px;color:#999;margin-top:4px;">Full test · Thu 14:00 all 9 staff log in live</div>
+      </div>
+    </div>
+  </div>
 </div>
-<div class="user-badge">VSG · BIPA 2026</div>
-</div></nav>
-<div class="page active" id="page-home">
-<div class="home-hero">
-<div class="home-hero-label">VSG · BIPA PLATFORM · APR 2026</div>
-<h1>VSG SaaS Platform<br/>Build Command Center</h1>
-<p>Chavis + Bob, Lisa, Tony, Leo building VSG's unified platform. Launch Thursday 23 Apr 14:00.</p>
-<div class="hero-stats">
-<div class="hero-stat"><div class="hero-stat-val" id="stat-done">0</div><div class="hero-stat-lbl">TASKS DONE</div></div>
-<div class="hero-stat"><div class="hero-stat-val" id="stat-total">0</div><div class="hero-stat-lbl">TOTAL TASKS</div></div>
-<div class="hero-stat"><div class="hero-stat-val" id="stat-pct">0%</div><div class="hero-stat-lbl">COMPLETE</div></div>
-<div class="hero-stat"><div class="hero-stat-val">Thu 14:00</div><div class="hero-stat-lbl">LAUNCH TIME</div></div>
-</div></div>
-<div style="font-weight:700;color:var(--navy);font-size:15px;margin-bottom:12px;">📦 Platform Modules</div>
-<div class="module-grid">
-<div class="module-card" onclick="showPage('schedule')"><div class="module-icon">📅</div><div class="module-name">Build Schedule</div><div class="module-sub">5 phases · 26 tasks</div><div class="module-badge live">LIVE NOW</div></div>
-<div class="module-card" onclick="showPage('mytasks')"><div class="module-icon">✅</div><div class="module-name">My Tasks</div><div class="module-sub">Filter by name</div><div class="module-badge live">LIVE NOW</div></div>
-<div class="module-card" onclick="showPage('team')"><div class="module-icon">👥</div><div class="module-name">BIPA Team</div><div class="module-sub">Roles &amp; deliverables</div><div class="module-badge live">LIVE NOW</div></div>
-<div class="module-card"><div class="module-icon">📊</div><div class="module-name">CEO Dashboard</div><div class="module-sub">P&amp;L · RAG · KPIs</div><div class="module-badge building">PHASE 2</div></div>
-<div class="module-card"><div class="module-icon">💰</div><div class="module-name">Finance</div><div class="module-sub">AR/AP · Cash · P&amp;L</div><div class="module-badge building">PHASE 2</div></div>
-<div class="module-card"><div class="module-icon">🤖</div><div class="module-name">BIPA AI</div><div class="module-sub">n8n · Claude · Telegram</div><div class="module-badge building">PHASE 3</div></div>
+
+<!-- ═══════════════════════ SCHEDULE ═══════════════════════ -->
+<div id="schedule" class="page">
+
+  <!-- PHASE 0 -->
+  <div class="phase-block">
+    <div class="phase-header" style="background:#B7860B;">
+      <div><h3>Phase 0: Saturday 18 Apr</h3><p>CEO solo preparation. Platform decision, budget confirm, team notification.</p><div class="phase-meta">CEO Solo only</div></div>
+      <div style="text-align:right;"><div class="phase-pct">0%</div><div style="font-size:11px;color:rgba(255,255,255,0.7);">0/4</div></div>
+    </div>
+    <div class="phase-tasks">
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">Review platform comparison — decide Softr Pro $89/mo OR Zoho One $333/mo (or better alternative)</div><div class="task-tags"><span class="task-tag">Platform decision made</span><span class="task-time">⏱ 30 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">Confirm monthly budget with CFO Henry</div><div class="task-tags"><span class="task-tag">Budget approved</span><span class="task-time">⏱ 15 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">Share bipahub.com to Boa, Tu, Tuan, Ngon via Zalo</div><div class="task-tags"><span class="task-tag">Team notified</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">Confirm roles: Boa=Platform Setup, Tu=Finance, Tuan=CEO Dashboard, Ngon=Automation</div><div class="task-tags"><span class="task-tag">Roles confirmed</span><span class="task-time">⏱ 15 min</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase-block">
+    <div class="phase-header" style="background:#1F3A5F;">
+      <div><h3>Phase 1: Monday 20 Apr</h3><p>Chavis briefs full plan. Each BIPA member receives Phase 1 tasks.</p><div class="phase-meta">11:00–12:00 &nbsp;·&nbsp; Online · Google Meet / Zalo</div></div>
+      <div style="text-align:right;"><div class="phase-pct">0%</div><div style="font-size:11px;color:rgba(255,255,255,0.7);">0/7</div></div>
+    </div>
+    <div class="phase-tasks">
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">11:00 — Open meeting. Present platform decision + cost to team</div><div class="task-tags"><span class="task-tag">Team aligned</span><span class="task-time">⏱ 20 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">11:20 — Walk through this bipahub.com schedule with team</div><div class="task-tags"><span class="task-tag">Everyone knows their role</span><span class="task-time">⏱ 15 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#4A148C;">Bo</div><div class="task-content"><div class="task-title">Boa ASSIGNED: Register platform (Softr Pro OR Zoho One). Evaluate best option for 9 non-technical VSG staff. Add 9 users with Google SSO. Create 5 dept workspaces.</div><div class="task-tags"><span class="task-tag">Platform live, 9 logins working, 5 workspaces created</span><span class="task-time">⏱ 3 hrs</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1565C0;">Tu</div><div class="task-content"><div class="task-title">Tu ASSIGNED: Set up Finance module. Import 102 VSG tenants (service fee/sq.m + utility fees). Build P&L + AR/AP draft.</div><div class="task-tags"><span class="task-tag">Finance dashboard draft live</span><span class="task-time">⏱ 3 hrs</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#E65100;">Tu</div><div class="task-content"><div class="task-title">Tuan ASSIGNED: Build CEO RAG board layout (5 VSG departments). Create EIP task tracker with 5 dept workspaces.</div><div class="task-tags"><span class="task-tag">CEO dashboard structure ready</span><span class="task-time">⏱ 3 hrs</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#2E7D32;">Ng</div><div class="task-content"><div class="task-title">Ngon ASSIGNED: Map all VSG notification triggers across 5 departments. Design double-notification logic (Dept head → CEO @Chavis_ai_bot).</div><div class="task-tags"><span class="task-tag">Notification blueprint documented</span><span class="task-time">⏱ 3 hrs</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">12:00 — Confirm all assignments clear. Check-in at 17:00 via Telegram</div><div class="task-tags"><span class="task-tag">Meeting closed, work started</span><span class="task-time">⏱ 15 min</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase-block">
+    <div class="phase-header" style="background:#1B5E20;">
+      <div><h3>Phase 2: Tuesday 21 Apr</h3><p>Phase 1 review. Chavis approves. Phase 2 assigned — live data and automation.</p><div class="phase-meta">11:00–12:00 &nbsp;·&nbsp; Online · Google Meet / Zalo</div></div>
+      <div style="text-align:right;"><div class="phase-pct">0%</div><div style="font-size:11px;color:rgba(255,255,255,0.7);">0/9</div></div>
+    </div>
+    <div class="phase-tasks">
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#4A148C;">Bo</div><div class="task-content"><div class="task-title">Boa 11:00 — Report: Platform setup complete? All 9 users logged in? Platform recommendation confirmed?</div><div class="task-tags"><span class="task-tag">Setup status confirmed</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1565C0;">Tu</div><div class="task-content"><div class="task-title">Tu 11:10 — Demo Finance dashboard. Show P&L + AR screen to Chavis. 102 tenants visible.</div><div class="task-tags"><span class="task-tag">Finance module approved</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#E65100;">Tu</div><div class="task-content"><div class="task-title">Tuan 11:20 — Demo CEO RAG board draft (5 depts). Show EIP tracker structure with 5 workspaces.</div><div class="task-tags"><span class="task-tag">CEO board approved</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#2E7D32;">Ng</div><div class="task-content"><div class="task-title">Ngon 11:30 — Walk through notification logic Layer 1 (dept heads) + Layer 2 (CEO @Chavis_ai_bot digest)</div><div class="task-tags"><span class="task-tag">Notification design approved</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">11:40 — Review all 4 modules. Approve or request changes (Go/No-go per module)</div><div class="task-tags"><span class="task-tag">Go/No-go per module</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#4A148C;">Bo</div><div class="task-content"><div class="task-title">Boa ASSIGNED Phase 2: Connect Sales/CRM module + configure 5-dept privacy walls (each staff sees only their dept)</div><div class="task-tags"><span class="task-tag">CRM module in progress</span><span class="task-time">⏱ 4 hrs</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1565C0;">Tu</div><div class="task-content"><div class="task-title">Tu ASSIGNED Phase 2: Activate AR aging alerts (30/60/90 day overdue) + cash threshold alert for CFO Henry</div><div class="task-tags"><span class="task-tag">Finance alerts live</span><span class="task-time">⏱ 4 hrs</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#E65100;">Tu</div><div class="task-content"><div class="task-title">Tuan ASSIGNED Phase 2: Populate EIP tasks across all 5 depts + connect real KPI data to CEO RAG board</div><div class="task-tags"><span class="task-tag">CEO board with live data</span><span class="task-time">⏱ 4 hrs</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#2E7D32;">Ng</div><div class="task-content"><div class="task-title">Ngon ASSIGNED Phase 2: Build n8n workflows — Layer 1 dept alerts + Layer 2 CEO Telegram digest to @Chavis_ai_bot</div><div class="task-tags"><span class="task-tag">n8n workflows active</span><span class="task-time">⏱ 4 hrs</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase-block">
+    <div class="phase-header" style="background:#4A148C;">
+      <div><h3>Phase 3: Wednesday 22 Apr</h3><p>All modules tested together. Cross-connections validated.</p><div class="phase-meta">11:00–12:00 &nbsp;·&nbsp; Online · Google Meet / Zalo</div></div>
+      <div style="text-align:right;"><div class="phase-pct">0%</div><div style="font-size:11px;color:rgba(255,255,255,0.7);">0/7</div></div>
+    </div>
+    <div class="phase-tasks">
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#4A148C;">Bo</div><div class="task-content"><div class="task-title">Boa 11:00 — Demo full platform login for all 9 users + privacy wall test (each dept sees only their data)</div><div class="task-tags"><span class="task-tag">Privacy confirmed per dept</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1565C0;">Tu</div><div class="task-content"><div class="task-title">Tu 11:10 — Trigger test AR alert (overdue invoice) — confirm fires to CFO Henry AND CEO Chavis on Telegram</div><div class="task-tags"><span class="task-tag">Double notification confirmed</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#E65100;">Tu</div><div class="task-content"><div class="task-title">Tuan 11:20 — Load CEO dashboard with real data — all 5 dept RAG statuses live</div><div class="task-tags"><span class="task-tag">RAG board with live data</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#2E7D32;">Ng</div><div class="task-content"><div class="task-title">Ngon 11:30 — Run full n8n automation test — all workflows fire correctly across all 5 departments</div><div class="task-tags"><span class="task-tag">BIPA bridge confirmed</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">11:40 — Login as CFO Henry, then as CEO — confirm different dept views and CEO full access</div><div class="task-tags"><span class="task-tag">Privacy + CEO access verified</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#4A148C;">Bo</div><div class="task-content"><div class="task-title">11:50 — Log all bugs. Each member fixes their bugs before Thursday 10:00</div><div class="task-tags"><span class="task-tag">Bug list documented</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#4A148C;">Bo</div><div class="task-content"><div class="task-title">OVERNIGHT Wed→Thu: Boa, Tu, Tuan, Ngon fix all bugs before 10:00</div><div class="task-tags"><span class="task-tag">All modules polished</span><span class="task-time">⏱ Overnight</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase-block">
+    <div class="phase-header" style="background:#B71C1C;">
+      <div><h3>Phase 4: Thursday 23 Apr — LAUNCH DAY</h3><p>Face-to-face finalization. 12:00 deadline. 14:00 launch — all 9 VSG staff go live.</p><div class="phase-meta">10:00–12:00 → LAUNCH 14:00 &nbsp;·&nbsp; In-Person · VSG Office</div></div>
+      <div style="text-align:right;"><div class="phase-pct">0%</div><div style="font-size:11px;color:rgba(255,255,255,0.7);">0/8</div></div>
+    </div>
+    <div class="phase-tasks">
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#4A148C;">Bo</div><div class="task-content"><div class="task-title">Boa 10:00 — Deploy final platform. Confirm all 9 VSG staff can log in</div><div class="task-tags"><span class="task-tag">Platform live and stable</span><span class="task-time">⏱ 20 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1565C0;">Tu</div><div class="task-content"><div class="task-title">Tu 10:20 — Merge Finance data into CEO dashboard — live connection confirmed</div><div class="task-tags"><span class="task-tag">Finance → CEO board connected</span><span class="task-time">⏱ 20 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#2E7D32;">Ng</div><div class="task-content"><div class="task-title">Ngon 10:40 — Activate all n8n workflows. Test Telegram digest to @Chavis_ai_bot</div><div class="task-tags"><span class="task-tag">BIPA Telegram digest live</span><span class="task-time">⏱ 20 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">11:00 — Full end-to-end test: P&L → AR alert → CEO RAG board → Telegram @Chavis_ai_bot</div><div class="task-tags"><span class="task-tag">Full system approved by CEO</span><span class="task-time">⏱ 30 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#4A148C;">Bo</div><div class="task-content"><div class="task-title">Boa 11:30 — Prepare login credentials + 1-page quick guide for all 9 VSG staff</div><div class="task-tags"><span class="task-tag">Login guide ready</span><span class="task-time">⏱ 20 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">11:50 — Final sign-off. Platform URL confirmed for all 9 VSG staff</div><div class="task-tags"><span class="task-tag">✅ SYSTEM APPROVED</span><span class="task-time">⏱ 10 min</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">🕐 12:00 DEADLINE — All modules complete. Team takes lunch break.</div><div class="task-tags"><span class="task-tag">System locked for launch</span></div></div></div>
+      <div class="task-row"><div class="task-check" onclick="toggleTask(this)"></div><div class="task-avatar" style="background:#1F3A5F;">Ch</div><div class="task-content"><div class="task-title">🚀 14:00 LAUNCH — All 9 VSG staff log in for first time. Chavis/Ken demos live platform.</div><div class="task-tags"><span class="task-tag">VSG Platform LIVE</span><span class="task-time">⏱ 60 min</span></div></div></div>
+    </div>
+  </div>
 </div>
-<div style="background:var(--white);border-radius:12px;border:1px solid #D0DCE8;padding:18px 20px;">
-<div style="font-weight:700;color:var(--navy);font-size:14px;margin-bottom:12px;">📅 This Week</div>
-<div class="timeline" id="home-timeline"></div>
-</div></div>
-<div class="page" id="page-schedule">
-<div style="margin-bottom:16px;">
-<div style="font-size:10px;color:var(--gold);letter-spacing:3px;font-weight:600;margin-bottom:4px;">BIPA TEAM · SAT–THU · APR 18–23</div>
-<div style="font-family:'DM Serif Display',serif;font-size:24px;color:var(--navy);">Build Schedule &amp; Task Tracker</div>
-<div style="font-size:13px;color:#666;margin-top:4px;">Tap any phase to expand · Tick tasks as completed</div>
+
+<!-- ═══════════════════════ MY TASKS ═══════════════════════ -->
+<div id="tasks" class="page">
+  <div class="member-filter">
+    <button class="mf-btn active" onclick="filterTasks('all',this)">All members</button>
+    <button class="mf-btn" onclick="filterTasks('chavis',this)">Chavis / Ken</button>
+    <button class="mf-btn" onclick="filterTasks('boa',this)">Bob / Boa</button>
+    <button class="mf-btn" onclick="filterTasks('tu',this)">Lisa / Tu</button>
+    <button class="mf-btn" onclick="filterTasks('tuan',this)">Tony / Tuan</button>
+    <button class="mf-btn" onclick="filterTasks('ngon',this)">Leo / Ngon</button>
+  </div>
+  <div id="tasks-list"></div>
 </div>
-<div class="overall-progress">
-<div style="display:flex;justify-content:space-between;align-items:center;">
-<div style="font-weight:700;color:var(--navy);font-size:14px;">Overall Progress</div>
-<div style="font-size:14px;font-weight:800;color:var(--navy);" id="prog-label">0/0</div>
+
+<!-- ═══════════════════════ TEAM ═══════════════════════ -->
+<div id="team" class="page">
+  <div class="section-title">BIPA Build Team (5 members)</div>
+  <div class="team-grid" style="margin-bottom:20px;">
+    <div class="person-card">
+      <div class="person-avatar" style="background:#1F3A5F;">Ken</div>
+      <div class="person-name">Chavis</div>
+      <div class="person-en">English name: Chavis &nbsp;|&nbsp; Real: Ken</div>
+      <div class="person-role">CEO & Founder — Vietson Infrastructure Development SHC. Decision maker, phase approver, platform owner. Acting head of Sales & Marketing.</div>
+      <span class="person-dept" style="background:#E3F2FD;color:#0C447C;">CEO · Sales & Mktg (acting)</span><br>
+      <span class="bipa-badge">BIPA Lead</span>
+    </div>
+    <div class="person-card">
+      <div class="person-avatar" style="background:#4A148C;">Boa</div>
+      <div class="person-name">Bob</div>
+      <div class="person-en">English name: Bob &nbsp;|&nbsp; Real: Boa</div>
+      <div class="person-role">CDO — Chief Data Officer. Leads Data Management dept. BIPA role: platform setup, Google SSO, 5 dept workspaces, tech infrastructure.</div>
+      <span class="person-dept" style="background:#F3E5F5;color:#4A148C;">CDO · Data Management</span><br>
+      <span class="bipa-badge">BIPA Team</span>
+    </div>
+    <div class="person-card">
+      <div class="person-avatar" style="background:#1565C0;">Tu</div>
+      <div class="person-name">Lisa</div>
+      <div class="person-en">English name: Lisa &nbsp;|&nbsp; Real: Tu</div>
+      <div class="person-role">Finance Assistant (reports to CFO Henry). BIPA role: Finance module, import 102 tenants, P&L and AR/AP dashboards.</div>
+      <span class="person-dept" style="background:#E3F2FD;color:#1565C0;">Finance dept (under Henry/CFO)</span><br>
+      <span class="bipa-badge">BIPA Team</span>
+    </div>
+    <div class="person-card">
+      <div class="person-avatar" style="background:#E65100;">Tuan</div>
+      <div class="person-name">Tony</div>
+      <div class="person-en">English name: Tony &nbsp;|&nbsp; Real: Tuan</div>
+      <div class="person-role">CTO — Chief Technical Officer. Leads Technical dept (Ngon, Joe under him). BIPA role: CEO RAG board (5 depts) + EIP task tracker.</div>
+      <span class="person-dept" style="background:#FFF3E0;color:#E65100;">CTO · Technical dept</span><br>
+      <span class="bipa-badge">BIPA Team</span>
+    </div>
+    <div class="person-card">
+      <div class="person-avatar" style="background:#2E7D32;">Ngon</div>
+      <div class="person-name">Leo</div>
+      <div class="person-en">English name: Leo &nbsp;|&nbsp; Real: Ngon</div>
+      <div class="person-role">Environment Manager (reports to CTO Tuan). BIPA role: n8n automation, double-layer notification system, Telegram digest to @Chavis_ai_bot.</div>
+      <span class="person-dept" style="background:#E8F5E9;color:#2E7D32;">Technical dept · Env Manager</span><br>
+      <span class="bipa-badge">BIPA Team</span>
+    </div>
+  </div>
+
+  <div class="section-title">All 9 VSG staff on the platform</div>
+  <div class="team-grid">
+    <div class="person-card"><div class="person-avatar" style="background:#1B5E20;">Jane</div><div class="person-name">Jane</div><div class="person-role">COO — Chief Operating Officer. Leads Operations dept. Manages Rose (Svc Mgr) and Joy (Accountant & HR).</div><span class="person-dept" style="background:#E8F5E9;color:#1B5E20;">COO · Operations</span></div>
+    <div class="person-card"><div class="person-avatar" style="background:#37474F;">Henry</div><div class="person-name">Henry</div><div class="person-role">CFO — Chief Financial Officer. Leads Finance dept. Tu/Lisa is his assistant. Manages all P&L, AR/AP for 102 tenants.</div><span class="person-dept" style="background:#ECEFF1;color:#37474F;">CFO · Finance</span></div>
+    <div class="person-card"><div class="person-avatar" style="background:#880E4F;">Joy</div><div class="person-name">Joy</div><div class="person-role">Chief Accountant & HR Manager (under COO Jane). Handles accounting and human resources.</div><span class="person-dept" style="background:#FCE4EC;color:#880E4F;">Operations · Accountant & HR</span></div>
+    <div class="person-card"><div class="person-avatar" style="background:#BF360C;">Rose</div><div class="person-name">Rose</div><div class="person-role">Service & CRM Manager (under COO Jane). Manages tenant service requests and customer relations.</div><span class="person-dept" style="background:#FBE9E7;color:#BF360C;">Operations · Service & CRM</span></div>
+  </div>
+
+  <div style="margin-top:20px;background:var(--white);border-radius:12px;padding:16px 20px;border:1px solid #E0E8F0;">
+    <div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">VSG Org Structure (effective after 1 May 2026)</div>
+    <div style="font-size:13px;color:#333;line-height:2;">
+      <b>BOD</b> → <b>BOM</b> → <b>CEO Chavis/Ken</b><br>
+      └ <b>COO Jane</b> — Operations (Rose · Joy · Service team · WWTP operators · Electric & Water team)<br>
+      └ <b>CFO Henry</b> — Finance (Tu/Lisa assistant)<br>
+      └ <b>CTO Tuan</b> — Technical (Ngon/Leo env mgr · Joe maintenance mgr)<br>
+      └ <b>CDO Boa</b> — Data Management (Data Manager · Data Analytic)<br>
+      └ <b>CMO (vacant)</b> — Sales & Marketing (Digital Marketing Mgr · Chavis acting)
+    </div>
+  </div>
 </div>
-<div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
-<div style="font-size:11px;color:#888;">Tap checkboxes to mark tasks complete</div>
-</div>
-<div id="phases-container"></div>
-<div class="launch-banner"><div style="font-size:36px;">🚀</div>
-<h2>LAUNCH: Thursday 23 Apr · 14:00</h2>
-<p>All 9 VSG staff try the platform live · CEO demos CEO dashboard</p>
-<p style="margin-top:4px;color:var(--soft-gold);">Deadline: 12:00 · 2-hour buffer before launch</p></div>
-</div>
-<div class="page" id="page-mytasks">
-<div style="margin-bottom:16px;">
-<div style="font-family:'DM Serif Display',serif;font-size:24px;color:var(--navy);">My Tasks</div>
-<div style="font-size:13px;color:#666;margin-top:4px;">Select your name to see only your tasks</div>
-</div>
-<div class="staff-selector" id="staff-selector"></div>
-<div id="my-tasks-list"></div>
-</div>
-<div class="page" id="page-team">
-<div style="margin-bottom:16px;">
-<div style="font-family:'DM Serif Display',serif;font-size:24px;color:var(--navy);">BIPA Team</div>
-<div style="font-size:13px;color:#666;margin-top:4px;">Each member owns one module</div>
-</div>
-<div id="team-cards"></div>
-<div style="background:var(--white);border-radius:12px;border:1px solid #D0DCE8;padding:18px 20px;margin-top:4px;">
-<div style="font-weight:700;color:var(--navy);font-size:14px;margin-bottom:14px;">📅 Full Meeting Timeline</div>
-<div class="timeline" id="team-timeline"></div>
-</div></div>
+
 <script>
-const NAVY="#1F4E79",GOLD="#F4A620",GREEN="#27AE60",RED="#C0392B",PURPLE="#8E44AD",ORANGE="#E67E22",BLUE="#2E86C1";
-const TEAM=[
-  {id:"chavis",name:"Chavis",role:"CEO · Decision Maker",color:NAVY,avatar:"👔"},
-  {id:"b1",name:"Bob",role:"Platform Setup Lead",color:GREEN,avatar:"⚙️"},
-  {id:"b2",name:"Lisa",role:"Finance & Data Module",color:RED,avatar:"📊"},
-  {id:"b3",name:"Tony",role:"Dashboard & CEO Board",color:PURPLE,avatar:"🖥️"},
-  {id:"b4",name:"Leo",role:"Automation & n8n Bridge",color:ORANGE,avatar:"🤖"}
-];
-const PHASES=[
-  {id:"p0",phase:"Phase 0",day:"TODAY — Sat 18 Apr",time:"Now",color:GOLD,textColor:"#163a5c",icon:"🏛️",mode:"CEO Solo",desc:"Platform decision, budget confirm, team notification",tasks:[
-    {id:"t01",owner:"chavis",text:"Review 5-platform comparison — decide: Hybrid $89/mo OR Zoho One $333/mo",output:"Platform decision made",dur:"30 min"},
-    {id:"t02",owner:"chavis",text:"Confirm monthly budget with CFO",output:"Budget approved",dur:"15 min"},
-    {id:"t03",owner:"chavis",text:"Share bipahub.com to Bob, Lisa, Tony, Leo via Zalo",output:"Team notified",dur:"10 min"},
-    {id:"t04",owner:"chavis",text:"Confirm roles: Bob=Setup, Lisa=Finance, Tony=Dashboard, Leo=Automation",output:"Roles confirmed",dur:"15 min"}
-  ]},
-  {id:"p1",phase:"Phase 1",day:"Monday 20 Apr",time:"11:00–12:00",color:BLUE,textColor:"#fff",icon:"💻",mode:"Online · Google Meet / Zalo",desc:"Chavis briefs full plan. Each member receives Phase 1 tasks.",tasks:[
-    {id:"t11",owner:"chavis",text:"11:00 — Open meeting. Present platform decision + cost to team",output:"Team aligned",dur:"20 min"},
-    {id:"t12",owner:"chavis",text:"11:20 — Walk through this bipahub.com schedule with team",output:"Everyone knows their role",dur:"15 min"},
-    {id:"t13",owner:"b1",text:"Bob ASSIGNED: Register platform (Softr Pro OR Zoho One). Add 9 users with Google SSO",output:"Platform live, 9 logins working",dur:"3 hrs"},
-    {id:"t14",owner:"b2",text:"Lisa ASSIGNED: Set up Finance module. Import 102 tenants. Build P&L + AR/AP draft",output:"Finance dashboard draft live",dur:"3 hrs"},
-    {id:"t15",owner:"b3",text:"Tony ASSIGNED: Build CEO RAG board layout. Create EIP task tracker with 6 dept workspaces",output:"CEO dashboard structure ready",dur:"3 hrs"},
-    {id:"t16",owner:"b4",text:"Leo ASSIGNED: Map notification triggers. Design double-notification logic (Dept → CEO)",output:"Notification blueprint documented",dur:"3 hrs"},
-    {id:"t17",owner:"chavis",text:"12:00 — Confirm all assignments clear. Check-in at 17:00 via Telegram",output:"Meeting closed, work started",dur:"15 min"}
-  ]},
-  {id:"p2",phase:"Phase 2",day:"Tuesday 21 Apr",time:"11:00–12:00",color:GREEN,textColor:"#fff",icon:"🔗",mode:"Online · Google Meet / Zalo",desc:"Phase 1 review. Chavis approves. Phase 2 assigned.",tasks:[
-    {id:"t21",owner:"b1",text:"Bob 11:00 — Report: Platform setup complete? All 9 users logged in?",output:"Setup status confirmed",dur:"10 min"},
-    {id:"t22",owner:"b2",text:"Lisa 11:10 — Demo Finance dashboard. Show P&L + AR screen to Chavis",output:"Finance module approved",dur:"10 min"},
-    {id:"t23",owner:"b3",text:"Tony 11:20 — Demo CEO RAG board draft. Show EIP tracker structure",output:"CEO board approved",dur:"10 min"},
-    {id:"t24",owner:"b4",text:"Leo 11:30 — Walk through notification logic Layer 1 + Layer 2",output:"Notification design approved",dur:"10 min"},
-    {id:"t25",owner:"chavis",text:"11:40 — Review all 4 modules. Approve or request changes",output:"Go/No-go per module",dur:"10 min"},
-    {id:"t26",owner:"b1",text:"Bob ASSIGNED Phase 2: Connect Sales/CRM + configure dept privacy walls",output:"CRM module in progress",dur:"4 hrs"},
-    {id:"t27",owner:"b2",text:"Lisa ASSIGNED Phase 2: Activate AR aging alerts (30/60/90d) + cash threshold",output:"Finance alerts live",dur:"4 hrs"},
-    {id:"t28",owner:"b3",text:"Tony ASSIGNED Phase 2: Populate EIP tasks + connect real KPI data to CEO board",output:"CEO board with live data",dur:"4 hrs"},
-    {id:"t29",owner:"b4",text:"Leo ASSIGNED Phase 2: Build n8n workflows — Layer 1 dept alerts + Layer 2 CEO digest",output:"n8n workflows active",dur:"4 hrs"}
-  ]},
-  {id:"p3",phase:"Phase 3",day:"Wednesday 22 Apr",time:"11:00–12:00",color:PURPLE,textColor:"#fff",icon:"🔄",mode:"Online · Google Meet / Zalo",desc:"All modules reviewed together. Cross-connections tested.",tasks:[
-    {id:"t31",owner:"b1",text:"Bob 11:00 — Demo full platform login for all 9 users + privacy wall test",output:"Privacy confirmed per dept",dur:"10 min"},
-    {id:"t32",owner:"b2",text:"Lisa 11:10 — Trigger test AR alert — confirm fires to CFO AND CEO Telegram",output:"Double notification confirmed",dur:"10 min"},
-    {id:"t33",owner:"b3",text:"Tony 11:20 — Load CEO dashboard with real data — all 6 dept KPIs as RAG",output:"RAG board with live data",dur:"10 min"},
-    {id:"t34",owner:"b4",text:"Leo 11:30 — Run full n8n automation test — all workflows fire correctly",output:"BIPA bridge confirmed",dur:"10 min"},
-    {id:"t35",owner:"chavis",text:"11:40 — Login as CFO, then CEO — confirm different views",output:"Privacy + CEO access verified",dur:"10 min"},
-    {id:"t36",owner:"b1",text:"11:50 — Log all bugs. Each member fixes before Thursday 10:00",output:"Bug list documented",dur:"10 min"},
-    {id:"t37",owner:"b1",text:"OVERNIGHT Wed→Thu: Bob, Lisa, Tony, Leo fix bugs before 10:00",output:"All modules polished",dur:"Overnight"}
-  ]},
-  {id:"p4",phase:"Phase 4",day:"Thursday 23 Apr",time:"10:00–12:00 → LAUNCH 14:00",color:RED,textColor:"#fff",icon:"🚀",mode:"In-Person · VSG Office",desc:"Face-to-face finalization. 12:00 deadline. 14:00 launch.",tasks:[
-    {id:"t41",owner:"b1",text:"Bob 10:00 — Deploy final platform. Confirm all 9 users can log in",output:"Platform live and stable",dur:"20 min"},
-    {id:"t42",owner:"b2",text:"Lisa 10:20 — Merge Finance data into CEO dashboard — live connection",output:"Finance → CEO board connected",dur:"20 min"},
-    {id:"t43",owner:"b4",text:"Leo 10:40 — Activate all n8n workflows. Test Telegram digest to @Chavis_ai_bot",output:"BIPA Telegram digest live",dur:"20 min"},
-    {id:"t44",owner:"chavis",text:"11:00 — Full end-to-end test: P&L → AR alert → CEO board → Telegram",output:"Full system approved by CEO",dur:"30 min"},
-    {id:"t45",owner:"b1",text:"Bob 11:30 — Prepare login credentials + 1-page quick guide for 9 staff",output:"Login guide ready",dur:"20 min"},
-    {id:"t46",owner:"chavis",text:"11:50 — Final sign-off. Platform URL confirmed for all staff",output:"✅ SYSTEM APPROVED",dur:"10 min"},
-    {id:"t47",owner:"chavis",text:"🎯 12:00 DEADLINE — All modules complete. Team takes lunch break.",output:"System locked for launch",dur:"—"},
-    {id:"t48",owner:"chavis",text:"🚀 14:00 LAUNCH — All 9 staff log in for first time. Chavis demos live.",output:"VSG Platform LIVE 🎉",dur:"60 min"}
-  ]}
-];
-const TIMELINE=[
-  {day:"Sat 18 Apr",time:"Now",label:"Platform Decision + Team Notification",type:"Solo",color:GOLD,tc:"#163a5c"},
-  {day:"Mon 20 Apr",time:"11:00–12:00",label:"Phase 1 Briefing + Task Assignment",type:"Online",color:BLUE,tc:"#fff"},
-  {day:"Tue 21 Apr",time:"11:00–12:00",label:"Phase 2 Review + Integration Launch",type:"Online",color:GREEN,tc:"#fff"},
-  {day:"Wed 22 Apr",time:"11:00–12:00",label:"Phase 3 Integration Check + Bug Log",type:"Online",color:PURPLE,tc:"#fff"},
-  {day:"Thu 23 Apr",time:"10:00–12:00",label:"Phase 4 Face-to-Face Finalization",type:"In-Person",color:RED,tc:"#fff"},
-  {day:"Thu 23 Apr",time:"14:00 🚀",label:"ALL STAFF LAUNCH",type:"Launch",color:"#163a5c",tc:GOLD}
-];
-let done=JSON.parse(localStorage.getItem('bipa_done')||'{}'),selectedStaff='all',openPhase='p0';
-function save(){localStorage.setItem('bipa_done',JSON.stringify(done));}
-function allTasks(){return PHASES.flatMap(p=>p.tasks);}
-function updateStats(){
-  const d=allTasks().filter(t=>done[t.id]).length,tot=allTasks().length,pct=tot?Math.round(d/tot*100):0;
-  const sd=document.getElementById('stat-done'),st=document.getElementById('stat-total'),sp=document.getElementById('stat-pct'),pl=document.getElementById('prog-label'),pf=document.getElementById('prog-fill');
-  if(sd)sd.textContent=d;if(st)st.textContent=tot;if(sp)sp.textContent=pct+'%';if(pl)pl.textContent=d+'/'+tot;if(pf)pf.style.width=pct+'%';
-  PHASES.forEach(ph=>{
-    const pd=ph.tasks.filter(t=>done[t.id]).length,p2=ph.tasks.length?Math.round(pd/ph.tasks.length*100):0;
-    const pe=document.getElementById('ph-pct-'+ph.id),pb=document.getElementById('ph-bar-'+ph.id),ps=document.getElementById('ph-sub-'+ph.id);
-    if(pe)pe.textContent=p2+'%';if(pb)pb.style.width=p2+'%';if(ps)ps.textContent=pd+'/'+ph.tasks.length;
-  });
-  TEAM.forEach(m=>{const mt=allTasks().filter(t=>t.owner===m.id),md=mt.filter(t=>done[t.id]).length,el=document.getElementById('ts-'+m.id);if(el)el.textContent=md+'/'+mt.length;});
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
 }
-function toggleTask(id){
-  done[id]=!done[id];save();
-  ['row-','mr-'].forEach(p=>{
-    const r=document.getElementById(p+id);if(!r)return;
-    r.classList.toggle('done',done[id]);
-    const cb=r.querySelector('.task-checkbox');if(cb){cb.classList.toggle('checked',done[id]);cb.textContent=done[id]?'✓':'';}
-    const tx=r.querySelector('.task-text');if(tx){tx.style.textDecoration=done[id]?'line-through':'none';tx.style.color=done[id]?'#999':'#222';}
-  });
+
+function toggleTask(el) {
+  el.classList.toggle('done');
   updateStats();
 }
-function getOwner(id){return TEAM.find(m=>m.id===id)||{name:id,color:'#888',avatar:'👤'};}
-function buildPhases(){
-  const c=document.getElementById('phases-container');c.innerHTML='';
-  PHASES.forEach(ph=>{
-    const pd=ph.tasks.filter(t=>done[t.id]).length,pct=ph.tasks.length?Math.round(pd/ph.tasks.length*100):0,isOpen=openPhase===ph.id;
-    const w=document.createElement('div');w.style.marginBottom='14px';
-    const h=document.createElement('div');h.className='phase-header'+(isOpen?' open':'');
-    h.style.cssText='background:'+(isOpen?ph.color:'#fff')+';border:2px solid '+(isOpen?GOLD:'#D0DCE8')+';box-shadow:'+(isOpen?'0 4px 20px '+ph.color+'44':'0 1px 6px rgba(0,0,0,0.06)')+';';
-    h.innerHTML='<div class="phase-icon">'+ph.icon+'</div><div class="phase-meta"><div class="phase-title" style="color:'+(isOpen?ph.textColor:ph.color)+'">'+ph.phase+': '+ph.day+'</div><div class="phase-sub" style="color:'+(isOpen?(ph.textColor==='#fff'?'#B8D4F0':'#555'):'#777')+'">'+ph.desc+'</div><div class="phase-tags"><span class="phase-tag" style="background:'+(isOpen?'rgba(255,255,255,0.18)':ph.color+'18')+';color:'+(isOpen?ph.textColor:ph.color)+'">'+ph.time+'</span><span class="phase-tag" style="background:'+(isOpen?'rgba(255,255,255,0.12)':'#EEF4FA')+';color:'+(isOpen?'#D6EAF8':'#555')+'">'+ph.mode+'</span></div></div><div class="phase-prog"><div class="phase-prog-num" id="ph-pct-'+ph.id+'" style="color:'+(isOpen?GOLD:ph.color)+'">'+pct+'%</div><div style="font-size:10px;color:'+(isOpen?'#B8D4F0':'#aaa')+'" id="ph-sub-'+ph.id+'">'+pd+'/'+ph.tasks.length+'</div><div class="phase-prog-bar" style="background:'+(isOpen?'rgba(255,255,255,0.2)':'#E0E8F0')+'"><div class="phase-prog-fill" id="ph-bar-'+ph.id+'" style="width:'+pct+'%;background:'+(isOpen?GOLD:ph.color)+'"></div></div></div><div class="phase-chevron" style="color:'+(isOpen?'#fff':'#aaa')+'">'+(isOpen?'▲':'▼')+'</div>';
-    h.onclick=()=>{openPhase=(openPhase===ph.id?null:ph.id);buildPhases();};
-    const tc=document.createElement('div');tc.className='tasks-container'+(isOpen?' open':'');
-    tc.style.cssText='border:2px solid '+ph.color+';border-top:none;border-radius:0 0 12px 12px;background:#fff;';
-    ph.tasks.forEach(task=>{
-      const ow=getOwner(task.owner),isDone=done[task.id];
-      const row=document.createElement('div');row.className='task-row'+(isDone?' done':'');row.id='row-'+task.id;row.onclick=()=>toggleTask(task.id);
-      row.innerHTML='<div class="task-checkbox'+(isDone?' checked':'')+'">'+(isDone?'✓':'')+'</div><div class="owner-badge" style="background:'+ow.color+'18;border:1px solid '+ow.color+'44;"><div class="owner-avatar">'+ow.avatar+'</div><div class="owner-name" style="color:'+ow.color+'">'+ow.name+'</div></div><div class="task-body"><div class="task-text" style="text-decoration:'+(isDone?'line-through':'none')+';color:'+(isDone?'#999':'#222')+'">'+task.text+'</div><div class="task-chips"><span class="chip chip-output">📋 '+task.output+'</span>'+(task.dur!=='—'?'<span class="chip chip-time">⏱ '+task.dur+'</span>':'')+'</div></div>';
-      tc.appendChild(row);
-    });
-    w.appendChild(h);w.appendChild(tc);c.appendChild(w);
-  });
+
+function updateStats() {
+  const total = document.querySelectorAll('.task-check').length;
+  const done = document.querySelectorAll('.task-check.done').length;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-pct').textContent = Math.round((done/total)*100) + '%';
 }
-function buildTimeline(id){
-  const el=document.getElementById(id);if(!el)return;
-  el.innerHTML=TIMELINE.map(r=>'<div class="tl-row"><div class="tl-day">'+r.day+'</div><div class="tl-time">'+r.time+'</div><div class="tl-label">'+r.label+'</div><span class="tl-badge" style="background:'+r.color+';color:'+r.tc+'">'+r.type+'</span></div>').join('');
+
+const allTasks = [
+  { member: 'chavis', title: 'Phase 0: Review platform comparison. Decide Softr Pro vs Zoho One vs better alternative.', tag: 'Platform decision', time: '30 min', color: '#1F3A5F', init: 'Ch' },
+  { member: 'chavis', title: 'Phase 0: Confirm monthly budget with CFO Henry.', tag: 'Budget approved', time: '15 min', color: '#1F3A5F', init: 'Ch' },
+  { member: 'chavis', title: 'Phase 0: Share bipahub.com to Boa, Tu, Tuan, Ngon via Zalo.', tag: 'Team notified', time: '10 min', color: '#1F3A5F', init: 'Ch' },
+  { member: 'chavis', title: 'Phase 1: 11:00 — Open meeting. Present platform decision + cost to team.', tag: 'Team aligned', time: '20 min', color: '#1F3A5F', init: 'Ch' },
+  { member: 'chavis', title: 'Phase 1: 11:20 — Walk through bipahub.com schedule. Confirm everyone knows their role.', tag: 'Roles confirmed', time: '15 min', color: '#1F3A5F', init: 'Ch' },
+  { member: 'chavis', title: 'Phase 1: 12:00 — Confirm all assignments clear. Check-in at 17:00 via Telegram.', tag: 'Work started', time: '15 min', color: '#1F3A5F', init: 'Ch' },
+  { member: 'boa', title: 'Phase 1: Register platform (Softr Pro OR Zoho One — evaluate best for VSG). Add 9 VSG staff via Google SSO. Create 5 dept workspaces (Operations, Finance, Technical, Data Mgmt, Sales & Mktg).', tag: 'Platform live, 9 logins, 5 workspaces', time: '3 hrs', color: '#4A148C', init: 'Bo' },
+  { member: 'tu', title: 'Phase 1: Set up Finance module. Import 102 industrial tenants (service fee/sq.m + utility fees). Build P&L + AR/AP draft views.', tag: 'Finance dashboard draft live', time: '3 hrs', color: '#1565C0', init: 'Tu' },
+  { member: 'tuan', title: 'Phase 1: Build CEO RAG board layout (5 VSG departments). Create EIP task tracker with 5 dept workspaces.', tag: 'CEO dashboard structure ready', time: '3 hrs', color: '#E65100', init: 'Tu' },
+  { member: 'ngon', title: 'Phase 1: Map VSG notification triggers across all 5 departments. Design double-notification logic (Dept head → CEO @Chavis_ai_bot Telegram digest).', tag: 'Notification blueprint documented', time: '3 hrs', color: '#2E7D32', init: 'Ng' },
+  { member: 'boa', title: 'Phase 2: Connect Sales/CRM module. Configure 5-dept privacy walls — each staff sees only their dept data.', tag: 'CRM + privacy walls active', time: '4 hrs', color: '#4A148C', init: 'Bo' },
+  { member: 'tu', title: 'Phase 2: Activate AR aging alerts (30/60/90 day overdue per tenant) + cash threshold alert for CFO Henry.', tag: 'Finance alerts live', time: '4 hrs', color: '#1565C0', init: 'Tu' },
+  { member: 'tuan', title: 'Phase 2: Populate EIP tasks across all 5 depts. Connect real KPI data to CEO RAG board.', tag: 'CEO board with live data', time: '4 hrs', color: '#E65100', init: 'Tu' },
+  { member: 'ngon', title: 'Phase 2: Build n8n workflows — Layer 1 dept alerts + Layer 2 CEO Telegram digest to @Chavis_ai_bot.', tag: 'n8n workflows active', time: '4 hrs', color: '#2E7D32', init: 'Ng' },
+  { member: 'boa', title: 'Phase 4: Deploy final platform. Prepare 1-page login guide for all 9 VSG staff.', tag: 'Platform live and stable', time: '20 min', color: '#4A148C', init: 'Bo' },
+  { member: 'tu', title: 'Phase 4: Merge Finance data into CEO dashboard — live connection confirmed.', tag: 'Finance → CEO board connected', time: '20 min', color: '#1565C0', init: 'Tu' },
+  { member: 'ngon', title: 'Phase 4: Activate all n8n workflows. Test Telegram digest to @Chavis_ai_bot.', tag: 'Telegram digest live', time: '20 min', color: '#2E7D32', init: 'Ng' },
+  { member: 'chavis', title: 'Phase 4: 11:00 Full end-to-end test: P&L → AR alert → CEO RAG board → Telegram @Chavis_ai_bot. Final system approval.', tag: '✅ SYSTEM APPROVED', time: '30 min', color: '#1F3A5F', init: 'Ch' },
+  { member: 'chavis', title: '🚀 14:00 LAUNCH — All 9 VSG staff log in for first time. Chavis/Ken demos live VSG platform.', tag: 'VSG Platform LIVE', time: '60 min', color: '#1F3A5F', init: 'Ch' },
+];
+
+function filterTasks(member, btn) {
+  document.querySelectorAll('.mf-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const list = document.getElementById('tasks-list');
+  const filtered = member === 'all' ? allTasks : allTasks.filter(t => t.member === member);
+  list.innerHTML = filtered.map(t => `
+    <div class="task-card">
+      <div class="tc-header">
+        <div class="task-avatar" style="background:${t.color};width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">${t.init}</div>
+        <div><div class="tc-name">${t.member === 'chavis' ? 'Chavis / Ken' : t.member === 'boa' ? 'Bob / Boa' : t.member === 'tu' ? 'Lisa / Tu' : t.member === 'tuan' ? 'Tony / Tuan' : 'Leo / Ngon'}</div><div class="tc-role" style="font-size:11px;color:#888;">${t.member === 'chavis' ? 'CEO & Founder' : t.member === 'boa' ? 'CDO · Platform Setup' : t.member === 'tu' ? 'Finance Assistant' : t.member === 'tuan' ? 'CTO · CEO Dashboard' : 'Env Mgr · Automation'}</div></div>
+      </div>
+      <div class="tc-desc">${t.title}</div>
+      <div class="tc-footer"><span class="task-tag">${t.tag}</span><span class="task-time" style="font-size:11px;color:#999;">⏱ ${t.time}</span></div>
+    </div>
+  `).join('');
 }
-function buildMyTasks(){
-  const sel=document.getElementById('staff-selector');sel.innerHTML='';
-  const all=document.createElement('button');all.className='staff-btn'+(selectedStaff==='all'?' active':'');
-  if(selectedStaff==='all')all.style.background='#555';all.textContent='👀 All Tasks';
-  all.onclick=()=>{selectedStaff='all';buildMyTasks();};sel.appendChild(all);
-  TEAM.forEach(m=>{
-    const btn=document.createElement('button');btn.className='staff-btn'+(selectedStaff===m.id?' active':'');
-    if(selectedStaff===m.id){btn.style.background=m.color;btn.style.borderColor=m.color;}
-    btn.textContent=m.avatar+' '+m.name;btn.onclick=()=>{selectedStaff=m.id;buildMyTasks();};sel.appendChild(btn);
-  });
-  const list=document.getElementById('my-tasks-list');list.innerHTML='';
-  PHASES.forEach(ph=>{
-    const tasks=ph.tasks.filter(t=>selectedStaff==='all'||t.owner===selectedStaff);if(!tasks.length)return;
-    const lbl=document.createElement('div');lbl.style.cssText='font-size:11px;font-weight:700;color:'+ph.color+';letter-spacing:2px;margin:14px 0 6px;';
-    lbl.textContent=ph.phase+' · '+ph.day;list.appendChild(lbl);
-    tasks.forEach(task=>{
-      const ow=getOwner(task.owner),isDone=done[task.id];
-      const card=document.createElement('div');card.className='my-task-card'+(isDone?' done':'');card.id='mr-'+task.id;card.onclick=()=>toggleTask(task.id);
-      card.innerHTML='<div class="task-checkbox'+(isDone?' checked':'')+'" style="margin-top:3px">'+(isDone?'✓':'')+'</div><div class="phase-dot" style="background:'+ph.color+'"></div><div style="flex:1"><div style="font-size:13px;color:'+(isDone?'#999':'#222')+';text-decoration:'+(isDone?'line-through':'none')+';line-height:1.5">'+task.text+'</div><div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap"><span style="font-size:10px;background:'+ow.color+'18;color:'+ow.color+';padding:2px 8px;border-radius:4px;font-weight:600">'+ow.avatar+' '+ow.name+'</span><span class="chip chip-output">📋 '+task.output+'</span></div></div>';
-      list.appendChild(card);
-    });
-  });
-}
-function buildTeam(){
-  const c=document.getElementById('team-cards');c.innerHTML='';
-  TEAM.forEach(m=>{
-    const mt=allTasks().filter(t=>t.owner===m.id),md=mt.filter(t=>done[t.id]).length;
-    const card=document.createElement('div');card.className='team-card';card.style.borderLeft='5px solid '+m.color;
-    card.innerHTML='<div class="team-avatar">'+m.avatar+'</div><div class="team-info"><div class="team-name" style="color:'+m.color+'">'+m.name+'</div><div class="team-role">'+m.role+'</div><div class="deliverable-tags">'+mt.map(t=>'<span class="del-tag" style="background:'+m.color+'15;color:'+m.color+';border:1px solid '+m.color+'33">'+(done[t.id]?'✅':'○')+' '+t.output+'</span>').join('')+'</div></div><div class="team-score"><div class="score-num" id="ts-'+m.id+'" style="color:'+m.color+'">'+md+'/'+mt.length+'</div><div class="score-lbl">done</div></div>';
-    c.appendChild(card);
-  });
-}
-function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  const tabs={home:0,schedule:1,mytasks:2,team:3};
-  document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
-  if(id==='mytasks')buildMyTasks();
-}
-buildPhases();buildTimeline('home-timeline');buildTimeline('team-timeline');buildTeam();updateStats();
-</script></body></html>
+
+filterTasks('all', document.querySelector('.mf-btn'));
+</script>
+</body>
+</html>
