@@ -67,7 +67,7 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
 .task-row{display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid #F0F4F8;transition:background .2s;}
 .task-row:last-child{border-bottom:none;}
 .task-row.done-row{background:#F1F8F1;}
-.task-check{width:22px;height:22px;border-radius:6px;border:2px solid #CCC;flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;user-select:none;font-size:13px;font-weight:700;color:#fff;}
+.task-check{width:22px;height:22px;border-radius:6px;border:2px solid #CCC;flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;user-select:none;font-size:14px;color:#fff;}
 .task-check.done{background:var(--green);border-color:var(--green);}
 .task-check.busy{background:#FFD54F;border-color:#F9A825;cursor:wait;}
 .t-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px;}
@@ -101,7 +101,7 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
 .tc-desc{font-size:13px;color:#333;line-height:1.5;}
 .tc-desc.crossed{color:#999;text-decoration:line-through;}
 .tc-foot{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center;}
-.tc-chk{width:20px;height:20px;border-radius:5px;border:2px solid #CCC;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:12px;font-weight:700;color:#fff;user-select:none;}
+.tc-chk{width:20px;height:20px;border-radius:5px;border:2px solid #CCC;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:13px;color:#fff;user-select:none;}
 .tc-chk.done{background:var(--green);border-color:var(--green);}
 .tc-chk.busy{background:#FFD54F;border-color:#F9A825;cursor:wait;}
 .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;}
@@ -126,7 +126,7 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
 </head>
 <body>
 
-<div id="ov" class="ov"><div class="sp"></div><p>Loading shared task data from server...</p></div>
+<div id="ov" class="ov"><div class="sp"></div><p>Connecting to VSG shared database...</p></div>
 
 <nav>
   <div class="nav-inner">
@@ -160,25 +160,26 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
   </div>
   <div class="sec-title">Platform Modules</div>
   <div class="modules-grid">
-    <div class="mod-card" onclick="showPage('schedule',document.querySelectorAll('.nav-tab')[1])"><div class="mod-icon" style="background:#E3F2FD;">&#128197;</div><div class="mod-name">Build Schedule</div><div class="mod-desc">5 phases &middot; 35 tasks. Full 4-day build plan for BIPA team.</div><span class="mod-badge badge-live">LIVE NOW</span></div>
+    <div class="mod-card" onclick="showPage('schedule',document.querySelectorAll('.nav-tab')[1])"><div class="mod-icon" style="background:#E3F2FD;">&#128197;</div><div class="mod-name">Build Schedule</div><div class="mod-desc">5 phases &middot; 35 tasks. Full 4-day build plan.</div><span class="mod-badge badge-live">LIVE NOW</span></div>
     <div class="mod-card" onclick="showPage('tasks',document.querySelectorAll('.nav-tab')[2])"><div class="mod-icon" style="background:#E8F5E9;">&#9989;</div><div class="mod-name">My Tasks</div><div class="mod-desc">View tasks by member. Boa &middot; Tu &middot; Tuan &middot; Ngon &middot; Chavis.</div><span class="mod-badge badge-live">LIVE NOW</span></div>
-    <div class="mod-card" onclick="showPage('team',document.querySelectorAll('.nav-tab')[3])"><div class="mod-icon" style="background:#F3E5F5;">&#128106;</div><div class="mod-name">BIPA Team</div><div class="mod-desc">9 VSG staff roles, deliverables, and accountability.</div><span class="mod-badge badge-live">LIVE NOW</span></div>
-    <div class="mod-card" onclick="goToPhase('ph2-block')"><div class="mod-icon" style="background:#FFF3E0;">&#128202;</div><div class="mod-name">CEO Dashboard</div><div class="mod-desc">RAG board &middot; 5 dept KPIs &middot; EIP task tracker. Built by Tuan.</div><span class="mod-badge badge-p2">PHASE 2</span></div>
-    <div class="mod-card" onclick="goToPhase('ph2-block')"><div class="mod-icon" style="background:#E8F5E9;">&#128180;</div><div class="mod-name">Finance</div><div class="mod-desc">102 tenants &middot; AR/AP &middot; P&amp;L &middot; Service fees &amp; utilities. Built by Tu.</div><span class="mod-badge badge-p2">PHASE 2</span></div>
+    <div class="mod-card" onclick="showPage('team',document.querySelectorAll('.nav-tab')[3])"><div class="mod-icon" style="background:#F3E5F5;">&#128106;</div><div class="mod-name">BIPA Team</div><div class="mod-desc">9 VSG staff roles, deliverables, accountability.</div><span class="mod-badge badge-live">LIVE NOW</span></div>
+    <div class="mod-card" onclick="goToPhase('ph2-block')"><div class="mod-icon" style="background:#FFF3E0;">&#128202;</div><div class="mod-name">CEO Dashboard</div><div class="mod-desc">RAG board &middot; 5 dept KPIs &middot; EIP tracker. Built by Tuan.</div><span class="mod-badge badge-p2">PHASE 2</span></div>
+    <div class="mod-card" onclick="goToPhase('ph2-block')"><div class="mod-icon" style="background:#E8F5E9;">&#128180;</div><div class="mod-name">Finance</div><div class="mod-desc">102 tenants &middot; AR/AP &middot; P&amp;L. Built by Tu.</div><span class="mod-badge badge-p2">PHASE 2</span></div>
     <div class="mod-card" onclick="goToPhase('ph3-block')"><div class="mod-icon" style="background:#EDE7F6;">&#129302;</div><div class="mod-name">BIPA AI</div><div class="mod-desc">n8n &middot; Dept alerts &middot; CEO Telegram digest. Built by Ngon.</div><span class="mod-badge badge-p3">PHASE 3</span></div>
   </div>
   <div class="sec-title">This Week's Meeting Schedule</div>
   <div class="week-grid">
     <div class="week-col"><div class="wc-label">Sat 18 Apr</div><div class="wc-phase">Phase 0</div><div class="wc-name">CEO solo prep</div><div class="wc-desc">Platform decision &middot; Budget &middot; Team brief</div></div>
     <div class="week-col" style="background:#EEF5FF;"><div class="wc-label" style="color:#1565C0;">Mon 20 Apr &larr; TODAY</div><div class="wc-phase">Phase 1 &middot; 11:00</div><div class="wc-name">Team kickoff</div><div class="wc-desc">Platform live &middot; Finance draft &middot; CEO board &middot; Automation blueprint</div></div>
-    <div class="week-col"><div class="wc-label">Tue 21 Apr</div><div class="wc-phase">Phase 2 &middot; 11:00</div><div class="wc-name">Live data build</div><div class="wc-desc">CRM &middot; AR alerts &middot; n8n workflows &middot; CEO board with real KPIs</div></div>
+    <div class="week-col"><div class="wc-label">Tue 21 Apr</div><div class="wc-phase">Phase 2 &middot; 11:00</div><div class="wc-name">Live data build</div><div class="wc-desc">CRM &middot; AR alerts &middot; n8n &middot; CEO board live KPIs</div></div>
     <div class="week-col"><div class="wc-label">Wed&ndash;Thu 22&ndash;23 Apr</div><div class="wc-phase">Phase 3&ndash;4</div><div class="wc-name">Integration &middot; Launch</div><div class="wc-desc">Full test &middot; Thu 14:00 all 9 staff go live</div></div>
   </div>
 </div>
 
 <!-- SCHEDULE -->
 <div id="schedule" class="page">
-  <div id="sc-sync" class="sync-bar ok"><div class="sync-dot"></div><span id="sc-sync-txt">Live &mdash; all changes shared with the whole team instantly</span></div>
+  <div id="sc-sync" class="sync-bar ok"><div class="sync-dot"></div><span id="sc-sync-txt">Live &mdash; changes sync to all 9 VSG staff instantly</span></div>
+
   <div class="phase-block" id="ph0-block">
     <div class="phase-hdr" style="background:#B7860B;"><div><h3>Phase 0: Saturday 18 Apr</h3><p>CEO solo preparation. Platform decision, budget confirm, team notification.</p><div class="meta">CEO Solo only</div></div><div class="phase-right"><div class="phase-pct" id="p0-pct">0%</div><div class="phase-count" id="p0-cnt">0/4</div><div class="phase-bar"><div class="phase-bar-fill" id="p0-bar" style="width:0%"></div></div></div></div>
     <div class="phase-body" id="p0-body">
@@ -188,36 +189,39 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
       <div class="task-row" id="tr-p0-3"><div class="task-check" id="ck-p0-3" onclick="chk('p0-3','p0',4,this)"></div><div class="t-av" style="background:#1F3A5F;">Ch</div><div class="t-body"><div class="t-title" id="tl-p0-3">Confirm roles: Boa=Platform Setup, Tu=Finance, Tuan=CEO Dashboard, Ngon=Automation</div><div class="t-tags"><span class="t-tag">Roles confirmed</span><span class="t-time">&#9201; 15 min</span><span class="t-who" id="tw-p0-3"></span></div></div></div>
     </div>
   </div>
+
   <div class="phase-block" id="ph1-block">
     <div class="phase-hdr" style="background:#1F3A5F;"><div><h3>Phase 1: Monday 20 Apr</h3><p>Chavis briefs full plan. Each BIPA member receives Phase 1 tasks.</p><div class="meta">11:00&ndash;12:00 &middot; Online &middot; Google Meet / Zalo</div></div><div class="phase-right"><div class="phase-pct" id="p1-pct">0%</div><div class="phase-count" id="p1-cnt">0/7</div><div class="phase-bar"><div class="phase-bar-fill" id="p1-bar" style="width:0%"></div></div></div></div>
     <div class="phase-body" id="p1-body">
       <div class="task-row" id="tr-p1-0"><div class="task-check" id="ck-p1-0" onclick="chk('p1-0','p1',7,this)"></div><div class="t-av" style="background:#1F3A5F;">Ch</div><div class="t-body"><div class="t-title" id="tl-p1-0">11:00 &mdash; Open meeting. Present platform decision + cost to team</div><div class="t-tags"><span class="t-tag">Team aligned</span><span class="t-time">&#9201; 20 min</span><span class="t-who" id="tw-p1-0"></span></div></div></div>
       <div class="task-row" id="tr-p1-1"><div class="task-check" id="ck-p1-1" onclick="chk('p1-1','p1',7,this)"></div><div class="t-av" style="background:#1F3A5F;">Ch</div><div class="t-body"><div class="t-title" id="tl-p1-1">11:20 &mdash; Walk through this bipahub.com schedule with team</div><div class="t-tags"><span class="t-tag">Everyone knows their role</span><span class="t-time">&#9201; 15 min</span><span class="t-who" id="tw-p1-1"></span></div></div></div>
-      <div class="task-row" id="tr-p1-2"><div class="task-check" id="ck-p1-2" onclick="chk('p1-2','p1',7,this)"></div><div class="t-av" style="background:#4A148C;">Bo</div><div class="t-body"><div class="t-title" id="tl-p1-2">Boa ASSIGNED: Register platform (Softr Pro OR Zoho One). Evaluate best for 9 non-technical VSG staff. Add 9 users via Google SSO. Create 5 dept workspaces.</div><div class="t-tags"><span class="t-tag">Platform live, 9 logins, 5 workspaces</span><span class="t-time">&#9201; 3 hrs</span><span class="t-who" id="tw-p1-2"></span></div></div></div>
+      <div class="task-row" id="tr-p1-2"><div class="task-check" id="ck-p1-2" onclick="chk('p1-2','p1',7,this)"></div><div class="t-av" style="background:#4A148C;">Bo</div><div class="t-body"><div class="t-title" id="tl-p1-2">Boa ASSIGNED: Register platform. Evaluate best for 9 non-technical VSG staff. Add 9 users via Google SSO. Create 5 dept workspaces.</div><div class="t-tags"><span class="t-tag">Platform live, 9 logins, 5 workspaces</span><span class="t-time">&#9201; 3 hrs</span><span class="t-who" id="tw-p1-2"></span></div></div></div>
       <div class="task-row" id="tr-p1-3"><div class="task-check" id="ck-p1-3" onclick="chk('p1-3','p1',7,this)"></div><div class="t-av" style="background:#1565C0;">Tu</div><div class="t-body"><div class="t-title" id="tl-p1-3">Tu ASSIGNED: Set up Finance module. Import 102 VSG tenants (service fee/sq.m + utility fees). Build P&amp;L + AR/AP draft.</div><div class="t-tags"><span class="t-tag">Finance dashboard draft live</span><span class="t-time">&#9201; 3 hrs</span><span class="t-who" id="tw-p1-3"></span></div></div></div>
       <div class="task-row" id="tr-p1-4"><div class="task-check" id="ck-p1-4" onclick="chk('p1-4','p1',7,this)"></div><div class="t-av" style="background:#E65100;">Tn</div><div class="t-body"><div class="t-title" id="tl-p1-4">Tuan ASSIGNED: Build CEO RAG board layout for 5 VSG departments. Create EIP task tracker with 5 dept workspaces.</div><div class="t-tags"><span class="t-tag">CEO dashboard structure ready</span><span class="t-time">&#9201; 3 hrs</span><span class="t-who" id="tw-p1-4"></span></div></div></div>
       <div class="task-row" id="tr-p1-5"><div class="task-check" id="ck-p1-5" onclick="chk('p1-5','p1',7,this)"></div><div class="t-av" style="background:#2E7D32;">Ng</div><div class="t-body"><div class="t-title" id="tl-p1-5">Ngon ASSIGNED: Map all VSG notification triggers across 5 departments. Design double-notification logic (Dept head &rarr; CEO @Chavis_ai_bot).</div><div class="t-tags"><span class="t-tag">Notification blueprint documented</span><span class="t-time">&#9201; 3 hrs</span><span class="t-who" id="tw-p1-5"></span></div></div></div>
       <div class="task-row" id="tr-p1-6"><div class="task-check" id="ck-p1-6" onclick="chk('p1-6','p1',7,this)"></div><div class="t-av" style="background:#1F3A5F;">Ch</div><div class="t-body"><div class="t-title" id="tl-p1-6">12:00 &mdash; Confirm all assignments clear. Check-in at 17:00 via Telegram</div><div class="t-tags"><span class="t-tag">Meeting closed, work started</span><span class="t-time">&#9201; 15 min</span><span class="t-who" id="tw-p1-6"></span></div></div></div>
     </div>
   </div>
+
   <div class="phase-block" id="ph2-block">
     <div class="phase-hdr" style="background:#1B5E20;"><div><h3>Phase 2: Tuesday 21 Apr</h3><p>Phase 1 review. Chavis approves. Phase 2 &mdash; live data and automation.</p><div class="meta">11:00&ndash;12:00 &middot; Online &middot; Google Meet / Zalo</div></div><div class="phase-right"><div class="phase-pct" id="p2-pct">0%</div><div class="phase-count" id="p2-cnt">0/9</div><div class="phase-bar"><div class="phase-bar-fill" id="p2-bar" style="width:0%"></div></div></div></div>
     <div class="phase-body" id="p2-body">
-      <div class="task-row" id="tr-p2-0"><div class="task-check" id="ck-p2-0" onclick="chk('p2-0','p2',9,this)"></div><div class="t-av" style="background:#4A148C;">Bo</div><div class="t-body"><div class="t-title" id="tl-p2-0">Boa 11:00 &mdash; Report: Platform setup complete? All 9 users logged in? Platform recommendation confirmed?</div><div class="t-tags"><span class="t-tag">Setup status confirmed</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p2-0"></span></div></div></div>
-      <div class="task-row" id="tr-p2-1"><div class="task-check" id="ck-p2-1" onclick="chk('p2-1','p2',9,this)"></div><div class="t-av" style="background:#1565C0;">Tu</div><div class="t-body"><div class="t-title" id="tl-p2-1">Tu 11:10 &mdash; Demo Finance dashboard. Show P&amp;L + AR screen to Chavis. 102 tenants visible.</div><div class="t-tags"><span class="t-tag">Finance module approved</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p2-1"></span></div></div></div>
-      <div class="task-row" id="tr-p2-2"><div class="task-check" id="ck-p2-2" onclick="chk('p2-2','p2',9,this)"></div><div class="t-av" style="background:#E65100;">Tn</div><div class="t-body"><div class="t-title" id="tl-p2-2">Tuan 11:20 &mdash; Demo CEO RAG board (5 depts). Show EIP tracker structure with 5 workspaces.</div><div class="t-tags"><span class="t-tag">CEO board approved</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p2-2"></span></div></div></div>
+      <div class="task-row" id="tr-p2-0"><div class="task-check" id="ck-p2-0" onclick="chk('p2-0','p2',9,this)"></div><div class="t-av" style="background:#4A148C;">Bo</div><div class="t-body"><div class="t-title" id="tl-p2-0">Boa 11:00 &mdash; Report: Platform setup complete? All 9 users logged in?</div><div class="t-tags"><span class="t-tag">Setup status confirmed</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p2-0"></span></div></div></div>
+      <div class="task-row" id="tr-p2-1"><div class="task-check" id="ck-p2-1" onclick="chk('p2-1','p2',9,this)"></div><div class="t-av" style="background:#1565C0;">Tu</div><div class="t-body"><div class="t-title" id="tl-p2-1">Tu 11:10 &mdash; Demo Finance dashboard. Show P&amp;L + AR screen. 102 tenants visible.</div><div class="t-tags"><span class="t-tag">Finance module approved</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p2-1"></span></div></div></div>
+      <div class="task-row" id="tr-p2-2"><div class="task-check" id="ck-p2-2" onclick="chk('p2-2','p2',9,this)"></div><div class="t-av" style="background:#E65100;">Tn</div><div class="t-body"><div class="t-title" id="tl-p2-2">Tuan 11:20 &mdash; Demo CEO RAG board (5 depts). Show EIP tracker with 5 workspaces.</div><div class="t-tags"><span class="t-tag">CEO board approved</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p2-2"></span></div></div></div>
       <div class="task-row" id="tr-p2-3"><div class="task-check" id="ck-p2-3" onclick="chk('p2-3','p2',9,this)"></div><div class="t-av" style="background:#2E7D32;">Ng</div><div class="t-body"><div class="t-title" id="tl-p2-3">Ngon 11:30 &mdash; Walk through notification logic Layer 1 + Layer 2 (@Chavis_ai_bot digest)</div><div class="t-tags"><span class="t-tag">Notification design approved</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p2-3"></span></div></div></div>
-      <div class="task-row" id="tr-p2-4"><div class="task-check" id="ck-p2-4" onclick="chk('p2-4','p2',9,this)"></div><div class="t-av" style="background:#1F3A5F;">Ch</div><div class="t-body"><div class="t-title" id="tl-p2-4">11:40 &mdash; Review all 4 modules. Approve or request changes (Go/No-go per module)</div><div class="t-tags"><span class="t-tag">Go/No-go per module</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p2-4"></span></div></div></div>
+      <div class="task-row" id="tr-p2-4"><div class="task-check" id="ck-p2-4" onclick="chk('p2-4','p2',9,this)"></div><div class="t-av" style="background:#1F3A5F;">Ch</div><div class="t-body"><div class="t-title" id="tl-p2-4">11:40 &mdash; Review all 4 modules. Approve or request changes</div><div class="t-tags"><span class="t-tag">Go/No-go per module</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p2-4"></span></div></div></div>
       <div class="task-row" id="tr-p2-5"><div class="task-check" id="ck-p2-5" onclick="chk('p2-5','p2',9,this)"></div><div class="t-av" style="background:#4A148C;">Bo</div><div class="t-body"><div class="t-title" id="tl-p2-5">Boa ASSIGNED Phase 2: Connect Sales/CRM module. Configure 5-dept privacy walls.</div><div class="t-tags"><span class="t-tag">CRM + privacy walls active</span><span class="t-time">&#9201; 4 hrs</span><span class="t-who" id="tw-p2-5"></span></div></div></div>
       <div class="task-row" id="tr-p2-6"><div class="task-check" id="ck-p2-6" onclick="chk('p2-6','p2',9,this)"></div><div class="t-av" style="background:#1565C0;">Tu</div><div class="t-body"><div class="t-title" id="tl-p2-6">Tu ASSIGNED Phase 2: Activate AR aging alerts (30/60/90 day overdue) + cash threshold alert for CFO Henry.</div><div class="t-tags"><span class="t-tag">Finance alerts live</span><span class="t-time">&#9201; 4 hrs</span><span class="t-who" id="tw-p2-6"></span></div></div></div>
       <div class="task-row" id="tr-p2-7"><div class="task-check" id="ck-p2-7" onclick="chk('p2-7','p2',9,this)"></div><div class="t-av" style="background:#E65100;">Tn</div><div class="t-body"><div class="t-title" id="tl-p2-7">Tuan ASSIGNED Phase 2: Populate EIP tasks across all 5 depts. Connect real KPI data to CEO RAG board.</div><div class="t-tags"><span class="t-tag">CEO board with live data</span><span class="t-time">&#9201; 4 hrs</span><span class="t-who" id="tw-p2-7"></span></div></div></div>
       <div class="task-row" id="tr-p2-8"><div class="task-check" id="ck-p2-8" onclick="chk('p2-8','p2',9,this)"></div><div class="t-av" style="background:#2E7D32;">Ng</div><div class="t-body"><div class="t-title" id="tl-p2-8">Ngon ASSIGNED Phase 2: Build n8n workflows &mdash; Layer 1 dept alerts + Layer 2 CEO Telegram digest.</div><div class="t-tags"><span class="t-tag">n8n workflows active</span><span class="t-time">&#9201; 4 hrs</span><span class="t-who" id="tw-p2-8"></span></div></div></div>
     </div>
   </div>
+
   <div class="phase-block" id="ph3-block">
     <div class="phase-hdr" style="background:#4A148C;"><div><h3>Phase 3: Wednesday 22 Apr</h3><p>All modules tested together. Cross-connections validated.</p><div class="meta">11:00&ndash;12:00 &middot; Online &middot; Google Meet / Zalo</div></div><div class="phase-right"><div class="phase-pct" id="p3-pct">0%</div><div class="phase-count" id="p3-cnt">0/7</div><div class="phase-bar"><div class="phase-bar-fill" id="p3-bar" style="width:0%"></div></div></div></div>
     <div class="phase-body" id="p3-body">
-      <div class="task-row" id="tr-p3-0"><div class="task-check" id="ck-p3-0" onclick="chk('p3-0','p3',7,this)"></div><div class="t-av" style="background:#4A148C;">Bo</div><div class="t-body"><div class="t-title" id="tl-p3-0">Boa 11:00 &mdash; Demo full platform login for all 9 users + privacy wall test per department</div><div class="t-tags"><span class="t-tag">Privacy confirmed per dept</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p3-0"></span></div></div></div>
+      <div class="task-row" id="tr-p3-0"><div class="task-check" id="ck-p3-0" onclick="chk('p3-0','p3',7,this)"></div><div class="t-av" style="background:#4A148C;">Bo</div><div class="t-body"><div class="t-title" id="tl-p3-0">Boa 11:00 &mdash; Demo full platform login for all 9 users + privacy wall test</div><div class="t-tags"><span class="t-tag">Privacy confirmed per dept</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p3-0"></span></div></div></div>
       <div class="task-row" id="tr-p3-1"><div class="task-check" id="ck-p3-1" onclick="chk('p3-1','p3',7,this)"></div><div class="t-av" style="background:#1565C0;">Tu</div><div class="t-body"><div class="t-title" id="tl-p3-1">Tu 11:10 &mdash; Trigger test AR alert &mdash; confirm fires to CFO Henry AND CEO Chavis on Telegram</div><div class="t-tags"><span class="t-tag">Double notification confirmed</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p3-1"></span></div></div></div>
       <div class="task-row" id="tr-p3-2"><div class="task-check" id="ck-p3-2" onclick="chk('p3-2','p3',7,this)"></div><div class="t-av" style="background:#E65100;">Tn</div><div class="t-body"><div class="t-title" id="tl-p3-2">Tuan 11:20 &mdash; Load CEO dashboard with real data &mdash; all 5 dept RAG statuses live</div><div class="t-tags"><span class="t-tag">RAG board with live data</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p3-2"></span></div></div></div>
       <div class="task-row" id="tr-p3-3"><div class="task-check" id="ck-p3-3" onclick="chk('p3-3','p3',7,this)"></div><div class="t-av" style="background:#2E7D32;">Ng</div><div class="t-body"><div class="t-title" id="tl-p3-3">Ngon 11:30 &mdash; Run full n8n automation test across all 5 departments</div><div class="t-tags"><span class="t-tag">BIPA bridge confirmed</span><span class="t-time">&#9201; 10 min</span><span class="t-who" id="tw-p3-3"></span></div></div></div>
@@ -226,6 +230,7 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
       <div class="task-row" id="tr-p3-6"><div class="task-check" id="ck-p3-6" onclick="chk('p3-6','p3',7,this)"></div><div class="t-av" style="background:#4A148C;">Bo</div><div class="t-body"><div class="t-title" id="tl-p3-6">OVERNIGHT Wed&rarr;Thu: Boa, Tu, Tuan, Ngon fix all bugs before 10:00</div><div class="t-tags"><span class="t-tag">All modules polished</span><span class="t-time">&#9201; Overnight</span><span class="t-who" id="tw-p3-6"></span></div></div></div>
     </div>
   </div>
+
   <div class="phase-block" id="ph4-block">
     <div class="phase-hdr" style="background:#B71C1C;"><div><h3>Phase 4: Thursday 23 Apr &mdash; LAUNCH DAY &#128640;</h3><p>Face-to-face finalization. 12:00 deadline. 14:00 all 9 VSG staff go live.</p><div class="meta">10:00&ndash;12:00 &rarr; LAUNCH 14:00 &middot; In-Person &middot; VSG Office</div></div><div class="phase-right"><div class="phase-pct" id="p4-pct">0%</div><div class="phase-count" id="p4-cnt">0/8</div><div class="phase-bar"><div class="phase-bar-fill" id="p4-bar" style="width:0%"></div></div></div></div>
     <div class="phase-body" id="p4-body">
@@ -243,7 +248,7 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
 
 <!-- MY TASKS -->
 <div id="tasks" class="page">
-  <div id="tk-sync" class="sync-bar ok"><div class="sync-dot"></div><span id="tk-sync-txt">Live &mdash; all changes shared with the whole team instantly</span></div>
+  <div id="tk-sync" class="sync-bar ok"><div class="sync-dot"></div><span id="tk-sync-txt">Live &mdash; changes sync to all 9 VSG staff instantly</span></div>
   <div class="mf-row">
     <button class="mf-btn active" onclick="fm('all',this)">All members</button>
     <button class="mf-btn" onclick="fm('chavis',this)">Chavis</button>
@@ -264,168 +269,135 @@ nav{background:linear-gradient(135deg,var(--dark-navy) 0%,var(--navy) 100%);bord
 <div id="team" class="page">
   <div class="sec-title">BIPA Build Team (5 members)</div>
   <div class="team-grid" style="margin-bottom:20px;">
-    <div class="pcard click" onclick="goM('chavis')"><div class="p-av" style="background:#1F3A5F;">Ch</div><div class="p-name">Chavis</div><div class="p-en">CEO &amp; Founder</div><div class="p-role">CEO &mdash; Vietson Infrastructure Development SHC. Decision maker, phase approver, platform owner. Acting head of Sales &amp; Marketing.</div><span class="p-dept" style="background:#E3F2FD;color:#0C447C;">CEO &middot; Sales &amp; Mktg (acting)</span><br><span class="p-bipa">BIPA Lead</span><br><span class="p-link">View my tasks &rarr;</span></div>
-    <div class="pcard click" onclick="goM('boa')"><div class="p-av" style="background:#4A148C;">Boa</div><div class="p-name">Bob</div><div class="p-en">English: Bob &nbsp;|&nbsp; Real: Boa</div><div class="p-role">CDO &mdash; Chief Data Officer. Leads Data Management dept. BIPA role: platform setup, Google SSO, 5 dept workspaces, tech infrastructure.</div><span class="p-dept" style="background:#F3E5F5;color:#4A148C;">CDO &middot; Data Management</span><br><span class="p-bipa">BIPA Team</span><br><span class="p-link">View my tasks &rarr;</span></div>
-    <div class="pcard click" onclick="goM('tu')"><div class="p-av" style="background:#1565C0;">Tu</div><div class="p-name">Lisa</div><div class="p-en">English: Lisa &nbsp;|&nbsp; Real: Tu</div><div class="p-role">Finance Assistant (reports to CFO Henry). BIPA role: Finance module, import 102 tenants, P&amp;L and AR/AP dashboards.</div><span class="p-dept" style="background:#E3F2FD;color:#1565C0;">Finance dept (under Henry/CFO)</span><br><span class="p-bipa">BIPA Team</span><br><span class="p-link">View my tasks &rarr;</span></div>
-    <div class="pcard click" onclick="goM('tuan')"><div class="p-av" style="background:#E65100;">Tuan</div><div class="p-name">Tony</div><div class="p-en">English: Tony &nbsp;|&nbsp; Real: Tuan</div><div class="p-role">CTO &mdash; Chief Technical Officer. Leads Technical dept (Ngon, Joe under him). BIPA role: CEO RAG board (5 depts) + EIP task tracker.</div><span class="p-dept" style="background:#FFF3E0;color:#E65100;">CTO &middot; Technical dept</span><br><span class="p-bipa">BIPA Team</span><br><span class="p-link">View my tasks &rarr;</span></div>
-    <div class="pcard click" onclick="goM('ngon')"><div class="p-av" style="background:#2E7D32;">Ngon</div><div class="p-name">Leo</div><div class="p-en">English: Leo &nbsp;|&nbsp; Real: Ngon</div><div class="p-role">Environment Manager (reports to CTO Tuan). BIPA role: n8n automation, double-layer notification, Telegram digest to @Chavis_ai_bot.</div><span class="p-dept" style="background:#E8F5E9;color:#2E7D32;">Technical dept &middot; Env Manager</span><br><span class="p-bipa">BIPA Team</span><br><span class="p-link">View my tasks &rarr;</span></div>
+    <div class="pcard click" onclick="goM('chavis')"><div class="p-av" style="background:#1F3A5F;">Ch</div><div class="p-name">Chavis</div><div class="p-en">CEO &amp; Founder</div><div class="p-role">CEO &mdash; Vietson Infrastructure Development SHC. Decision maker, phase approver, platform owner.</div><span class="p-dept" style="background:#E3F2FD;color:#0C447C;">CEO &middot; Sales &amp; Mktg (acting)</span><br><span class="p-bipa">BIPA Lead</span><br><span class="p-link">View my tasks &rarr;</span></div>
+    <div class="pcard click" onclick="goM('boa')"><div class="p-av" style="background:#4A148C;">Boa</div><div class="p-name">Bob</div><div class="p-en">English: Bob &nbsp;|&nbsp; Real: Boa</div><div class="p-role">CDO &mdash; Data Management dept head. BIPA: platform setup, Google SSO, 5 dept workspaces.</div><span class="p-dept" style="background:#F3E5F5;color:#4A148C;">CDO &middot; Data Management</span><br><span class="p-bipa">BIPA Team</span><br><span class="p-link">View my tasks &rarr;</span></div>
+    <div class="pcard click" onclick="goM('tu')"><div class="p-av" style="background:#1565C0;">Tu</div><div class="p-name">Lisa</div><div class="p-en">English: Lisa &nbsp;|&nbsp; Real: Tu</div><div class="p-role">Finance Assistant (reports to CFO Henry). BIPA: Finance module, 102 tenants, P&amp;L, AR/AP.</div><span class="p-dept" style="background:#E3F2FD;color:#1565C0;">Finance dept (under Henry/CFO)</span><br><span class="p-bipa">BIPA Team</span><br><span class="p-link">View my tasks &rarr;</span></div>
+    <div class="pcard click" onclick="goM('tuan')"><div class="p-av" style="background:#E65100;">Tuan</div><div class="p-name">Tony</div><div class="p-en">English: Tony &nbsp;|&nbsp; Real: Tuan</div><div class="p-role">CTO &mdash; Technical dept head (Ngon, Joe under him). BIPA: CEO RAG board + EIP tracker.</div><span class="p-dept" style="background:#FFF3E0;color:#E65100;">CTO &middot; Technical dept</span><br><span class="p-bipa">BIPA Team</span><br><span class="p-link">View my tasks &rarr;</span></div>
+    <div class="pcard click" onclick="goM('ngon')"><div class="p-av" style="background:#2E7D32;">Ngon</div><div class="p-name">Leo</div><div class="p-en">English: Leo &nbsp;|&nbsp; Real: Ngon</div><div class="p-role">Env Manager (reports to CTO Tuan). BIPA: n8n automation, double-layer notification, Telegram digest.</div><span class="p-dept" style="background:#E8F5E9;color:#2E7D32;">Technical dept &middot; Env Manager</span><br><span class="p-bipa">BIPA Team</span><br><span class="p-link">View my tasks &rarr;</span></div>
   </div>
   <div class="sec-title">All 9 VSG Staff on the Platform</div>
   <div class="team-grid">
-    <div class="pcard"><div class="p-av" style="background:#1B5E20;">Jane</div><div class="p-name">Jane</div><div class="p-role">COO &mdash; Chief Operating Officer. Leads Operations dept. Manages Rose (Svc Mgr) and Joy (Accountant &amp; HR).</div><span class="p-dept" style="background:#E8F5E9;color:#1B5E20;">COO &middot; Operations</span></div>
-    <div class="pcard"><div class="p-av" style="background:#37474F;">Henry</div><div class="p-name">Henry</div><div class="p-role">CFO &mdash; Chief Financial Officer. Leads Finance dept. Tu/Lisa is his assistant. Manages all P&amp;L, AR/AP for 102 tenants.</div><span class="p-dept" style="background:#ECEFF1;color:#37474F;">CFO &middot; Finance</span></div>
-    <div class="pcard"><div class="p-av" style="background:#880E4F;">Joy</div><div class="p-name">Joy</div><div class="p-role">Chief Accountant &amp; HR Manager (under COO Jane). Handles accounting and human resources.</div><span class="p-dept" style="background:#FCE4EC;color:#880E4F;">Operations &middot; Accountant &amp; HR</span></div>
-    <div class="pcard"><div class="p-av" style="background:#BF360C;">Rose</div><div class="p-name">Rose</div><div class="p-role">Service &amp; CRM Manager (under COO Jane). Manages tenant service requests and customer relations.</div><span class="p-dept" style="background:#FBE9E7;color:#BF360C;">Operations &middot; Service &amp; CRM</span></div>
+    <div class="pcard"><div class="p-av" style="background:#1B5E20;">Jane</div><div class="p-name">Jane</div><div class="p-role">COO &mdash; Operations dept. Manages Rose (Svc Mgr) and Joy (Accountant &amp; HR).</div><span class="p-dept" style="background:#E8F5E9;color:#1B5E20;">COO &middot; Operations</span></div>
+    <div class="pcard"><div class="p-av" style="background:#37474F;">Henry</div><div class="p-name">Henry</div><div class="p-role">CFO &mdash; Finance dept. Tu/Lisa is his assistant. Manages all P&amp;L, AR/AP for 102 tenants.</div><span class="p-dept" style="background:#ECEFF1;color:#37474F;">CFO &middot; Finance</span></div>
+    <div class="pcard"><div class="p-av" style="background:#880E4F;">Joy</div><div class="p-name">Joy</div><div class="p-role">Chief Accountant &amp; HR Manager (under COO Jane).</div><span class="p-dept" style="background:#FCE4EC;color:#880E4F;">Operations &middot; Accountant &amp; HR</span></div>
+    <div class="pcard"><div class="p-av" style="background:#BF360C;">Rose</div><div class="p-name">Rose</div><div class="p-role">Service &amp; CRM Manager (under COO Jane). Manages tenant service requests.</div><span class="p-dept" style="background:#FBE9E7;color:#BF360C;">Operations &middot; Service &amp; CRM</span></div>
   </div>
-  <div class="org-box"><div class="ot">VSG Org Structure (effective after 1 May 2026)</div><div class="or"><b>BOD &rarr; BOM &rarr; CEO Chavis</b><br>&nbsp;&nbsp;&lfloor; <b>COO Jane</b> &mdash; Operations (Rose &middot; Joy &middot; Service team &middot; WWTP &middot; Electric &amp; Water)<br>&nbsp;&nbsp;&lfloor; <b>CFO Henry</b> &mdash; Finance (Tu/Lisa assistant)<br>&nbsp;&nbsp;&lfloor; <b>CTO Tuan</b> &mdash; Technical (Ngon/Leo env mgr &middot; Joe maintenance mgr)<br>&nbsp;&nbsp;&lfloor; <b>CDO Boa</b> &mdash; Data Management (Data Manager &middot; Data Analytic)<br>&nbsp;&nbsp;&lfloor; <b>CMO (vacant)</b> &mdash; Sales &amp; Marketing (Digital Marketing Mgr &middot; Chavis acting)</div></div>
+  <div class="org-box"><div class="ot">VSG Org Structure (effective after 1 May 2026)</div><div class="or"><b>BOD &rarr; BOM &rarr; CEO Chavis</b><br>&nbsp;&nbsp;&lfloor; <b>COO Jane</b> &mdash; Operations (Rose &middot; Joy &middot; Service &middot; WWTP &middot; Electric &amp; Water)<br>&nbsp;&nbsp;&lfloor; <b>CFO Henry</b> &mdash; Finance (Tu/Lisa)<br>&nbsp;&nbsp;&lfloor; <b>CTO Tuan</b> &mdash; Technical (Ngon/Leo &middot; Joe)<br>&nbsp;&nbsp;&lfloor; <b>CDO Boa</b> &mdash; Data Management<br>&nbsp;&nbsp;&lfloor; <b>CMO (vacant)</b> &mdash; Sales &amp; Marketing (Chavis acting)</div></div>
 </div>
 
-<script>
-// ── JSONBin.io shared database ────────────────────────────────────────────────
-// Free public JSON storage — all 9 VSG staff read/write the SAME bin
-var BIN_ID = '6805a1288960c979a5a5f8e2';
-var API_KEY = '$2a$10$pHFGFxRxrQ1JFVqnc5E3m.LjVMzPjOXrK7k9MqsW8EjVHBNhqXAXy';
-var BASE = 'https://api.jsonbin.io/v3/bins/';
+<!-- Firebase SDK — works from any website, no CORS issues -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, get, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-var ST = {};   // shared task state
+const firebaseConfig = {
+  apiKey: "AIzaSyAs3zJ8JmlvcxE4MLahFsYW5jKP2DzBzHE",
+  authDomain: "vsg-bipahub.firebaseapp.com",
+  databaseURL: "https://vsg-bipahub-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "vsg-bipahub",
+  storageBucket: "vsg-bipahub.firebasestorage.app",
+  messagingSenderId: "1060944783140",
+  appId: "1:1060944783140:web:6625d29c431a37790175b1",
+  measurementId: "G-FXLKCNJEE1"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const tasksRef = ref(db, 'tasks');
+
+var ST = {};
 var curM = 'all';
-var saveQ = null;
-var polling = null;
-var lastSaved = '';
 
-function setSy(id,cls,msg){
-  var el=document.getElementById(id+'-sync');
-  var tx=document.getElementById(id+'-sync-txt');
-  if(el){el.className='sync-bar '+cls;}
-  if(tx){tx.textContent=msg;}
+function sy(cls, msg) {
+  ['sc','tk'].forEach(function(p) {
+    var el = document.getElementById(p+'-sync');
+    var tx = document.getElementById(p+'-sync-txt');
+    if (el) el.className = 'sync-bar ' + cls;
+    if (tx) tx.textContent = msg;
+  });
 }
 
-// ── LOAD ─────────────────────────────────────────────────────────────────────
-async function load(){
-  try{
-    var r=await fetch(BASE+BIN_ID+'/latest',{headers:{'X-Master-Key':API_KEY,'X-Bin-Meta':false}});
-    if(r.ok){
-      var data=await r.json();
-      ST=data||{};
-      lastSaved=JSON.stringify(ST);
-    }
-  }catch(e){ST={};}
+// Load once then listen for live changes
+onValue(tasksRef, (snapshot) => {
+  ST = snapshot.val() || {};
   applyAll();
-  document.getElementById('ov').style.display='none';
-  startPoll();
-}
+  document.getElementById('ov').style.display = 'none';
+  sy('ok', 'Live \u2014 changes sync to all 9 VSG staff instantly');
+}, (error) => {
+  document.getElementById('ov').style.display = 'none';
+  sy('err', 'Connection failed \u2014 check internet');
+});
 
-// ── SAVE ─────────────────────────────────────────────────────────────────────
-async function save(){
-  setSy('sc','saving','Saving...');
-  setSy('tk','saving','Saving...');
-  try{
-    var body=JSON.stringify(ST);
-    var r=await fetch(BASE+BIN_ID,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':API_KEY},body:body});
-    if(r.ok){
-      lastSaved=body;
-      setSy('sc','ok','Saved — all 9 VSG staff see this update');
-      setSy('tk','ok','Saved — all 9 VSG staff see this update');
-    }else{throw new Error('PUT failed');}
-  }catch(e){
-    setSy('sc','err','Save failed — check your internet and try again');
-    setSy('tk','err','Save failed — check your internet and try again');
+window._saveTask = async function(key, value) {
+  sy('saving', 'Saving\u2026');
+  try {
+    await set(ref(db, 'tasks/' + key), value);
+    sy('ok', 'Saved \u2014 all 9 VSG staff see this now');
+  } catch(e) {
+    sy('err', 'Save failed \u2014 check your internet connection');
   }
-}
+};
 
-// ── POLL every 20s ────────────────────────────────────────────────────────────
-function startPoll(){
-  polling=setInterval(async function(){
-    try{
-      var r=await fetch(BASE+BIN_ID+'/latest',{headers:{'X-Master-Key':API_KEY,'X-Bin-Meta':false}});
-      if(r.ok){
-        var data=await r.json();
-        var str=JSON.stringify(data);
-        if(str!==lastSaved){
-          ST=data||{};
-          lastSaved=str;
-          applyAll();
-          setSy('sc','ok','Updated \u2014 a team member just completed a task');
-          setSy('tk','ok','Updated \u2014 a team member just completed a task');
-        }
-      }
-    }catch(e){}
-  },20000);
-}
+var PT = {p0:4, p1:7, p2:9, p3:7, p4:8};
 
-// ── APPLY STATE TO ALL UI ────────────────────────────────────────────────────
-var phaseTotals={p0:4,p1:7,p2:9,p3:7,p4:8};
-function applyAll(){
-  Object.keys(phaseTotals).forEach(function(ph){
-    var tot=phaseTotals[ph];
-    for(var i=0;i<tot;i++){
-      var k=ph+'-'+i;
-      var s=ST[k];
-      var ckEl=document.getElementById('ck-'+k);
-      var rowEl=document.getElementById('tr-'+k);
-      var tlEl=document.getElementById('tl-'+k);
-      var twEl=document.getElementById('tw-'+k);
-      if(!ckEl)continue;
-      if(s&&s.d){
-        ckEl.classList.add('done'); ckEl.textContent='\u2713';
-        if(rowEl)rowEl.classList.add('done-row');
-        if(tlEl)tlEl.classList.add('crossed');
-        if(twEl)twEl.textContent='\u2713 Done'+(s.b?' by '+s.b:'');
-      }else{
-        ckEl.classList.remove('done'); ckEl.textContent='';
-        if(rowEl)rowEl.classList.remove('done-row');
-        if(tlEl)tlEl.classList.remove('crossed');
-        if(twEl)twEl.textContent='';
+function applyAll() {
+  Object.keys(PT).forEach(function(ph) {
+    for (var i = 0; i < PT[ph]; i++) {
+      var k = ph+'-'+i; var s = ST[k];
+      var ck = document.getElementById('ck-'+k);
+      var tr = document.getElementById('tr-'+k);
+      var tl = document.getElementById('tl-'+k);
+      var tw = document.getElementById('tw-'+k);
+      if (!ck) continue;
+      if (s && s.d) {
+        ck.classList.add('done'); ck.textContent = '\u2713';
+        if (tr) tr.classList.add('done-row');
+        if (tl) tl.classList.add('crossed');
+        if (tw) tw.textContent = '\u2713 Done' + (s.b ? ' by ' + s.b : '');
+      } else {
+        ck.classList.remove('done'); ck.textContent = '';
+        if (tr) tr.classList.remove('done-row');
+        if (tl) tl.classList.remove('crossed');
+        if (tw) tw.textContent = '';
       }
     }
-    updateBar(ph,tot);
+    updateBar(ph);
   });
   updateGlobal();
-  if(curM)rebuildCards(curM);
+  rebuildCards(curM);
 }
 
-// ── TOGGLE SCHEDULE CHECKBOX ──────────────────────────────────────────────────
-function chk(k,ph,tot,el){
-  if(el.classList.contains('busy'))return;
-  var nowDone=!el.classList.contains('done');
-  el.classList.add('busy'); el.textContent='';
-  ST[k]=nowDone?{d:true,b:'Team',t:new Date().toISOString()}:{d:false};
-  applyAll();
-  clearTimeout(saveQ);
-  saveQ=setTimeout(function(){save(); el.classList.remove('busy');},600);
+window._applyAll = applyAll;
+window._ST = ST;
+
+function updateBar(ph) {
+  var tot = PT[ph]; var done = 0;
+  for (var i = 0; i < tot; i++) { var s = ST[ph+'-'+i]; if (s && s.d) done++; }
+  var pct = Math.round(done/tot*100);
+  var pe = document.getElementById(ph+'-pct');
+  var ce = document.getElementById(ph+'-cnt');
+  var be = document.getElementById(ph+'-bar');
+  if (pe) pe.textContent = pct + '%';
+  if (ce) ce.textContent = done + '/' + tot;
+  if (be) be.style.width = pct + '%';
 }
 
-// ── PHASE BAR ────────────────────────────────────────────────────────────────
-function updateBar(ph,tot){
-  var done=0;
-  for(var i=0;i<tot;i++){var s=ST[ph+'-'+i];if(s&&s.d)done++;}
-  var pct=Math.round(done/tot*100);
-  var pEl=document.getElementById(ph+'-pct');
-  var cEl=document.getElementById(ph+'-cnt');
-  var bEl=document.getElementById(ph+'-bar');
-  if(pEl)pEl.textContent=pct+'%';
-  if(cEl)cEl.textContent=done+'/'+tot;
-  if(bEl)bEl.style.width=pct+'%';
-}
-
-// ── GLOBAL STATS ─────────────────────────────────────────────────────────────
-function updateGlobal(){
-  var tot=0,done=0;
-  Object.keys(phaseTotals).forEach(function(ph){
-    tot+=phaseTotals[ph];
-    for(var i=0;i<phaseTotals[ph];i++){var s=ST[ph+'-'+i];if(s&&s.d)done++;}
+function updateGlobal() {
+  var tot = 0, done = 0;
+  Object.keys(PT).forEach(function(ph) {
+    tot += PT[ph];
+    for (var i = 0; i < PT[ph]; i++) { var s = ST[ph+'-'+i]; if (s && s.d) done++; }
   });
-  document.getElementById('h-total').textContent=tot;
-  document.getElementById('h-done').textContent=done;
-  document.getElementById('h-pct').textContent=Math.round(done/tot*100)+'%';
+  document.getElementById('h-total').textContent = tot;
+  document.getElementById('h-done').textContent = done;
+  document.getElementById('h-pct').textContent = Math.round(done/tot*100) + '%';
 }
 
-// ── MEMBER DATA ───────────────────────────────────────────────────────────────
-var MD={
+var MD = {
   chavis:{color:'#1F3A5F',init:'Ch',name:'Chavis',role:'CEO & Founder',tot:8,
     keys:['p0-0','p0-1','p0-2','p0-3','p1-0','p1-1','p1-6','p4-3'],
     tasks:[
-      {ph:'Phase 0',t:'Review platform comparison \u2014 decide Softr Pro $89/mo OR Zoho One $333/mo (or better alternative)',tag:'Platform decision',time:'30 min'},
+      {ph:'Phase 0',t:'Review platform comparison \u2014 decide Softr Pro $89/mo OR Zoho One $333/mo',tag:'Platform decision',time:'30 min'},
       {ph:'Phase 0',t:'Confirm monthly budget with CFO Henry',tag:'Budget approved',time:'15 min'},
       {ph:'Phase 0',t:'Share bipahub.com to Boa, Tu, Tuan, Ngon via Zalo',tag:'Team notified',time:'10 min'},
       {ph:'Phase 0',t:'Confirm roles: Boa=Platform Setup, Tu=Finance, Tuan=CEO Dashboard, Ngon=Automation',tag:'Roles confirmed',time:'15 min'},
@@ -437,115 +409,116 @@ var MD={
   boa:{color:'#4A148C',init:'Bo',name:'Bob / Boa',role:'CDO \u00b7 Platform Setup',tot:5,
     keys:['p1-2','p2-5','p3-0','p4-0','p4-4'],
     tasks:[
-      {ph:'Phase 1',t:'Register platform. Evaluate best for 9 non-technical VSG staff. Add 9 users via Google SSO. Create 5 dept workspaces (Operations, Finance, Technical, Data Mgmt, Sales & Mktg).',tag:'Platform live, 9 logins, 5 workspaces',time:'3 hrs'},
-      {ph:'Phase 2',t:'Connect Sales/CRM module. Configure 5-dept privacy walls \u2014 each staff sees only their dept data.',tag:'CRM + privacy walls active',time:'4 hrs'},
-      {ph:'Phase 3',t:'Demo full platform login for all 9 users + privacy wall test. Log all bugs.',tag:'Privacy confirmed, bugs logged',time:'1 hr'},
+      {ph:'Phase 1',t:'Register platform. Evaluate best for 9 non-technical VSG staff. Add 9 users via Google SSO. Create 5 dept workspaces.',tag:'Platform live, 9 logins',time:'3 hrs'},
+      {ph:'Phase 2',t:'Connect Sales/CRM module. Configure 5-dept privacy walls.',tag:'CRM + privacy walls',time:'4 hrs'},
+      {ph:'Phase 3',t:'Demo full platform login for all 9 users + privacy wall test. Log all bugs.',tag:'Privacy confirmed',time:'1 hr'},
       {ph:'Phase 4',t:'Deploy final platform. Confirm all 9 VSG staff can log in.',tag:'Platform live and stable',time:'20 min'},
       {ph:'Phase 4',t:'Prepare login credentials + 1-page quick login guide for all 9 VSG staff.',tag:'Login guide ready',time:'20 min'}
     ]},
   tu:{color:'#1565C0',init:'Tu',name:'Lisa / Tu',role:'Finance Assistant',tot:4,
     keys:['p1-3','p2-6','p3-1','p4-1'],
     tasks:[
-      {ph:'Phase 1',t:'Set up Finance module. Import 102 VSG industrial tenants (service fee/sq.m + utility fees per quantity). Build P&L draft + AR/AP draft views.',tag:'Finance dashboard draft live',time:'3 hrs'},
-      {ph:'Phase 2',t:'Activate AR aging alerts \u2014 30/60/90 day overdue per tenant. Add cash threshold alert for CFO Henry.',tag:'Finance alerts live',time:'4 hrs'},
+      {ph:'Phase 1',t:'Set up Finance module. Import 102 VSG industrial tenants (service fee/sq.m + utility fees). Build P&L draft + AR/AP draft views.',tag:'Finance dashboard draft live',time:'3 hrs'},
+      {ph:'Phase 2',t:'Activate AR aging alerts \u2014 30/60/90 day overdue per tenant. Cash threshold alert for CFO Henry.',tag:'Finance alerts live',time:'4 hrs'},
       {ph:'Phase 3',t:'Trigger test AR alert \u2014 confirm fires to CFO Henry AND CEO Chavis on Telegram.',tag:'Double notification confirmed',time:'10 min'},
-      {ph:'Phase 4',t:'Merge Finance data into CEO dashboard \u2014 live connection confirmed.',tag:'Finance \u2192 CEO board connected',time:'20 min'}
+      {ph:'Phase 4',t:'Merge Finance data into CEO dashboard \u2014 live connection confirmed.',tag:'Finance \u2192 CEO board',time:'20 min'}
     ]},
   tuan:{color:'#E65100',init:'Tn',name:'Tony / Tuan',role:'CTO \u00b7 CEO Dashboard',tot:4,
     keys:['p1-4','p2-7','p3-2','p4-5'],
     tasks:[
-      {ph:'Phase 1',t:'Build CEO RAG board layout for 5 VSG departments (Operations, Finance, Technical, Data Mgmt, Sales & Mktg). Create EIP task tracker with 5 dept workspaces.',tag:'CEO dashboard structure ready',time:'3 hrs'},
+      {ph:'Phase 1',t:'Build CEO RAG board layout for 5 VSG departments. Create EIP task tracker with 5 dept workspaces.',tag:'CEO dashboard structure ready',time:'3 hrs'},
       {ph:'Phase 2',t:'Populate EIP tasks across all 5 departments. Connect real KPI data to CEO RAG board.',tag:'CEO board with live data',time:'4 hrs'},
-      {ph:'Phase 3',t:'Load CEO dashboard with real data \u2014 all 5 dept RAG statuses live. Demo to Chavis.',tag:'RAG board with live data',time:'10 min'},
+      {ph:'Phase 3',t:'Load CEO dashboard with real data \u2014 all 5 dept RAG statuses live.',tag:'RAG board with live data',time:'10 min'},
       {ph:'Phase 4',t:'OVERNIGHT fix: resolve all dashboard bugs before Thursday 10:00.',tag:'CEO board polished',time:'Overnight'}
     ]},
   ngon:{color:'#2E7D32',init:'Ng',name:'Leo / Ngon',role:'Env Mgr \u00b7 Automation',tot:4,
     keys:['p1-5','p2-8','p3-3','p4-2'],
     tasks:[
-      {ph:'Phase 1',t:'Map all VSG notification triggers across 5 departments. Design double-notification logic: Layer 1 (dept head alert) \u2192 Layer 2 (CEO @Chavis_ai_bot Telegram digest). Document full blueprint.',tag:'Notification blueprint documented',time:'3 hrs'},
+      {ph:'Phase 1',t:'Map all VSG notification triggers across 5 departments. Design double-notification logic: Layer 1 (dept head) \u2192 Layer 2 (CEO @Chavis_ai_bot Telegram digest).',tag:'Notification blueprint documented',time:'3 hrs'},
       {ph:'Phase 2',t:'Build n8n workflows \u2014 Layer 1 dept alerts + Layer 2 CEO Telegram digest to @Chavis_ai_bot.',tag:'n8n workflows active',time:'4 hrs'},
-      {ph:'Phase 3',t:'Run full n8n automation test \u2014 all workflows fire correctly across all 5 departments.',tag:'BIPA bridge confirmed',time:'10 min'},
+      {ph:'Phase 3',t:'Run full n8n automation test across all 5 departments.',tag:'BIPA bridge confirmed',time:'10 min'},
       {ph:'Phase 4',t:'Activate all n8n workflows. Test Telegram digest to @Chavis_ai_bot. Fix all automation bugs before Thursday 10:00.',tag:'Telegram digest live',time:'20 min'}
     ]}
 };
 
-var mpIds={
-  chavis:['d-c','p-c','b-c','l-c'],
-  boa:['d-b','p-b','b-b','l-b'],
-  tu:['d-t','p-t','b-t','l-t'],
-  tuan:['d-tn','p-tn','b-tn','l-tn'],
-  ngon:['d-n','p-n','b-n','l-n']
+var mpIds = {
+  chavis:['d-c','p-c','b-c','l-c'], boa:['d-b','p-b','b-b','l-b'],
+  tu:['d-t','p-t','b-t','l-t'], tuan:['d-tn','p-tn','b-tn','l-tn'], ngon:['d-n','p-n','b-n','l-n']
 };
 
-// ── TOGGLE TASK CARD ─────────────────────────────────────────────────────────
-function tcChk(k,mid,el){
-  if(el.classList.contains('busy'))return;
-  var nowDone=!el.classList.contains('done');
-  el.classList.add('busy');
-  ST[k]=nowDone?{d:true,b:MD[mid].name,t:new Date().toISOString()}:{d:false};
-  applyAll();
-  clearTimeout(saveQ);
-  saveQ=setTimeout(function(){save(); el.classList.remove('busy');},600);
+function refreshMP(m) {
+  var md = MD[m]; var done = 0;
+  md.keys.forEach(function(k) { if (ST[k] && ST[k].d) done++; });
+  var pct = Math.round(done/md.tot*100);
+  var ids = mpIds[m];
+  var de = document.getElementById(ids[0]); var pe = document.getElementById(ids[1]);
+  var be = document.getElementById(ids[2]); var le = document.getElementById(ids[3]);
+  if (de) de.textContent = done; if (pe) pe.textContent = pct + '%';
+  if (be) be.style.width = pct + '%';
+  if (le) le.textContent = done + ' of ' + md.tot + ' tasks completed';
 }
 
-// ── MEMBER PROGRESS ───────────────────────────────────────────────────────────
-function refreshMP(m){
-  var md=MD[m];
-  var done=0;
-  md.keys.forEach(function(k){if(ST[k]&&ST[k].d)done++;});
-  var tot=md.tot;
-  var pct=Math.round(done/tot*100);
-  var ids=mpIds[m];
-  var dEl=document.getElementById(ids[0]);
-  var pEl=document.getElementById(ids[1]);
-  var bEl=document.getElementById(ids[2]);
-  var lEl=document.getElementById(ids[3]);
-  if(dEl)dEl.textContent=done;
-  if(pEl)pEl.textContent=pct+'%';
-  if(bEl)bEl.style.width=pct+'%';
-  if(lEl)lEl.textContent=done+' of '+tot+' tasks completed';
-}
-
-// ── BUILD TASK CARDS ──────────────────────────────────────────────────────────
-function rebuildCards(m){
-  var list=document.getElementById('tc-list');
-  var members=m==='all'?Object.keys(MD):[m];
-  var html='';
-  members.forEach(function(mid){
-    var md=MD[mid];
+function rebuildCards(m) {
+  var list = document.getElementById('tc-list');
+  var members = m === 'all' ? Object.keys(MD) : [m];
+  var html = '';
+  members.forEach(function(mid) {
     refreshMP(mid);
-    md.tasks.forEach(function(task,i){
-      var k=md.keys[i];
-      var s=ST[k];
-      var isDone=s&&s.d;
-      var doneBy=isDone&&s.b?' \u00b7 Done by '+s.b:'';
-      html+='<div class="tc'+(isDone?' done-card':'')+'" id="card-'+k+'">'
-        +'<div class="tc-hdr"><div class="t-av" style="background:'+md.color+';width:28px;height:28px;font-size:10px;">'+md.init+'</div>'
-        +'<div><div class="tc-n">'+md.name+'</div><div class="tc-r">'+md.role+'</div></div></div>'
-        +'<div class="tc-desc'+(isDone?' crossed':'')+'" id="cdesc-'+k+'">'+task.t+'</div>'
-        +'<div class="tc-foot">'
-        +'<div class="tc-chk'+(isDone?' done':'')+'" id="cchk-'+k+'" onclick="tcChk(\''+k+'\',\''+mid+'\',this)">'+(isDone?'\u2713':'')+'</div>'
-        +'<span class="t-tag">'+task.ph+'</span>'
-        +'<span class="t-tag">'+task.tag+'</span>'
-        +'<span class="t-time">&#9201; '+task.time+'</span>'
-        +(isDone?'<span class="t-who">\u2713'+doneBy+'</span>':'')
-        +'</div></div>';
+    MD[mid].tasks.forEach(function(task, i) {
+      var k = MD[mid].keys[i]; var s = ST[k]; var isDone = s && s.d;
+      var dBy = isDone && s.b ? ' \u00b7 Done by ' + s.b : '';
+      html += '<div class="tc' + (isDone ? ' done-card' : '') + '" id="card-' + k + '">'
+        + '<div class="tc-hdr"><div class="t-av" style="background:' + MD[mid].color + ';width:28px;height:28px;font-size:10px;">' + MD[mid].init + '</div>'
+        + '<div><div class="tc-n">' + MD[mid].name + '</div><div class="tc-r">' + MD[mid].role + '</div></div></div>'
+        + '<div class="tc-desc' + (isDone ? ' crossed' : '') + '">' + task.t + '</div>'
+        + '<div class="tc-foot">'
+        + '<div class="tc-chk' + (isDone ? ' done' : '') + '" onclick="window._tcChk(\'' + k + '\',\'' + mid + '\',this)">' + (isDone ? '\u2713' : '') + '</div>'
+        + '<span class="t-tag">' + task.ph + '</span><span class="t-tag">' + task.tag + '</span>'
+        + '<span class="t-time">&#9201; ' + task.time + '</span>'
+        + (isDone ? '<span class="t-who">\u2713' + dBy + '</span>' : '')
+        + '</div></div>';
     });
   });
-  list.innerHTML=html;
+  list.innerHTML = html;
 }
 
-// ── FILTER ───────────────────────────────────────────────────────────────────
-function fm(m,btn){
-  curM=m;
-  document.querySelectorAll('.mf-btn').forEach(function(b){b.classList.remove('active');});
+window._tcChk = async function(k, mid, el) {
+  if (el.classList.contains('busy')) return;
+  el.classList.add('busy');
+  var nowDone = !el.classList.contains('done');
+  var val = nowDone ? {d: true, b: MD[mid].name, t: new Date().toISOString()} : {d: false};
+  ST[k] = val;
+  applyAll();
+  await window._saveTask(k, val);
+  el.classList.remove('busy');
+};
+
+window._chk = async function(k, ph, tot, el) {
+  if (el.classList.contains('busy')) return;
+  el.classList.add('busy'); el.textContent = '';
+  var nowDone = !el.classList.contains('done');
+  var val = nowDone ? {d: true, b: 'Team', t: new Date().toISOString()} : {d: false};
+  ST[k] = val;
+  applyAll();
+  await window._saveTask(k, val);
+  el.classList.remove('busy');
+};
+
+window._fm = function(m, btn) {
+  curM = m;
+  document.querySelectorAll('.mf-btn').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
-  document.querySelectorAll('.mp-box').forEach(function(el){el.classList.remove('show');});
-  if(m!=='all')document.getElementById('mp-'+m).classList.add('show');
+  document.querySelectorAll('.mp-box').forEach(function(el) { el.classList.remove('show'); });
+  if (m !== 'all') document.getElementById('mp-' + m).classList.add('show');
   rebuildCards(m);
-}
+};
 
-// ── NAV ───────────────────────────────────────────────────────────────────────
+window._rebuildCards = rebuildCards;
+</script>
+
+<script>
+function chk(k,ph,tot,el){ if(window._chk) window._chk(k,ph,tot,el); }
+function fm(m,btn){ if(window._fm) window._fm(m,btn); }
 function showPage(id,btn){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
@@ -560,10 +533,7 @@ function goM(m){
   showPage('tasks',document.querySelectorAll('.nav-tab')[2]);
   setTimeout(function(){var btn=document.querySelector('.mf-btn[onclick="fm(\''+m+'\',this)"]');if(btn)fm(m,btn);},80);
 }
-
-// ── INIT ─────────────────────────────────────────────────────────────────────
-fm('all',document.querySelector('.mf-btn'));
-load();
+document.querySelector('.mf-btn').classList.add('active');
 </script>
 </body>
 </html>
