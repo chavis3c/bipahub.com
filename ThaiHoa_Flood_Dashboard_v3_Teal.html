@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Thai Hoa IP — Flood Monitor · VSG</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#97EAD9;font-family:'Segoe UI',Arial,sans-serif;color:#1a2748;min-height:100vh}
+:root{
+  --navy:#1a2748;--navy2:#243054;--gold:#c8962a;--gold2:#e0aa40;
+  --bg:#97EAD9;--card:#ffffff;--bd:#d0d9ec;--t1:#1a2748;--t2:#4a5a78;--t3:#8a9ab8;
+  --ok:#16a34a;--wa:#ca8a04;--wn:#ea580c;--cr:#dc2626;
+  --vfi:#dc2626;--pyen:#7c3aed;
+}
+.shell{max-width:1120px;margin:0 auto;padding:14px}
+
+/* HEADER */
+.hdr{background:var(--navy);border-radius:10px;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.htag{font-size:9px;color:var(--gold2);letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px;font-family:monospace}
+.htitle{font-size:21px;font-weight:700;color:#fff;letter-spacing:.02em}
+.hsub{font-size:12px;color:#8899cc;margin-top:2px}
+.badge{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:6px 12px;font-size:11px;color:#8899cc;font-family:monospace}
+.dot{width:8px;height:8px;border-radius:50%;animation:p 2s infinite;flex-shrink:0}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* RAIN PANEL */
+.rain-box{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px 20px;margin-bottom:12px;box-shadow:0 1px 3px rgba(10,80,70,.12)}
+.rain-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;flex-wrap:wrap;gap:8px}
+.rlbl{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.1em}
+.rval{display:flex;align-items:baseline;gap:4px}
+.rmm{font-size:36px;font-weight:700;font-family:monospace;color:var(--navy2);line-height:1;transition:color .3s}
+.runit{font-size:14px;color:var(--t3)}
+.scbadge{font-size:11px;font-family:monospace;padding:4px 12px;border-radius:4px;font-weight:700;margin-left:10px}
+input[type=range]{width:100%;-webkit-appearance:none;height:5px;border-radius:3px;outline:none;cursor:pointer;background:linear-gradient(to right,var(--gold) var(--p,17%),#d0d9ec var(--p,17%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--gold2);border:3px solid white;box-shadow:0 0 0 2px var(--gold);cursor:pointer}
+.ticks{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--t3);font-family:monospace}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(3,1fr)}}
+.sc{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:11px 13px;box-shadow:0 1px 3px rgba(10,80,70,.10)}
+.sclbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;font-weight:600}
+.scval{font-size:18px;font-weight:700;font-family:monospace}
+.scnote{font-size:11px;color:var(--t3);margin-top:2px}
+
+/* BANNER */
+.abanner{border-radius:8px;padding:10px 16px;margin-bottom:12px;font-size:13px;font-weight:600;display:none;align-items:flex-start;gap:10px;line-height:1.5}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:1fr 300px;gap:12px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.mp,.ap{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;box-shadow:0 1px 3px rgba(10,80,70,.10)}
+.phdr{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.phdr::after{content:'';flex:1;height:1px;background:var(--bd)}
+.ap{display:flex;flex-direction:column}
+
+/* ZONE LIST */
+.zrow{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;margin-bottom:4px;border:1px solid transparent;transition:all .3s}
+.zi{width:32px;height:32px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;font-family:monospace;flex-shrink:0;text-align:center;line-height:1.2}
+.zinfo{flex:1;min-width:0}
+.zname{font-size:12px;font-weight:600;color:var(--t1)}
+.zdet{font-size:10px;color:var(--t3);margin-top:1px}
+.zbadge{font-size:9px;font-weight:700;font-family:monospace;padding:3px 7px;border-radius:4px;flex-shrink:0}
+.hotpill{display:inline-flex;font-size:9px;font-family:monospace;font-weight:700;padding:1px 6px;border-radius:3px;margin-top:2px}
+
+/* LEGEND */
+.leg{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)}
+.li{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2)}
+.ld{width:10px;height:10px;border-radius:2px}
+
+/* IND LEGEND */
+.ind-leg{display:flex;gap:8px;flex-wrap:wrap;padding:8px 10px;background:#7dd6c4;border-radius:6px;margin-top:8px}
+.il{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--t2)}
+.ilc{width:10px;height:10px;border-radius:1px;flex-shrink:0}
+
+/* FOOTER */
+.footer{margin-top:16px;padding:10px 16px;background:var(--navy);border-radius:8px;font-size:10px;color:#5a6a88;text-align:center;font-family:monospace;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<div class="hdr">
+  <div>
+    <div class="htag">VSG · KCN Đức Hòa III · Thái Hòa · Long An · Est. 2005</div>
+    <div class="htitle">Thai Hoa IP — Flood Scenario Monitor</div>
+    <div class="hsub">Zone A (North, 38 tenants) · Zone B (South, 63 tenants) · VFI + Phương Yến Hotspots · 101 tenants total</div>
+  </div>
+  <div class="badge"><span class="dot" id="liveDot" style="background:#16a34a"></span><span id="liveLabel">SIMULATION MODE</span></div>
+</div>
+
+<div class="rain-box">
+  <div class="rain-top">
+    <span class="rlbl">Rainfall Scenario — Drag Slider</span>
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px">
+      <div class="rval"><span class="rmm" id="rV">25</span><span class="runit">mm</span></div>
+      <span class="scbadge" id="scB">MODERATE RAIN</span>
+    </div>
+  </div>
+  <input type="range" id="sl" min="10" max="100" value="25" step="1"/>
+  <div class="ticks"><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span><span>60</span><span>70</span><span>80</span><span>90</span><span>100 mm</span></div>
+</div>
+
+<div class="stats">
+  <div class="sc"><div class="sclbl">Park Status</div><div class="scval" id="pkS" style="font-size:12px;padding-top:4px;color:var(--ok)">NORMAL</div><div class="scnote">All zones OK</div></div>
+  <div class="sc"><div class="sclbl">Zones at Risk</div><div class="scval" id="zAR" style="color:var(--ok)">0</div><div class="scnote">of 7 zones</div></div>
+  <div class="sc"><div class="sclbl">Tenants Affected</div><div class="scval" id="tAff" style="color:var(--ok)">0</div><div class="scnote">of 101 tenants</div></div>
+  <div class="sc"><div class="sclbl">VFI Factory</div><div class="scval" id="vfiS" style="font-size:11px;padding-top:4px;color:var(--vfi)">WATCH</div><div class="scnote">B203-219 hotspot</div></div>
+  <div class="sc"><div class="sclbl">Phương Yến</div><div class="scval" id="pyS" style="font-size:11px;padding-top:4px;color:var(--pyen)">CLEAR</div><div class="scnote">A213-219/Rd D</div></div>
+  <div class="sc"><div class="sclbl">Action Required</div><div class="scval" id="actL" style="font-size:11px;padding-top:4px;color:var(--ok)">MONITOR</div><div class="scnote" id="actN">Routine patrol</div></div>
+</div>
+
+<div class="abanner" id="abanner"></div>
+
+<div class="grid">
+<div class="mp">
+  <div class="phdr">Thai Hoa IP · Actual Layout — Roads, Canals, Industry Zones</div>
+
+  <!-- INDUSTRY LEGEND -->
+  <div class="ind-leg">
+    <div class="il"><div class="ilc" style="background:#4ade80"></div>Fertilizer/Pesticide</div>
+    <div class="il"><div class="ilc" style="background:#fb923c"></div>Mechanical</div>
+    <div class="il"><div class="ilc" style="background:#e879f9"></div>Factory for rent</div>
+    <div class="il"><div class="ilc" style="background:#60a5fa"></div>Pipe/Yarn/Rope</div>
+    <div class="il"><div class="ilc" style="background:#a3a3a3"></div>Fiber/Paper</div>
+    <div class="il"><div class="ilc" style="background:#fcd34d"></div>Food/Other</div>
+    <div class="il"><div class="ilc" style="background:#f87171;border:1px dashed #dc2626"></div>VFI Hotspot</div>
+    <div class="il"><div class="ilc" style="background:#c4b5fd;border:1px dashed #7c3aed"></div>Phương Yến</div>
+  </div>
+
+  <!-- PARK MAP SVG -->
+  <svg viewBox="0 0 480 760" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-top:10px">
+
+    <!-- ===== BACKGROUND ===== -->
+    <rect x="0" y="0" width="480" height="760" fill="#7ecfbe"/>
+
+    <!-- ===== OUTER BOUNDARY ===== -->
+    <rect x="14" y="28" width="452" height="722" fill="#dff7f3" stroke="#8a9272" stroke-width="2"/>
+
+    <!-- ===== WEST DRAINAGE CANAL ===== -->
+    <rect x="14" y="28" width="18" height="722" fill="#7ec8e3" stroke="#4ea8c8" stroke-width=".8" opacity=".7"/>
+    <text x="23" y="200" text-anchor="middle" fill="#1e6888" font-size="7" font-family="monospace" transform="rotate(-90 23 200)">WESTERN DRAINAGE CANAL</text>
+
+    <!-- ===== EAST DRAINAGE CANAL ===== -->
+    <rect x="448" y="28" width="18" height="722" fill="#7ec8e3" stroke="#4ea8c8" stroke-width=".8" opacity=".7"/>
+    <text x="457" y="560" text-anchor="middle" fill="#1e6888" font-size="7" font-family="monospace" transform="rotate(90 457 560)">EASTERN DRAINAGE CANAL</text>
+
+    <!-- ===== NORTH BOUNDARY ROAD ===== -->
+    <rect x="32" y="28" width="416" height="18" fill="#b0a888" stroke="#8a8268" stroke-width=".5"/>
+    <text x="240" y="40" text-anchor="middle" fill="#fff" font-size="8" font-family="monospace" font-weight="700">ĐƯỜNG BẰNG - ĐỨC HÒA (NORTH)</text>
+
+    <!-- ===== 110kV POWER LINE (top right diagonal) ===== -->
+    <rect x="360" y="28" width="88" height="12" fill="#4fa8d8" stroke="#2878b8" stroke-width=".5"/>
+    <text x="404" y="37" text-anchor="middle" fill="#fff" font-size="7" font-family="monospace" font-weight="700">TRU 110kV</text>
+
+    <!-- ===== LEFT MAIN ROAD - KCN Hồng Đạt ===== -->
+    <rect x="32" y="46" width="28" height="616" fill="#c8c0a0" stroke="#a8a088" stroke-width=".5"/>
+    <text x="46" y="280" text-anchor="middle" fill="#5a5040" font-size="7" font-family="monospace" transform="rotate(-90 46 280)">KCN HỒNG ĐẠT</text>
+
+    <!-- ===== RIGHT MAIN ROAD - KCN Minh Ngân ===== -->
+    <rect x="420" y="46" width="28" height="616" fill="#c8c0a0" stroke="#a8a088" stroke-width=".5"/>
+    <text x="434" y="330" text-anchor="middle" fill="#5a5040" font-size="7" font-family="monospace" transform="rotate(90 434 330)">KCN MINH NGÂN</text>
+
+    <!-- ===== INNER LEFT ROAD ===== -->
+    <rect x="172" y="46" width="18" height="310" fill="#d8d0b0" stroke="#b8b098" stroke-width=".5"/>
+    <rect x="172" y="376" width="18" height="286" fill="#d8d0b0" stroke="#b8b098" stroke-width=".5"/>
+
+    <!-- ===== INNER RIGHT ROAD ===== -->
+    <rect x="290" y="46" width="18" height="310" fill="#d8d0b0" stroke="#b8b098" stroke-width=".5"/>
+    <rect x="290" y="376" width="18" height="286" fill="#d8d0b0" stroke="#b8b098" stroke-width=".5"/>
+
+    <!-- ============================= -->
+    <!-- ===== ZONE A - NORTH ======= -->
+    <!-- ============================= -->
+    <rect x="60" y="46" width="4" height="310" fill="#c8c0a0" opacity=".3"/>
+    <text x="130" y="58" text-anchor="middle" fill="#3a5028" font-size="8" font-family="monospace" font-weight="700">ZONE A — NORTH BLOCK</text>
+
+    <!-- A-West lots (x=60-170) -->
+    <!-- Row 1 A-West -->
+    <rect id="aW1" x="60" y="58" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="60" y="96" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <!-- Cross road 1 -->
+    <rect x="60" y="134" width="418" height="10" fill="#d8d0b0" stroke="#b8b098" stroke-width=".5"/>
+    <rect x="60" y="146" width="108" height="36" fill="#e879f9" stroke="#c026d3" stroke-width=".5" opacity=".75"/>
+    <rect x="60" y="184" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <!-- Cross road 2 -->
+    <rect x="60" y="222" width="418" height="10" fill="#d8d0b0" stroke="#b8b098" stroke-width=".5"/>
+    <rect x="60" y="234" width="108" height="36" fill="#e879f9" stroke="#c026d3" stroke-width=".5" opacity=".75"/>
+    <rect x="60" y="272" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <!-- A-West water overlay -->
+    <rect id="wA-W" x="60" y="58" width="108" height="292" fill="#1d6cc0" opacity="0" style="transition:opacity .5s"/>
+    <rect id="sA-W" x="60" y="58" width="108" height="292" fill="none" stroke="#a8b8d0" stroke-width="1" style="transition:stroke .3s"/>
+
+    <!-- A-Center-Left lots (x=192-288) -->
+    <rect x="192" y="58" width="96" height="36" fill="#fb923c" stroke="#ea6d0c" stroke-width=".5" opacity=".8"/>
+    <rect x="192" y="96" width="96" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="192" y="146" width="96" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="192" y="184" width="96" height="36" fill="#e879f9" stroke="#c026d3" stroke-width=".5" opacity=".75"/>
+    <rect x="192" y="234" width="96" height="36" fill="#60a5fa" stroke="#2d7fcc" stroke-width=".5" opacity=".8"/>
+    <rect x="192" y="272" width="96" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+
+    <!-- A-Center-Right lots (x=310-418) = A-East upper / A201-A212 -->
+    <rect id="aET" x="310" y="58" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="310" y="96" width="108" height="36" fill="#e879f9" stroke="#c026d3" stroke-width=".5" opacity=".75"/>
+    <rect x="310" y="146" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="310" y="184" width="108" height="36" fill="#fb923c" stroke="#ea6d0c" stroke-width=".5" opacity=".8"/>
+
+    <!-- PHƯƠNG YẾN ZONE (A213-219) - A-East lower near Road D junction -->
+    <rect id="zPY" x="310" y="222" width="108" height="86" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5,3" opacity=".9"/>
+    <text x="364" y="258" text-anchor="middle" fill="#7c3aed" font-size="8" font-family="monospace" font-weight="700">PHƯƠNG YẾN</text>
+    <text x="364" y="270" text-anchor="middle" fill="#7c3aed" font-size="7" font-family="monospace">A213-219</text>
+    <text x="364" y="282" text-anchor="middle" fill="#9a70d0" font-size="7" font-family="monospace">Road 2 × Rd D</text>
+    <rect id="wPY" x="310" y="222" width="108" height="86" fill="#7b2fbe" opacity="0" style="transition:opacity .5s"/>
+    <rect id="sPY" x="310" y="222" width="108" height="86" fill="none" stroke="#7c3aed" stroke-width="1.5" style="transition:stroke .3s"/>
+
+    <!-- A water overlays center -->
+    <rect id="wA-E-top" x="310" y="58" width="108" height="162" fill="#1d6cc0" opacity="0" style="transition:opacity .5s"/>
+    <rect id="sA-E-top" x="310" y="58" width="108" height="162" fill="none" stroke="#a8b8d0" stroke-width="1" style="transition:stroke .3s"/>
+
+    <!-- ============================= -->
+    <!-- ===== ROUNDABOUT ZONE ======= -->
+    <!-- ============================= -->
+    <rect x="32" y="356" width="416" height="20" fill="#c8c0a0" stroke="#a8a088" stroke-width=".8"/>
+    <!-- Roundabout road (horizontal connector) -->
+    <rect x="32" y="338" width="416" height="38" fill="#d4cdb0" stroke="#b4ad90" stroke-width=".5" opacity=".7"/>
+    <text x="118" y="360" text-anchor="middle" fill="#5a5040" font-size="7" font-family="monospace">ĐƯỜNG TRỤC</text>
+
+    <!-- Roundabout circle -->
+    <circle cx="240" cy="357" r="24" fill="#c8e8b0" stroke="#7aaa50" stroke-width="2"/>
+    <circle cx="240" cy="357" r="14" fill="#d8f0c0" stroke="#7aaa50" stroke-width="1"/>
+    <text x="240" y="362" text-anchor="middle" fill="#3a6a20" font-size="7" font-family="monospace" font-weight="700">VÒNG</text>
+
+    <!-- Drainage arrows at roundabout level -->
+    <!-- Left arrow -->
+    <polygon points="52,350 38,357 52,364" fill="#4ea8c8" opacity=".9"/>
+    <rect x="52" y="353" width="28" height="8" fill="#7ec8e3" opacity=".7"/>
+    <text x="52" y="348" text-anchor="middle" fill="#1e6888" font-size="7" font-family="monospace">← drain</text>
+    <!-- Right arrow -->
+    <polygon points="428,350 442,357 428,364" fill="#4ea8c8" opacity=".9"/>
+    <rect x="400" y="353" width="28" height="8" fill="#7ec8e3" opacity=".7"/>
+    <text x="428" y="348" text-anchor="middle" fill="#1e6888" font-size="7" font-family="monospace">drain →</text>
+
+    <!-- VSG Office marker -->
+    <rect x="148" y="340" width="72" height="18" rx="2" fill="#1a2748" stroke="#c8962a" stroke-width="1"/>
+    <text x="184" y="352" text-anchor="middle" fill="#e0aa40" font-size="7" font-family="monospace" font-weight="700">VSG OFFICE</text>
+
+    <!-- ============================= -->
+    <!-- ===== ZONE B - SOUTH ======= -->
+    <!-- ============================= -->
+    <text x="120" y="392" text-anchor="middle" fill="#203850" font-size="8" font-family="monospace" font-weight="700">ZONE B — SOUTH BLOCK</text>
+
+    <!-- B-West lots (x=60-170) -->
+    <rect x="60" y="392" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="60" y="430" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <!-- Cross road -->
+    <rect x="60" y="468" width="418" height="10" fill="#d8d0b0" stroke="#b8b098" stroke-width=".5"/>
+    <rect x="60" y="480" width="108" height="36" fill="#fb923c" stroke="#ea6d0c" stroke-width=".5" opacity=".8"/>
+    <rect x="60" y="518" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <!-- Cross road -->
+    <rect x="60" y="556" width="418" height="10" fill="#d8d0b0" stroke="#b8b098" stroke-width=".5"/>
+    <!-- SIAM block B131-138 -->
+    <rect x="60" y="568" width="108" height="54" fill="#e879f9" stroke="#c026d3" stroke-width=".8" opacity=".75"/>
+    <text x="114" y="592" text-anchor="middle" fill="#7c0899" font-size="7" font-family="monospace" font-weight="700">SIAM</text>
+    <text x="114" y="603" text-anchor="middle" fill="#9a20b8" font-size="6" font-family="monospace">B131-138</text>
+    <rect x="60" y="624" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect id="wB-W" x="60" y="392" width="108" height="278" fill="#1d6cc0" opacity="0" style="transition:opacity .5s"/>
+    <rect id="sB-W" x="60" y="392" width="108" height="278" fill="none" stroke="#a8b8d0" stroke-width="1" style="transition:stroke .3s"/>
+
+    <!-- B-Center-Left (x=192-288) -->
+    <rect x="192" y="392" width="96" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="192" y="430" width="96" height="36" fill="#a3a3a3" stroke="#737373" stroke-width=".5" opacity=".8"/>
+    <rect x="192" y="480" width="96" height="36" fill="#fcd34d" stroke="#d4a820" stroke-width=".5" opacity=".8"/>
+    <rect x="192" y="518" width="96" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="192" y="568" width="96" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="192" y="606" width="96" height="36" fill="#fb923c" stroke="#ea6d0c" stroke-width=".5" opacity=".8"/>
+    <rect x="192" y="644" width="96" height="16" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+
+    <!-- ===== VFI FACTORY HOTSPOT (B203-219) - B East upper ===== -->
+    <rect id="zVFI" x="310" y="392" width="108" height="140" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3" opacity=".95"/>
+    <text x="364" y="450" text-anchor="middle" fill="#dc2626" font-size="9" font-family="monospace" font-weight="700">VFI</text>
+    <text x="364" y="463" text-anchor="middle" fill="#dc2626" font-size="8" font-family="monospace" font-weight="700">FACTORY</text>
+    <text x="364" y="476" text-anchor="middle" fill="#ef4444" font-size="7" font-family="monospace">B203-206, B219</text>
+    <text x="364" y="490" text-anchor="middle" fill="#b91c1c" font-size="7" font-family="monospace">PRIMARY HOTSPOT</text>
+    <text x="364" y="502" text-anchor="middle" fill="#991b1b" font-size="7" font-family="monospace">Flood 13mm+</text>
+    <rect id="wVFI" x="310" y="392" width="108" height="140" fill="#991b1b" opacity="0" style="transition:opacity .5s"/>
+    <rect id="sVFI" x="310" y="392" width="108" height="140" fill="none" stroke="#dc2626" stroke-width="1.5" style="transition:stroke .3s"/>
+
+    <!-- B-East lower (B207-234) -->
+    <rect x="310" y="534" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="310" y="572" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="310" y="610" width="108" height="36" fill="#a3a3a3" stroke="#737373" stroke-width=".5" opacity=".8"/>
+    <rect x="310" y="648" width="108" height="12" fill="#fcd34d" stroke="#d4a820" stroke-width=".5" opacity=".8"/>
+    <rect id="wB-E-bot" x="310" y="534" width="108" height="130" fill="#1d6cc0" opacity="0" style="transition:opacity .5s"/>
+    <rect id="sB-E-bot" x="310" y="534" width="108" height="130" fill="none" stroke="#a8b8d0" stroke-width="1" style="transition:stroke .3s"/>
+
+    <!-- Zone B horizontal drainage canal -->
+    <rect id="zDrain" x="32" y="662" width="416" height="12" fill="#7ec8e3" stroke="#4ea8c8" stroke-width=".8" opacity=".8"/>
+    <text x="240" y="671" text-anchor="middle" fill="#1e6888" font-size="6" font-family="monospace" font-weight="700">DRAINAGE CANAL B (ZONE B SOUTH)</text>
+    <rect id="wDrain" x="32" y="662" width="416" height="12" fill="#1d4cc0" opacity="0" style="transition:opacity .5s"/>
+    <rect id="sDrain" x="32" y="662" width="416" height="12" fill="none" stroke="#4ea8c8" stroke-width="1" style="transition:stroke .3s"/>
+
+    <!-- Bottom Zone B lots -->
+    <rect x="60" y="676" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="192" y="676" width="96" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+    <rect x="310" y="676" width="108" height="36" fill="#4ade80" stroke="#22c55e" stroke-width=".5" opacity=".8"/>
+
+    <!-- South boundary road -->
+    <rect x="32" y="714" width="416" height="16" fill="#c8c0a0" stroke="#a8a088" stroke-width=".5"/>
+    <text x="240" y="725" text-anchor="middle" fill="#5a5040" font-size="7" font-family="monospace">SOUTH BOUNDARY ROAD</text>
+
+    <!-- Zone labels on sides -->
+    <text x="12" y="200" text-anchor="middle" fill="#2a5020" font-size="8" font-family="monospace" font-weight="700" transform="rotate(-90 12 200)">ZONE A</text>
+    <text x="12" y="530" text-anchor="middle" fill="#203850" font-size="8" font-family="monospace" font-weight="700" transform="rotate(-90 12 530)">ZONE B</text>
+
+    <!-- North arrow -->
+    <text x="462" y="750" text-anchor="middle" fill="#5a6848" font-size="9" font-family="monospace">N↑</text>
+
+    <!-- Cross roads labels -->
+    <text x="480" y="140" font-size="6" fill="#8a8268" font-family="monospace" text-anchor="end">Rd 1</text>
+    <text x="480" y="228" font-size="6" fill="#8a8268" font-family="monospace" text-anchor="end">Rd 2</text>
+    <text x="480" y="474" font-size="6" fill="#8a8268" font-family="monospace" text-anchor="end">Rd 3</text>
+    <text x="480" y="562" font-size="6" fill="#8a8268" font-family="monospace" text-anchor="end">Rd 4</text>
+
+  </svg>
+
+  <div class="leg">
+    <div class="li"><div class="ld" style="background:#22c55e"></div>Clear</div>
+    <div class="li"><div class="ld" style="background:#ca8a04"></div>Watch</div>
+    <div class="li"><div class="ld" style="background:#ea580c"></div>Warning</div>
+    <div class="li"><div class="ld" style="background:#dc2626"></div>Critical</div>
+    <div class="li"><div class="ld" style="background:#dc2626;border-radius:50%"></div>VFI</div>
+    <div class="li"><div class="ld" style="background:#7c3aed;border-radius:50%"></div>Phương Yến</div>
+    <div class="li"><div class="ld" style="background:#7ec8e3"></div>Canal/drain</div>
+    <div class="li"><div class="ld" style="background:#c8c0a0"></div>Road</div>
+  </div>
+</div>
+
+<!-- ALERT PANEL -->
+<div class="ap">
+  <div class="phdr">Zone Alert Status</div>
+  <div id="zoneList" style="flex:1;overflow-y:auto"></div>
+</div>
+
+</div><!-- end grid -->
+
+<div class="footer">
+  VSG · Thai Hoa Industrial Park · Flood Scenario Dashboard v2.0 (Bright) · CEO: Chavis · ENV Director: Ken<br>
+  Coordinates: 10.856°N, 106.385°E · Long An, Vietnam · VFI Watch: 13mm · Warning: 20mm · Critical: 35mm
+</div>
+
+</div><!-- end shell -->
+
+<script>
+const LV={
+  clear:{l:'CLEAR',c:'#16a34a',b:'rgba(22,163,74,.2)',bg:'rgba(22,163,74,.07)',w:0,s:'#d0d9ec'},
+  watch:{l:'WATCH',c:'#ca8a04',b:'rgba(202,138,4,.25)',bg:'rgba(202,138,4,.09)',w:.35,s:'#ca8a04'},
+  warning:{l:'WARNING',c:'#ea580c',b:'rgba(234,88,12,.3)',bg:'rgba(234,88,12,.09)',w:.6,s:'#ea580c'},
+  critical:{l:'CRITICAL',c:'#dc2626',b:'rgba(220,38,38,.35)',bg:'rgba(220,38,38,.09)',w:.82,s:'#dc2626'}
+};
+const ZONES=[
+  {k:'VFI',wEl:['wVFI'],sEl:['sVFI'],name:'VFI Factory',detail:'B203-206, B219A-B · Zone B East',tenants:1,thr:{watch:13,warning:20,critical:32},hotspot:'vfi'},
+  {k:'PY',wEl:['wPY'],sEl:['sPY'],name:'Phương Yến',detail:'A213-219 · Road 2 × Road D corner',tenants:8,thr:{watch:18,warning:28,critical:45},hotspot:'py'},
+  {k:'DRAIN',wEl:['wDrain'],sEl:['sDrain'],name:'Drainage Canal B',detail:'Park-wide Zone B outflow',tenants:0,thr:{watch:20,warning:33,critical:50}},
+  {k:'B-W',wEl:['wB-W'],sEl:['sB-W'],name:'Zone B · West (B1xx)',detail:'B101–B138 · 25 tenants · Road 1',tenants:25,thr:{watch:35,warning:50,critical:68}},
+  {k:'B-E',wEl:['wB-E-bot'],sEl:['sB-E-bot'],name:'Zone B · East (B2xx)',detail:'B201–B234A · 37 tenants',tenants:37,thr:{watch:38,warning:53,critical:72}},
+  {k:'A-E',wEl:['wA-E-top'],sEl:['sA-E-top'],name:'Zone A · East Upper',detail:'A201–A212 · 10 tenants',tenants:10,thr:{watch:52,warning:68,critical:85}},
+  {k:'A-W',wEl:['wA-W'],sEl:['sA-W'],name:'Zone A · West + Centre',detail:'A101–A124, A220–A230 · 28 tenants',tenants:28,thr:{watch:55,warning:72,critical:88}}
+];
+const ord=['clear','watch','warning','critical'];
+function lv(mm,z){if(mm>=z.thr.critical)return'critical';if(mm>=z.thr.warning)return'warning';if(mm>=z.thr.watch)return'watch';return'clear';}
+
+function render(mm){
+  let atRisk=0,affected=0,worst='clear';
+  const list=document.getElementById('zoneList');
+  list.innerHTML='';
+  ZONES.forEach(z=>{
+    const v=lv(mm,z),info=LV[v];
+    if(v!=='clear'){atRisk++;affected+=z.tenants;}
+    if(ord.indexOf(v)>ord.indexOf(worst))worst=v;
+    z.wEl.forEach(id=>{const el=document.getElementById(id);if(el)el.setAttribute('opacity',info.w);});
+    z.sEl.forEach(id=>{
+      const el=document.getElementById(id);if(!el)return;
+      if(z.hotspot==='vfi')el.setAttribute('stroke',v==='clear'?'#dc2626':info.s);
+      else if(z.hotspot==='py')el.setAttribute('stroke',v==='clear'?'#7c3aed':info.s);
+      else el.setAttribute('stroke',info.s);
+    });
+    const row=document.createElement('div');
+    row.className='zrow';
+    row.style.background=info.bg;row.style.borderColor=info.b;
+    const ic_c=z.hotspot==='vfi'?'#dc2626':z.hotspot==='py'?'#7c3aed':info.c;
+    const ic=z.hotspot==='vfi'?'VFI':z.hotspot==='py'?'PY ':z.k.substring(0,4);
+    let pills='';
+    if(z.hotspot==='vfi')pills='<span class="hotpill" style="background:rgba(220,38,38,.12);color:#dc2626;border:1px solid rgba(220,38,38,.3)">HOTSPOT #1</span>';
+    if(z.hotspot==='py')pills='<span class="hotpill" style="background:rgba(124,58,237,.12);color:#7c3aed;border:1px solid rgba(124,58,237,.3)">HOTSPOT #2</span>';
+    row.innerHTML='<div class="zi" style="background:'+info.b+';color:'+ic_c+'">'+ic+'</div>'
+      +'<div class="zinfo"><div class="zname" style="'+(z.hotspot?'color:'+ic_c:'')+'">'+z.name+'</div>'
+      +'<div class="zdet">'+z.detail+'</div>'+pills+'</div>'
+      +'<span class="zbadge" style="background:'+info.b+';color:'+ic_c+'">'+info.l+'</span>';
+    list.appendChild(row);
+  });
+
+  const wi=LV[worst];
+  document.getElementById('zAR').textContent=atRisk;
+  document.getElementById('zAR').style.color=atRisk===0?'var(--ok)':wi.c;
+  document.getElementById('tAff').textContent=affected;
+  document.getElementById('tAff').style.color=affected===0?'var(--ok)':wi.c;
+
+  const vfiLv=lv(mm,ZONES[0]),pyLv=lv(mm,ZONES[1]);
+  document.getElementById('vfiS').textContent=LV[vfiLv].l;
+  document.getElementById('vfiS').style.color=vfiLv==='clear'?'#dc2626':LV[vfiLv].c;
+  document.getElementById('pyS').textContent=LV[pyLv].l;
+  document.getElementById('pyS').style.color=pyLv==='clear'?'#7c3aed':LV[pyLv].c;
+
+  const sc=mm<20?{l:'LIGHT RAIN',bg:'rgba(22,163,74,.15)',c:'#15803d'}
+    :mm<38?{l:'MODERATE RAIN',bg:'rgba(202,138,4,.15)',c:'#a16207'}
+    :mm<58?{l:'HEAVY RAIN',bg:'rgba(234,88,12,.15)',c:'#c2410c'}
+    :mm<75?{l:'SEVERE RAIN',bg:'rgba(220,38,38,.15)',c:'#b91c1c'}
+    :{l:'EXTREME EVENT',bg:'rgba(220,38,38,.25)',c:'#991b1b'};
+  const sb=document.getElementById('scB');
+  sb.textContent=sc.l;sb.style.cssText='font-size:11px;font-family:monospace;padding:4px 12px;border-radius:4px;font-weight:700;margin-left:10px;background:'+sc.bg+';color:'+sc.c;
+  document.getElementById('rV').style.color=sc.c;
+
+  const sMap={clear:'NORMAL',watch:'ELEVATED',warning:'HIGH ALERT',critical:'EMERGENCY'};
+  const aMap={clear:'MONITOR',watch:'PREPARE',warning:'RESPOND',critical:'EVACUATE'};
+  const aN={clear:'Routine patrol',watch:'Check VFI + Phương Yến drains',warning:'Deploy pumps — Alert Ken',critical:'Evacuate hotspots — Alert CEO'};
+  document.getElementById('pkS').textContent=sMap[worst];document.getElementById('pkS').style.color=wi.c;
+  document.getElementById('actL').textContent=aMap[worst];document.getElementById('actL').style.color=wi.c;
+  document.getElementById('actN').textContent=aN[worst];
+  document.getElementById('liveDot').style.background=wi.c;
+
+  const banner=document.getElementById('abanner');
+  const msgs={
+    watch:'⚠  '+mm+'mm: VFI (B203) + Phương Yến (A213) drainage stressed. Ken: inspect both hotspot areas now.',
+    warning:'🚨  '+mm+'mm: Active flooding at VFI and Phương Yến. Activate pumps. Alert tenant contacts via BIPA Telegram.',
+    critical:'🔴  CRITICAL '+mm+'mm: Both hotspots flooded. Evacuate zones. Notify Long An authorities + all 101 tenants.'
+  };
+  if(worst!=='clear'){
+    banner.style.display='flex';banner.style.background=wi.bg;
+    banner.style.border='1px solid '+wi.b;banner.style.color=wi.c;
+    banner.textContent=msgs[worst]||'';
+  } else banner.style.display='none';
+}
+
+const sl=document.getElementById('sl');
+sl.addEventListener('input',()=>{
+  const mm=parseInt(sl.value);
+  document.getElementById('rV').textContent=mm;
+  sl.style.setProperty('--p',((mm-10)/90*100).toFixed(1)+'%');
+  render(mm);
+});
+render(25);
+</script>
+</body>
+</html>
