@@ -59,7 +59,9 @@
     function App() {
       const [activeWk, setActiveWk] = useState(1);
       const [view, setView] = useState("leaderboard");
-      const [checks, setChecks] = useState({});
+      const [checks, setChecks] = useState(() => {
+        try { const s = localStorage.getItem("vsg_sprint_checks"); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
+      });
       const [selected, setSelected] = useState(null);
 
       const getScore = (id) => {
@@ -70,7 +72,40 @@
 
       const toggle = (id, wk, ti) => {
         const k = `${id}-${wk}-${ti}`;
-        setChecks(prev => ({ ...prev, [k]: !prev[k] }));
+        setChecks(prev => {
+          const next = { ...prev, [k]: !prev[k] };
+          try { localStorage.setItem("vsg_sprint_checks", JSON.stringify(next)); } catch(e) {}
+          return next;
+        });
+      };
+
+      const saveProgress = () => {
+        const data = { checks, savedAt: new Date().toISOString(), version: "VSG-Sprint-v1" };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "VSG_Sprint_Progress_" + new Date().toISOString().slice(0,10) + ".json";
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      const loadProgress = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          try {
+            const data = JSON.parse(ev.target.result);
+            const loaded = data.checks || data;
+            setChecks(loaded);
+            try { localStorage.setItem("vsg_sprint_checks", JSON.stringify(loaded)); } catch(err) {}
+            alert("✅ Progress loaded successfully! / Đã tải tiến độ thành công!");
+          } catch(err) {
+            alert("❌ Invalid file. Please use a VSG Sprint save file.");
+          }
+        };
+        reader.readAsText(file);
       };
 
       const totalChecks   = Object.values(checks).filter(Boolean).length;
