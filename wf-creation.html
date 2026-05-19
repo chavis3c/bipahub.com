@@ -15,7 +15,47 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState } = React;
+    const { useState, useEffect } = React;
+
+    /* ── Airtable Sync ── */
+    const AT_TOKEN = "pat6L3vnUXTAZ5H8Q.ece3bdb3acf23f28c7bc4b856c14032fddf87e59281ca1354ebd0c5c152f912a";
+    const AT_URL   = "https://api.airtable.com/v0/appLS3CcOA8nJ9HSt/tblVbBPV4Tq41GUkl";
+    const AT_KEY   = "vsg_sprint_checks";
+    let   AT_RID   = null;
+
+    async function atLoad() {
+      try {
+        const r = await fetch(`${AT_URL}?filterByFormula=%7BKey%7D%3D%22${AT_KEY}%22`,
+          { headers:{ Authorization:`Bearer ${AT_TOKEN}` } });
+        const d = await r.json();
+        if (d.records && d.records.length > 0) {
+          AT_RID = d.records[0].id;
+          return JSON.parse(d.records[0].fields.Value || "{}");
+        }
+        return null;
+      } catch(e) { return null; }
+    }
+
+    async function atSave(checks) {
+      try {
+        const body = { fields:{ Key:AT_KEY, Value:JSON.stringify(checks) } };
+        if (AT_RID) {
+          await fetch(`${AT_URL}/${AT_RID}`, {
+            method:"PATCH",
+            headers:{ Authorization:`Bearer ${AT_TOKEN}`, "Content-Type":"application/json" },
+            body: JSON.stringify(body)
+          });
+        } else {
+          const r = await fetch(AT_URL, {
+            method:"POST",
+            headers:{ Authorization:`Bearer ${AT_TOKEN}`, "Content-Type":"application/json" },
+            body: JSON.stringify(body)
+          });
+          const d = await r.json();
+          AT_RID = d.id;
+        }
+      } catch(e) {}
+    }
 
     const NAVY = "#1a3a5c";
     const ORANGE = "#e85d1a";
@@ -63,6 +103,27 @@
         try { const s = localStorage.getItem("vsg_sprint_checks"); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
       });
       const [selected, setSelected] = useState(null);
+      const [syncing, setSyncing] = useState(false);
+      const [syncMsg, setSyncMsg] = useState("⏳ Loading from cloud...");
+
+      useEffect(() => {
+        atLoad().then(atData => {
+          const atCount  = atData  ? Object.values(atData).filter(Boolean).length  : 0;
+          let lsData = {};
+          try { const s = localStorage.getItem("vsg_sprint_checks"); lsData = s ? JSON.parse(s) : {}; } catch(e) {}
+          const lsCount  = Object.values(lsData).filter(Boolean).length;
+          if (atCount >= lsCount && atCount > 0) {
+            setChecks(atData);
+            try { localStorage.setItem("vsg_sprint_checks", JSON.stringify(atData)); } catch(e) {}
+            setSyncMsg("☁️ Loaded from cloud (" + atCount + " tasks)");
+          } else if (lsCount > 0) {
+            setSyncMsg("☁️ Using local data (" + lsCount + " tasks) — saving to cloud...");
+            atSave(lsData).then(() => setSyncMsg("☁️ Synced to cloud ✓ (" + lsCount + " tasks)"));
+          } else {
+            setSyncMsg("☁️ Ready — no data yet");
+          }
+        });
+      }, []);
 
       const getScore = (id) => {
         let s = 0;
@@ -75,6 +136,10 @@
         setChecks(prev => {
           const next = { ...prev, [k]: !prev[k] };
           try { localStorage.setItem("vsg_sprint_checks", JSON.stringify(next)); } catch(e) {}
+          setTimeout(() => {
+            setSyncMsg("💾 Saving to cloud...");
+            atSave(next).then(() => setSyncMsg("☁️ Cloud saved ✓ — " + new Date().toLocaleTimeString('vi-VN')));
+          }, 0);
           return next;
         });
       };
@@ -188,6 +253,7 @@
                   <div style={s.progLbl}>Team Progress</div>
                   <div style={s.progPct}>{teamPct}%</div>
                   <div style={s.progSub}>{totalChecks} / {totalPossible} tasks</div>
+                  <div style={{fontSize:10,color:"rgba(255,255,255,.5)",marginTop:4,fontStyle:"italic"}}>{syncMsg}</div>
                 </div>
                 <a href="https://vsg-crm-form.netlify.app/" target="_blank" rel="noopener noreferrer" style={s.wfBtn}>
                   <span style={{fontSize:14}}>📋</span> Submit Workflow Request
@@ -204,6 +270,11 @@
               </div>
             </div>
             <div style={s.bar}><div style={s.barGlow}/></div>
+          </div>
+
+          {/* SYNC TOAST */}
+          <div style={{position:"fixed",bottom:20,right:20,background:"#1a3a5c",color:"#fff",padding:"8px 16px",borderRadius:20,fontSize:12,fontWeight:600,zIndex:9999,boxShadow:"0 4px 12px rgba(0,0,0,.3)",transition:"opacity .3s"}}>
+            {syncMsg}
           </div>
 
           {/* MAIN */}
