@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Thai Hoa IP — Terrain Altitude Map</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#060c18; font-family:'Courier New',monospace; overflow:hidden; }
+canvas { display:block; }
+#hud { position:absolute; top:18px; left:20px; pointer-events:none; }
+#hud h1 { font-size:22px; font-weight:bold; letter-spacing:4px; color:#00ffe0; text-shadow:0 0 24px #00ffe0aa; margin-bottom:3px; }
+#hud .sub { font-size:11px; color:#4ecdc477; letter-spacing:2px; }
+#scale-note { position:absolute; top:68px; left:20px; font-size:10px; color:#ff880088; pointer-events:none; letter-spacing:1px; }
+#stats { position:absolute; top:18px; right:20px; color:#4ecdc4; font-size:11px; text-align:right; pointer-events:none; line-height:2; }
+#stats span { color:#00ffe0; }
+#flood-panel {
+  position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+  background:rgba(4,10,26,0.92); border:1px solid #0066ff66;
+  border-radius:14px; padding:16px 28px 14px;
+  min-width:380px; box-shadow:0 0 32px #0044ff22; user-select:none;
+}
+#flood-panel .fp-title { font-size:11px; letter-spacing:3px; color:#4488ff; text-align:center; margin-bottom:10px; }
+#flood-level-display { font-size:30px; font-weight:bold; color:#00aaff; text-align:center; text-shadow:0 0 16px #0088ffaa; margin-bottom:8px; letter-spacing:2px; }
+#flood-level-display .unit { font-size:14px; color:#4488ff88; }
+#flood-slider { width:100%; height:8px; -webkit-appearance:none; appearance:none; background:linear-gradient(to right,#1a3aff,#0088ff,#00ccff); border-radius:4px; outline:none; cursor:pointer; margin-bottom:10px; }
+#flood-slider::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#00aaff; border:3px solid #ffffff44; box-shadow:0 0 10px #00aaffaa; cursor:pointer; }
+#flood-info { display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#4488ff88; letter-spacing:1px; }
+#flooded-count { font-size:13px; font-weight:bold; padding:4px 12px; border-radius:20px; background:rgba(0,50,200,0.3); border:1px solid #0066ff66; color:#ffffff; letter-spacing:1px; }
+#flooded-count.danger { background:rgba(200,0,0,0.35); border-color:#ff333366; color:#ff8888; }
+#flooded-list { position:absolute; bottom:130px; left:50%; transform:translateX(-50%); display:flex; gap:6px; flex-wrap:wrap; justify-content:center; max-width:600px; pointer-events:none; }
+.flooded-tag { font-size:11px; font-weight:bold; padding:3px 9px; border-radius:10px; background:rgba(200,30,0,0.75); border:1px solid #ff443388; color:#ffccaa; letter-spacing:1px; }
+#legend { position:absolute; bottom:165px; left:20px; pointer-events:none; }
+.leg-title { font-size:10px; color:#4ecdc4; letter-spacing:2px; margin-bottom:6px; }
+.grad-strip { width:200px; height:12px; border-radius:3px; background:linear-gradient(to right,#1a3aff,#00bfff,#00ff88,#aaff00,#ffdd00,#ff6600,#ff2200); }
+.grad-nums { display:flex; justify-content:space-between; width:200px; margin-top:3px; }
+.grad-nums span { font-size:9px; color:#7ff4e899; }
+.zone-key { margin-top:10px; display:flex; flex-direction:column; gap:5px; }
+.zone-row { display:flex; align-items:center; gap:8px; }
+.zone-box { width:18px; height:14px; border-radius:3px; }
+.zone-lbl { font-size:10px; color:#aaccbb; letter-spacing:1px; }
+#tooltip { position:absolute; display:none; background:rgba(2,10,22,0.95); border:1px solid #00ffe066; border-radius:8px; padding:10px 14px; pointer-events:none; min-width:180px; }
+#tooltip .tn { font-size:16px; font-weight:bold; color:#00ffe0; margin-bottom:4px; }
+#tooltip .ta { font-size:14px; color:#ffdd00; }
+#tooltip .tl { font-size:10px; color:#4ecdc488; margin-top:3px; }
+#controls { position:absolute; bottom:22px; right:20px; color:#4ecdc455; font-size:10px; text-align:right; pointer-events:none; line-height:2; letter-spacing:1px; }
+</style>
+</head>
+<body>
+<div id="hud"><h1>⬡ THAI HOA IP</h1><div class="sub">TERRAIN ALTITUDE + FLOOD SIMULATION · 29 STATIONS</div></div>
+<div id="scale-note">⚠ VERTICAL SCALE ×80 · FLOOD LEVEL ADJUSTABLE</div>
+<div id="stats">HIGHEST: <span>A1 · 2.58m</span><br>LOWEST: <span>B25 · 1.06m</span><br>RANGE: <span>1.52m</span></div>
+<div id="legend">
+  <div class="leg-title">ALTITUDE (m ASL)</div>
+  <div class="grad-strip"></div>
+  <div class="grad-nums"><span>1.06</span><span>1.35</span><span>1.65</span><span>1.97</span><span>2.58</span></div>
+  <div class="zone-key">
+    <div class="zone-row"><div class="zone-box" style="background:#0d2e1a;border:1px solid #1a6632"></div><span class="zone-lbl">LEFT / RIGHT ZONE</span></div>
+    <div class="zone-row"><div class="zone-box" style="background:#0a1535;border:1px solid #1a3a7a"></div><span class="zone-lbl">MIDDLE ZONE</span></div>
+    <div class="zone-row"><div class="zone-box" style="background:rgba(0,80,220,0.45);border:1px solid #0066ffaa"></div><span class="zone-lbl">FLOOD WATER</span></div>
+  </div>
+</div>
+<div id="flooded-list"></div>
+<div id="flood-panel">
+  <div class="fp-title">🌊 FLOOD WATER LEVEL SIMULATION</div>
+  <div id="flood-level-display">1.06 <span class="unit">m</span></div>
+  <input type="range" id="flood-slider" min="106" max="260" value="106" step="1">
+  <div id="flood-info">
+    <span>MIN 1.06m</span>
+    <div id="flooded-count">0 stations flooded</div>
+    <span>MAX 2.60m</span>
+  </div>
+</div>
+<div id="tooltip"><div class="tn" id="tn"></div><div class="ta" id="ta"></div><div class="tl" id="tl"></div></div>
+<div id="controls">DRAG · ROTATE &nbsp;|&nbsp; SCROLL · ZOOM<br>RIGHT-DRAG · PAN &nbsp;|&nbsp; HOVER · INSPECT</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ── rounded rect polyfill ─────────────────────────────────────
+function rrect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y); ctx.arcTo(x+w, y,   x+w, y+r,   r);
+  ctx.lineTo(x+w, y+h-r); ctx.arcTo(x+w, y+h, x+w-r, y+h, r);
+  ctx.lineTo(x+r, y+h); ctx.arcTo(x,   y+h, x,   y+h-r, r);
+  ctx.lineTo(x, y+r);   ctx.arcTo(x,   y,   x+r, y,     r);
+  ctx.closePath();
+}
+
+// ── DATA ──────────────────────────────────────────────────────
+const DATA = [
+  {id:"A1",  name:"Pump Station",       lat:10.930074,  lng:106.4756106, alt:2.58},
+  {id:"A2",  name:"Good Hoa Ky",        lat:10.9296521, lng:106.4727453, alt:1.89},
+  {id:"A3",  name:"BC Cannal-3 Road",   lat:10.9286962, lng:106.4747558, alt:1.46},
+  {id:"A4",  name:"Ha Long",            lat:10.9277517, lng:106.4767385, alt:1.64},
+  {id:"A5",  name:"Phuong Yen",         lat:10.9259794, lng:106.4758724, alt:2.07},
+  {id:"A6",  name:"BC Cannal-2 Road",   lat:10.9269199, lng:106.473882,  alt:1.25},
+  {id:"A7",  name:"VFI 1-2",            lat:10.9279055, lng:106.4718973, alt:2.01},
+  {id:"A8",  name:"Dai Cat",            lat:10.9261037, lng:106.4710082, alt:1.67},
+  {id:"A9",  name:"BC Cannal-1 Road",   lat:10.9251773, lng:106.4730177, alt:1.35},
+  {id:"A10", name:"Son So 1",           lat:10.9242421, lng:106.4748815, alt:1.78},
+  {id:"A11", name:"BC-DH Road",         lat:10.9247149, lng:106.4727902, alt:1.22},
+  {id:"A12", name:"VS-DH Road",         lat:10.9251539, lng:106.4711908, alt:1.55},
+  {id:"A13", name:"Shophouse-DH",       lat:10.9237011, lng:106.474084,  alt:1.65},
+  {id:"B14", name:"Tuoi Coffee",        lat:10.9240795, lng:106.4720193, alt:1.37},
+  {id:"B15", name:"Thipmall",           lat:10.9236298, lng:106.4724293, alt:1.17},
+  {id:"B16", name:"Phu Cuong-DH",       lat:10.9236772, lng:106.4729295, alt:1.55},
+  {id:"B17", name:"VFI 3-4",            lat:10.9212479, lng:106.4736264, alt:1.62},
+  {id:"B18", name:"BC Cannal-4 Road",   lat:10.9221024, lng:106.4717129, alt:1.17},
+  {id:"B19", name:"Viet Vet",           lat:10.923028,  lng:106.4697054, alt:1.77},
+  {id:"B20", name:"ATC",                lat:10.9212444, lng:106.4689027, alt:1.81},
+  {id:"B21", name:"BC Cannal-5 Road",   lat:10.9203264, lng:106.4708847, alt:1.13},
+  {id:"B22", name:"Nam Bac",            lat:10.9194203, lng:106.472847,  alt:1.68},
+  {id:"B23", name:"VFI 7-8",            lat:10.9184718, lng:106.4700895, alt:1.09},
+  {id:"B24", name:"True Care",          lat:10.9176523, lng:106.4672234, alt:1.97},
+  {id:"B25", name:"BC Cannal-7 Road",   lat:10.9167306, lng:106.4692015, alt:1.06},
+  {id:"B26", name:"Bach Khoa",          lat:10.9158219, lng:106.4711887, alt:1.67},
+  {id:"B27", name:"Ufarm",              lat:10.9184071, lng:106.4703937, alt:1.70},
+  {id:"B28", name:"Truong Hoang Phat",  lat:10.9149836, lng:106.4683993, alt:1.12},
+  {id:"B29", name:"VFD 9-10",           lat:10.9159151, lng:106.466363,  alt:2.05},
+];
+
+const lats=DATA.map(d=>d.lat), lngs=DATA.map(d=>d.lng), alts=DATA.map(d=>d.alt);
+const rawMinLat=Math.min(...lats), rawMaxLat=Math.max(...lats);
+const rawMinLng=Math.min(...lngs), rawMaxLng=Math.max(...lngs);
+const minAlt=Math.min(...alts), maxAlt=Math.max(...alts);
+const lngRange=rawMaxLng-rawMinLng;
+
+function labelZone(lng){
+  const t=(lng-rawMinLng)/lngRange;
+  return (t<0.30||t>0.70)?'side':'middle';
+}
+const LABEL_BG={
+  side:  {fill:'rgba(8,32,16,0.93)',  border:'rgba(30,110,55,0.8)',  idColor:'#55ffaa', altColor:'#aaff88'},
+  middle:{fill:'rgba(6,14,42,0.93)',  border:'rgba(30,70,180,0.8)',  idColor:'#88bbff', altColor:'#ffdd55'},
+};
+
+const padLat=(rawMaxLat-rawMinLat)*0.10, padLng=lngRange*0.10;
+const minLat=rawMinLat-padLat, maxLat=rawMaxLat+padLat;
+const minLng=rawMinLng-padLng, maxLng=rawMaxLng+padLng;
+
+function idw(qLat,qLng,power){
+  power=power||3; var num=0,den=0;
+  for(var i=0;i<DATA.length;i++){
+    var d=DATA[i];
+    var dx=(d.lat-qLat)*111000, dy=(d.lng-qLng)*111000*Math.cos(qLat*Math.PI/180);
+    var dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<0.1)return d.alt;
+    var w=1/Math.pow(dist,power);
+    num+=w*d.alt; den+=w;
+  }
+  return num/den;
+}
+
+const WORLD=32, VERT=80*0.152;
+function normLng(lng){return((lng-minLng)/(maxLng-minLng)-0.5)*WORLD;}
+function normLat(lat){return((lat-minLat)/(maxLat-minLat)-0.5)*(-WORLD*0.85);}
+function normAlt(alt){return((alt-minAlt)/(maxAlt-minAlt))*VERT;}
+
+function altColor(t){
+  var stops=[[0,[.05,.10,.90]],[.15,[0,.50,1]],[.30,[0,.88,.88]],[.45,[0,1,.42]],[.60,[.78,1,0]],[.78,[1,.62,0]],[1,[1,.08,0]]];
+  for(var i=0;i<stops.length-1;i++){
+    var t0=stops[i][0],c0=stops[i][1],t1=stops[i+1][0],c1=stops[i+1][1];
+    if(t>=t0&&t<=t1){
+      var s=(t-t0)/(t1-t0);
+      return[c0[0]+(c1[0]-c0[0])*s, c0[1]+(c1[1]-c0[1])*s, c0[2]+(c1[2]-c0[2])*s];
+    }
+  }
+  return stops[stops.length-1][1];
+}
+
+// ── Scene ─────────────────────────────────────────────────────
+var W=window.innerWidth, H=window.innerHeight;
+var renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(W,H);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.shadowMap.enabled=true;
+document.body.appendChild(renderer.domElement);
+
+var scene=new THREE.Scene();
+scene.background=new THREE.Color(0x060c18);
+scene.fog=new THREE.FogExp2(0x060c18, 0.012);
+
+var camera=new THREE.PerspectiveCamera(42,W/H,0.1,300);
+camera.position.set(0,26,38);
+camera.lookAt(new THREE.Vector3(0,3,0));
+
+// Lights — explicit position.set()
+var amb=new THREE.AmbientLight(0x2244aa, 3.5);
+scene.add(amb);
+
+var sun=new THREE.DirectionalLight(0xfff4e0, 2.2);
+sun.position.set(12,30,10);
+sun.castShadow=true;
+sun.shadow.mapSize.width=1024;
+sun.shadow.mapSize.height=1024;
+scene.add(sun);
+
+var fill=new THREE.DirectionalLight(0x0055cc, 0.9);
+fill.position.set(-12,6,-8);
+scene.add(fill);
+
+var rim=new THREE.DirectionalLight(0x00ffcc, 0.5);
+rim.position.set(0,10,-16);
+scene.add(rim);
+
+// Floor
+var floorGeo=new THREE.BoxGeometry(WORLD*1.18, 0.5, WORLD*1.02);
+var floorMat=new THREE.MeshStandardMaterial({color:0x0a1520, roughness:0.9, metalness:0.1});
+var floorMesh=new THREE.Mesh(floorGeo,floorMat);
+floorMesh.position.set(0,-0.26,0);
+floorMesh.receiveShadow=true;
+scene.add(floorMesh);
+
+var gridH=new THREE.GridHelper(WORLD*1.12, 24, 0x1a3a5a, 0x0e1f30);
+gridH.position.y=0.02;
+scene.add(gridH);
+
+// ── Terrain ───────────────────────────────────────────────────
+var GRID=80;
+var vCount=(GRID+1)*(GRID+1);
+var tPos=new Float32Array(vCount*3);
+var tCol=new Float32Array(vCount*3);
+var tIdx=[];
+var altGrid=[];
+
+for(var row=0;row<=GRID;row++){
+  altGrid[row]=[];
+  for(var c=0;c<=GRID;c++){
+    var lat=minLat+(row/GRID)*(maxLat-minLat);
+    var lng=minLng+(c/GRID)*(maxLng-minLng);
+    var alt=idw(lat,lng);
+    altGrid[row][c]=alt;
+    var vi=row*(GRID+1)+c;
+    tPos[vi*3+0]=normLng(lng);
+    tPos[vi*3+1]=normAlt(alt);
+    tPos[vi*3+2]=normLat(lat);
+    var t=(alt-minAlt)/(maxAlt-minAlt);
+    var ac=altColor(t);
+    tCol[vi*3+0]=ac[0]; tCol[vi*3+1]=ac[1]; tCol[vi*3+2]=ac[2];
+  }
+}
+for(var r=0;r<GRID;r++){
+  for(var c2=0;c2<GRID;c2++){
+    var a=r*(GRID+1)+c2, b=a+1, cc=a+(GRID+1), d2=cc+1;
+    tIdx.push(a,cc,b, b,cc,d2);
+  }
+}
+
+var geo=new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.BufferAttribute(tPos,3));
+geo.setAttribute('color',    new THREE.BufferAttribute(tCol,3));
+geo.setIndex(tIdx);
+geo.computeVertexNormals();
+
+var terrainMesh=new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
+  vertexColors:true, roughness:0.5, metalness:0.15, side:THREE.DoubleSide
+}));
+terrainMesh.receiveShadow=true;
+terrainMesh.castShadow=true;
+scene.add(terrainMesh);
+
+var wireMesh=new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+  color:0xffffff, wireframe:true, transparent:true, opacity:0.020
+}));
+scene.add(wireMesh);
+
+// ── Contour Lines ─────────────────────────────────────────────
+var cLevels=[1.2,1.4,1.6,1.8,2.0,2.2,2.4];
+var cColors=[0x4488ff,0x00ccff,0x00ff88,0xaaff00,0xffdd00,0xff8800,0xff3300];
+
+for(var ci=0;ci<cLevels.length;ci++){
+  var level=cLevels[ci];
+  var pts=[];
+  for(var row2=0;row2<GRID;row2++){
+    for(var c3=0;c3<GRID;c3++){
+      var a00=altGrid[row2][c3], a10=altGrid[row2][c3+1];
+      var a01=altGrid[row2+1][c3], a11=altGrid[row2+1][c3+1];
+      var lng0=minLng+(c3/GRID)*(maxLng-minLng), lng1=minLng+((c3+1)/GRID)*(maxLng-minLng);
+      var lat0=minLat+(row2/GRID)*(maxLat-minLat), lat1=minLat+((row2+1)/GRID)*(maxLat-minLat);
+      var x0=normLng(lng0), x1=normLng(lng1), z0=normLat(lat0), z1=normLat(lat1);
+      var fy=normAlt(level)+0.05;
+      var segs=[];
+      function ip(v0,v1,xa,za,xb,zb){
+        if((v0<level&&v1>=level)||(v1<level&&v0>=level)){
+          var t=(level-v0)/(v1-v0);
+          segs.push([xa+(xb-xa)*t, fy, za+(zb-za)*t]);
+        }
+      }
+      ip(a00,a10,x0,z0,x1,z0); ip(a01,a11,x0,z1,x1,z1);
+      ip(a00,a01,x0,z0,x0,z1); ip(a10,a11,x1,z0,x1,z1);
+      if(segs.length===2){ pts.push(segs[0][0],segs[0][1],segs[0][2], segs[1][0],segs[1][1],segs[1][2]); }
+    }
+  }
+  if(pts.length>0){
+    var lg=new THREE.BufferGeometry();
+    lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts),3));
+    scene.add(new THREE.LineSegments(lg, new THREE.LineBasicMaterial({color:cColors[ci],transparent:true,opacity:0.55})));
+  }
+}
+
+// ── Flood Water Plane ─────────────────────────────────────────
+var waterGeo=new THREE.PlaneGeometry(WORLD*1.1, WORLD*0.92);
+var waterMat=new THREE.MeshStandardMaterial({
+  color:0x0055dd, transparent:true, opacity:0.45,
+  roughness:0.05, metalness:0.1, side:THREE.DoubleSide
+});
+waterMat.emissive=new THREE.Color(0x003399);
+waterMat.emissiveIntensity=0.3;
+var waterMesh=new THREE.Mesh(waterGeo,waterMat);
+waterMesh.rotation.x=-Math.PI/2;
+waterMesh.position.set(0, normAlt(1.06), 0);
+waterMesh.visible=false;
+scene.add(waterMesh);
+
+// ── Station Pins ──────────────────────────────────────────────
+var pinMeshes=[], pinData=[], pinMats=[], shaftMats=[];
+var currentFloodAlt=1.06;
+
+for(var di=0;di<DATA.length;di++){
+  var d=DATA[di];
+  var px=normLng(d.lng), pz=normLat(d.lat), py=normAlt(d.alt);
+  var t2=(d.alt-minAlt)/(maxAlt-minAlt);
+  var ac2=altColor(t2);
+  var c3=new THREE.Color(ac2[0],ac2[1],ac2[2]);
+
+  var sMat=new THREE.MeshStandardMaterial({color:c3.clone(),emissive:c3.clone(),emissiveIntensity:0.5});
+  var shaft=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,4.0,8), sMat);
+  shaft.position.set(px, py+2.0, pz);
+  scene.add(shaft);
+  shaftMats.push(sMat);
+
+  var bMat=new THREE.MeshStandardMaterial({color:c3.clone(),emissive:c3.clone(),emissiveIntensity:1.4,roughness:0.1,metalness:0.5});
+  var ball=new THREE.Mesh(new THREE.SphereGeometry(0.22,12,12), bMat);
+  ball.position.set(px, py+4.1, pz);
+  ball.userData={id:d.id, name:d.name, alt:d.alt, lng:d.lng, origColor:[ac2[0],ac2[1],ac2[2]]};
+  scene.add(ball);
+  pinMeshes.push(ball);
+  pinData.push(d);
+  pinMats.push(bMat);
+
+  // Label sprite — use rrect polyfill
+  var zone=labelZone(d.lng);
+  var zc=LABEL_BG[zone];
+  var cv=document.createElement('canvas');
+  cv.width=152; cv.height=60;
+  var ctx=cv.getContext('2d');
+
+  // Background
+  ctx.fillStyle=zc.fill;
+  rrect(ctx,0,0,152,60,8);
+  ctx.fill();
+
+  // Border
+  ctx.strokeStyle=zc.border;
+  ctx.lineWidth=2;
+  rrect(ctx,1,1,150,58,7);
+  ctx.stroke();
+
+  // Left accent stripe
+  ctx.fillStyle='rgb('+Math.round(ac2[0]*255)+','+Math.round(ac2[1]*255)+','+Math.round(ac2[2]*255)+')';
+  ctx.fillRect(0,0,5,60);
+
+  // Station ID
+  ctx.fillStyle=zc.idColor;
+  ctx.font='bold 26px monospace';
+  ctx.textAlign='left';
+  ctx.fillText(d.id, 14, 27);
+
+  // Altitude
+  ctx.fillStyle=zc.altColor;
+  ctx.font='bold 20px monospace';
+  ctx.fillText(d.alt+'m', 14, 52);
+
+  var tex=new THREE.CanvasTexture(cv);
+  var spMat=new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false});
+  var sp=new THREE.Sprite(spMat);
+  sp.scale.set(2.5,0.98,1);
+  sp.position.set(px, py+5.8, pz);
+  scene.add(sp);
+}
+
+// ── Flood Slider ──────────────────────────────────────────────
+var slider=document.getElementById('flood-slider');
+var floodDisplay=document.getElementById('flood-level-display');
+var floodedCountEl=document.getElementById('flooded-count');
+var floodedListEl=document.getElementById('flooded-list');
+
+function updateFlood(val){
+  currentFloodAlt=val/100;
+  floodDisplay.innerHTML=currentFloodAlt.toFixed(2)+' <span class="unit">m</span>';
+  var wy=normAlt(currentFloodAlt);
+  var show=currentFloodAlt>1.06;
+  waterMesh.visible=show;
+  waterMesh.position.y=wy;
+
+  var flooded=[];
+  for(var i=0;i<pinMeshes.length;i++){
+    var d=pinData[i];
+    var isF=d.alt<=currentFloodAlt;
+    if(isF){
+      flooded.push(d.id);
+      pinMats[i].color.setRGB(1,0.1,0.05);
+      pinMats[i].emissive.setRGB(1,0.1,0.05);
+      pinMats[i].emissiveIntensity=2.5;
+      shaftMats[i].color.setRGB(1,0.2,0.05);
+      shaftMats[i].emissive.setRGB(1,0.2,0.05);
+    } else {
+      var oc=pinMeshes[i].userData.origColor;
+      pinMats[i].color.setRGB(oc[0],oc[1],oc[2]);
+      pinMats[i].emissive.setRGB(oc[0],oc[1],oc[2]);
+      pinMats[i].emissiveIntensity=1.4;
+      shaftMats[i].color.setRGB(oc[0],oc[1],oc[2]);
+      shaftMats[i].emissive.setRGB(oc[0],oc[1],oc[2]);
+    }
+  }
+  floodedCountEl.textContent=flooded.length+' station'+(flooded.length!==1?'s':'')+' flooded';
+  floodedCountEl.className=flooded.length>0?'danger':'';
+  floodedListEl.innerHTML=flooded.map(function(id){return '<div class="flooded-tag">⚠ '+id+'</div>';}).join('');
+}
+
+slider.addEventListener('input',function(e){updateFlood(parseInt(e.target.value));});
+
+// ── Orbit ─────────────────────────────────────────────────────
+var drag=false, rDrag=false, prev={x:0,y:0};
+var sph={theta:-0.2, phi:0.50, r:52};
+var target=new THREE.Vector3(0,2,0);
+
+function updateCam(){
+  var phi=Math.max(0.08,Math.min(1.35,sph.phi));
+  camera.position.set(
+    target.x+sph.r*Math.sin(phi)*Math.sin(sph.theta),
+    target.y+sph.r*Math.cos(phi),
+    target.z+sph.r*Math.sin(phi)*Math.cos(sph.theta)
+  );
+  camera.lookAt(target);
+}
+updateCam();
+
+var el=renderer.domElement;
+el.addEventListener('mousedown',function(e){
+  if(e.button===0)drag=true;
+  if(e.button===2)rDrag=true;
+  prev={x:e.clientX,y:e.clientY};
+});
+el.addEventListener('mouseup',function(){drag=false;rDrag=false;});
+el.addEventListener('contextmenu',function(e){e.preventDefault();});
+el.addEventListener('mousemove',function(e){
+  if(drag){
+    sph.theta-=(e.clientX-prev.x)*0.007;
+    sph.phi  -=(e.clientY-prev.y)*0.005;
+    prev={x:e.clientX,y:e.clientY};
+    updateCam();
+  }
+  if(rDrag){
+    var dx=(e.clientX-prev.x)*0.03, dy=(e.clientY-prev.y)*0.03;
+    var fwd=new THREE.Vector3();
+    camera.getWorldDirection(fwd);
+    var right=new THREE.Vector3();
+    right.crossVectors(fwd,new THREE.Vector3(0,1,0)).normalize();
+    target.addScaledVector(right,-dx);
+    target.y+=dy;
+    prev={x:e.clientX,y:e.clientY};
+    updateCam();
+  }
+  handleHover(e);
+});
+el.addEventListener('wheel',function(e){
+  sph.r=Math.max(14,Math.min(90,sph.r+e.deltaY*0.04));
+  updateCam();
+},{passive:true});
+
+var tt=document.getElementById('tooltip');
+var ray=new THREE.Raycaster(), m2d=new THREE.Vector2();
+var hoveredPin=null;
+
+function handleHover(e){
+  var rect=el.getBoundingClientRect();
+  m2d.x=((e.clientX-rect.left)/rect.width)*2-1;
+  m2d.y=-((e.clientY-rect.top)/rect.height)*2+1;
+  ray.setFromCamera(m2d,camera);
+  var hits=ray.intersectObjects(pinMeshes);
+  if(hoveredPin){hoveredPin.material.emissiveIntensity=1.4;hoveredPin.scale.setScalar(1);hoveredPin=null;}
+  if(hits.length>0){
+    var p=hits[0].object;
+    p.material.emissiveIntensity=3.5;
+    p.scale.setScalar(1.7);
+    hoveredPin=p;
+    var d=p.userData;
+    var rank=[].concat(DATA).sort(function(a,b){return b.alt-a.alt;}).findIndex(function(x){return x.id===d.id;})+1;
+    document.getElementById('tn').textContent=d.id+' · '+d.name;
+    document.getElementById('ta').textContent='▲ '+d.alt+'m   Rank #'+rank+'/29';
+    document.getElementById('tl').textContent=(d.alt<=currentFloodAlt)?'🔴 FLOODED AT THIS LEVEL':'✅ SAFE AT THIS LEVEL';
+    tt.style.display='block';
+    tt.style.left=(e.clientX+16)+'px';
+    tt.style.top=(e.clientY-20)+'px';
+  } else {
+    tt.style.display='none';
+  }
+}
+
+// ── Animate ───────────────────────────────────────────────────
+var t0=0;
+function animate(){
+  requestAnimationFrame(animate);
+  t0+=0.01;
+  if(!drag&&!rDrag){sph.theta+=0.0008;updateCam();}
+  if(waterMesh.visible){
+    waterMat.opacity=0.38+0.10*Math.sin(t0*1.2);
+    waterMesh.position.y=normAlt(currentFloodAlt)+0.08*Math.sin(t0*0.9);
+  }
+  for(var i=0;i<pinMeshes.length;i++){
+    if(pinMeshes[i]!==hoveredPin && pinData[i].alt>currentFloodAlt)
+      pinMats[i].emissiveIntensity=0.9+0.4*Math.sin(t0+i*0.8);
+  }
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener('resize',function(){
+  var w=window.innerWidth,h=window.innerHeight;
+  camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h);
+});
+</script>
+</body>
+</html>
