@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRISM PCBS — 90-Day Campaign Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #1D9E75;
+    --teal-light: #E1F5EE;
+    --teal-dark: #0F6E56;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --amber: #BA7517;
+    --amber-light: #FAEEDA;
+    --coral: #993C1D;
+    --coral-light: #FAECE7;
+    --purple: #534AB7;
+    --purple-light: #EEEDFE;
+    --gray: #F5F5F3;
+    --gray-mid: #E8E8E4;
+    --gray-dark: #888780;
+    --text: #1a1a18;
+    --text-muted: #6b6b67;
+    --border: rgba(0,0,0,0.08);
+    --white: #ffffff;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #F7F7F5;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  .page-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px 20px 48px;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-left h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+  .header-left p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+  .prism-badge {
+    background: var(--teal);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  /* ── KPI Cards ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    text-align: center;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+  .kpi-num { font-size: 26px; font-weight: 600; line-height: 1; margin-bottom: 5px; }
+  .kpi-lbl { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+  .legend-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-right: 4px; }
+  .leg-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); cursor: default; }
+  .leg-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+
+  /* ── Month Tabs ── */
+  .tab-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 20px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 5px;
+  }
+  .tab-btn {
+    padding: 9px 10px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.18s;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .tab-btn:hover { background: var(--gray); color: var(--text); }
+  .tab-btn.active { background: var(--teal); color: #fff; }
+  .tab-btn .tab-sub { display: block; font-size: 10px; font-weight: 400; opacity: 0.8; margin-top: 1px; }
+
+  /* ── Month Panel ── */
+  .month-panel { display: none; animation: fadeIn 0.2s ease; }
+  .month-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .month-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1.5px solid var(--gray-mid);
+    flex-wrap: wrap;
+  }
+  .month-title { font-size: 16px; font-weight: 600; color: var(--text); }
+  .phase-badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .month-goal {
+    margin-top: 4px;
+    width: 100%;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .month-goal strong { color: var(--text); font-weight: 600; }
+
+  /* ── Week Grid ── */
+  .channel-section { margin-bottom: 16px; }
+  .channel-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    padding-left: 2px;
+  }
+  .week-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 1fr 1fr;
+    gap: 8px;
+    align-items: stretch;
+    margin-bottom: 8px;
+  }
+  .week-tag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--gray);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    line-height: 1.3;
+    padding: 6px 4px;
+  }
+  .col-headers {
+    display: grid;
+    grid-template-columns: 70px 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .col-h { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); text-align: center; }
+
+  /* ── Post Cards ── */
+  .post-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 11px 13px;
+    cursor: pointer;
+    transition: all 0.18s;
+    position: relative;
+    overflow: hidden;
+  }
+  .post-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+  .post-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); border-color: rgba(0,0,0,0.14); }
+  .post-card.expanded { box-shadow: 0 6px 24px rgba(0,0,0,0.1); border-color: rgba(0,0,0,0.14); }
+  .post-type-row { display: flex; align-items: center; gap: 5px; margin-bottom: 5px; }
+  .type-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .type-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .post-title-txt { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.4; margin-bottom: 5px; }
+  .post-meta { font-size: 10px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+  .post-expand { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--gray-mid); display: none; }
+  .post-card.expanded .post-expand { display: block; }
+  .expand-row { margin-bottom: 7px; }
+  .expand-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 2px; }
+  .expand-val { font-size: 12px; color: var(--text); line-height: 1.5; }
+  .expand-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+  .tag-chip {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: var(--gray);
+  }
+  .click-hint {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 6px;
+    opacity: 0.6;
+  }
+
+  /* ── Divider ── */
+  .section-divider { height: 1px; background: var(--gray-mid); margin: 20px 0; }
+
+  /* ── Footer ── */
+  .cal-footer {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .footer-text { font-size: 12px; color: var(--text-muted); }
+  .footer-text strong { color: var(--text); font-weight: 600; }
+  .footer-targets { display: flex; gap: 8px; flex-wrap: wrap; }
+  .target-chip {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    border: 1px solid rgba(15,110,86,0.18);
+  }
+
+  @media (max-width: 640px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .week-row { grid-template-columns: 1fr; }
+    .col-headers { display: none; }
+    .week-tag { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1>PRISM PCBS — 90-Day Campaign Calendar</h1>
+      <p>B2B marketing tracker · LinkedIn + Zalo/Email · May – July 2026</p>
+    </div>
+    <div class="prism-badge">PRISM Consortium</div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-num" style="color: var(--teal);">12</div>
+      <div class="kpi-lbl">Developer meetings<br>90-day target</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num" style="color: var(--blue);">3</div>
+      <div class="kpi-lbl">MOU targets<br>Q3 2026</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num" style="color: var(--amber);">500+</div>
+      <div class="kpi-lbl">LinkedIn reach<br>per month</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num" style="color: var(--coral);">18</div>
+      <div class="kpi-lbl">Content pieces<br>total</div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-title">Content types:</span>
+    <span class="leg-item"><span class="leg-dot" style="background:var(--teal);"></span>Case study</span>
+    <span class="leg-item"><span class="leg-dot" style="background:var(--blue);"></span>Education / thought leadership</span>
+    <span class="leg-item"><span class="leg-dot" style="background:var(--amber);"></span>Social proof / testimonial</span>
+    <span class="leg-item"><span class="leg-dot" style="background:var(--coral);"></span>Direct outreach / CTA</span>
+    <span class="leg-item"><span class="leg-dot" style="background:var(--purple);"></span>Video / visual</span>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab(0)">May 2026<span class="tab-sub">Phase 1 · Awareness</span></button>
+    <button class="tab-btn" onclick="switchTab(1)">June 2026<span class="tab-sub">Phase 2 · Credibility</span></button>
+    <button class="tab-btn" onclick="switchTab(2)">July 2026<span class="tab-sub">Phase 3 · Conversion</span></button>
+  </div>
+
+  <!-- ══════════ MAY ══════════ -->
+  <div class="month-panel active" id="panel-0">
+    <div class="month-header">
+      <span class="month-title">May 2026 — Awareness & Foundation</span>
+      <span class="phase-badge" style="background:var(--teal-light);color:var(--teal-dark);">Phase 1: Introduce PRISM</span>
+      <div class="month-goal">
+        🎯 <strong>May goal:</strong> &nbsp;2 qualified discovery calls booked · PRISM LinkedIn page launched · 1 case study published
+      </div>
+    </div>
+
+    <!-- LinkedIn channel -->
+    <div class="channel-section">
+      <div class="channel-label">LinkedIn</div>
+      <div class="col-headers">
+        <div class="col-h"></div>
+        <div class="col-h">Week 1</div>
+        <div class="col-h">Week 2</div>
+        <div class="col-h">Week 3–4</div>
+      </div>
+      <div class="week-row">
+        <div class="week-tag">LI</div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--blue);"></span><span class="type-label" style="color:var(--blue);">Education</span></div>
+          <div class="post-title-txt">What is PCBS? Why Vietnam's industrial housing needs it now</div>
+          <div class="post-meta">📄 Article · 800 words</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Hook</div><div class="expand-val">"Vietnam is still building the old way. That needs to change."</div></div>
+            <div class="expand-row"><div class="expand-label">Key message</div><div class="expand-val">PCBS is proven globally (UK→Singapore→Thailand). Vietnam at only 5% penetration — the gap is the opportunity.</div></div>
+            <div class="expand-row"><div class="expand-label">CTA</div><div class="expand-val">Tag Kim Oanh, BECAMEX, NOVALAND LinkedIn pages in the post description</div></div>
+            <div class="expand-tags"><span class="tag-chip">#PCBS</span><span class="tag-chip">#VietnamRealEstate</span><span class="tag-chip">#PRISM</span><span class="tag-chip">#Construction</span></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--teal);"></span><span class="type-label" style="color:var(--teal);">Case Study</span></div>
+          <div class="post-title-txt">Singapore's IDD model: How precast cut construction time by 30%</div>
+          <div class="post-meta">🎠 Carousel · 6 slides</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Angle</div><div class="expand-val">Singapore HDB programme — from 1980s policy to world-class delivery. Data-driven slides with before/after timelines.</div></div>
+            <div class="expand-row"><div class="expand-label">Slides structure</div><div class="expand-val">1. The problem → 2. Singapore's bet → 3. Speed data → 4. Cost data → 5. Quality results → 6. Vietnam next?</div></div>
+            <div class="expand-tags"><span class="tag-chip">#Singapore</span><span class="tag-chip">#IDD</span><span class="tag-chip">#PrecastConcrete</span></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--purple);"></span><span class="type-label" style="color:var(--purple);">Video</span></div>
+          <div class="post-title-txt">PRISM brand launch video — "From Vision to Structure"</div>
+          <div class="post-meta">🎬 Video reel · 60 sec</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Visual direction</div><div class="expand-val">Thai Hoa IP site footage + PCBS factory clips + Chavis CEO voiceover. Use PRISM SUNO track as background.</div></div>
+            <div class="expand-row"><div class="expand-label">End card</div><div class="expand-val">PRISM logo + "Vietnam builds smarter." + contact CTA</div></div>
+            <div class="expand-tags"><span class="tag-chip">#PRISMStrength</span><span class="tag-chip">#VideoLaunch</span></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zalo/Email channel -->
+    <div class="channel-section">
+      <div class="channel-label">Zalo / Direct Email</div>
+      <div class="week-row">
+        <div class="week-tag">ZL/EM</div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--coral);"></span><span class="type-label" style="color:var(--coral);">CTA</span></div>
+          <div class="post-title-txt">Cold intro message to Kim Oanh Group project team</div>
+          <div class="post-meta">💬 Zalo direct message</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Tone</div><div class="expand-val">Respectful, brief. Reference Kim Oanh's current residential pipeline. Attach LinkedIn article link.</div></div>
+            <div class="expand-row"><div class="expand-label">Ask</div><div class="expand-val">15-minute discovery call to share PRISM PCBS framework for their 300-unit projects.</div></div>
+            <div class="expand-row"><div class="expand-label">Status</div><div class="expand-val">✅ Draft ready — LinkedIn article Week 1</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--coral);"></span><span class="type-label" style="color:var(--coral);">Outreach</span></div>
+          <div class="post-title-txt">PRISM capability deck email to BECAMEX industrial division</div>
+          <div class="post-meta">📧 Email + PDF attachment</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Attachment</div><div class="expand-val">PRISM PCBS deck (EN) — focus on industrial worker housing efficiency</div></div>
+            <div class="expand-row"><div class="expand-label">Contact</div><div class="expand-val">BECAMEX Industrial Zone BD team — confirm contact name before sending</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--amber);"></span><span class="type-label" style="color:var(--amber);">Social Proof</span></div>
+          <div class="post-title-txt">VSG Thai Hoa IP — PCBS readiness brief for NOVALAND BD team</div>
+          <div class="post-meta">📧 Email follow-up</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Positioning</div><div class="expand-val">VSG Thai Hoa IP as proof-of-concept environment. KCN Đức Hòa III location advantages for NOVALAND projects.</div></div>
+            <div class="expand-row"><div class="expand-label">Ask</div><div class="expand-val">Site visit invitation — June window</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ JUNE ══════════ -->
+  <div class="month-panel" id="panel-1">
+    <div class="month-header">
+      <span class="month-title">June 2026 — Credibility & Engagement</span>
+      <span class="phase-badge" style="background:var(--blue-light);color:var(--blue);">Phase 2: Build trust with data</span>
+      <div class="month-goal">
+        🎯 <strong>June goal:</strong> &nbsp;1 site visit completed · 5 active conversations · 1 MOU discussion started
+      </div>
+    </div>
+
+    <div class="channel-section">
+      <div class="channel-label">LinkedIn</div>
+      <div class="col-headers">
+        <div class="col-h"></div>
+        <div class="col-h">Week 1</div>
+        <div class="col-h">Week 2</div>
+        <div class="col-h">Week 3–4</div>
+      </div>
+      <div class="week-row">
+        <div class="week-tag">LI</div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--blue);"></span><span class="type-label" style="color:var(--blue);">Education</span></div>
+          <div class="post-title-txt">PCBS vs traditional RC: Cost breakdown for a 300-unit project in Vietnam</div>
+          <div class="post-meta">📊 Infographic post</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Data source</div><div class="expand-val">PRISM ROI model + Kim Oanh 300-unit financial plan (Thông tư 11/2021/TT-BXD direct/indirect cost framework)</div></div>
+            <div class="expand-row"><div class="expand-label">Key stat</div><div class="expand-val">Show 20–30% total cost advantage for PCBS at scale (labour + time + rework reduction)</div></div>
+            <div class="expand-tags"><span class="tag-chip">#ROI</span><span class="tag-chip">#CostAnalysis</span><span class="tag-chip">#VietnamConstruction</span></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--amber);"></span><span class="type-label" style="color:var(--amber);">Social Proof</span></div>
+          <div class="post-title-txt">McDB partner spotlight: How PRISM Consortium delivers end-to-end</div>
+          <div class="post-meta">📄 Article · 600 words</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Angle</div><div class="expand-val">Introduce PRISM consortium structure — McDB, Arcon, Do Gia, Finpro. Each partner's role in end-to-end delivery.</div></div>
+            <div class="expand-row"><div class="expand-label">Trust signal</div><div class="expand-val">Consortium model reduces single-vendor risk — key objection from large developers</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--teal);"></span><span class="type-label" style="color:var(--teal);">Case Study</span></div>
+          <div class="post-title-txt">Thailand's PCBS boom 2004–2024: Lessons for Vietnam developers</div>
+          <div class="post-meta">🎠 Carousel · 8 slides</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Narrative arc</div><div class="expand-val">Thailand 2004 IDD policy → adoption curve → 20-year results → Vietnam at same inflection point now</div></div>
+            <div class="expand-row"><div class="expand-label">CTA slide</div><div class="expand-val">"Which Vietnamese developer will be first?"</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="channel-section">
+      <div class="channel-label">Zalo / Direct Email</div>
+      <div class="week-row">
+        <div class="week-tag">ZL/EM</div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--coral);"></span><span class="type-label" style="color:var(--coral);">Outreach</span></div>
+          <div class="post-title-txt">Follow-up to May contacts: Share ROI model summary (Kim Oanh 300-unit)</div>
+          <div class="post-meta">💬 Zalo + Email</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Content</div><div class="expand-val">1-page PDF summary of PCBS ROI model specific to 300-unit residential project. Position as tailored, not generic.</div></div>
+            <div class="expand-row"><div class="expand-label">Ask</div><div class="expand-val">Request 30-min technical walkthrough meeting in June</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--purple);"></span><span class="type-label" style="color:var(--purple);">Video</span></div>
+          <div class="post-title-txt">PRISM site walkthrough at Thai Hoa IP — short testimonial reel</div>
+          <div class="post-meta">🎬 Zalo Broadcast</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Format</div><div class="expand-val">90 sec vertical video. Chavis walks through Thai Hoa IP showing scale, infrastructure, logistics readiness for PCBS supply chain.</div></div>
+            <div class="expand-row"><div class="expand-label">Distribution</div><div class="expand-val">Broadcast to Zalo contacts + share to personal LinkedIn profile</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--coral);"></span><span class="type-label" style="color:var(--coral);">CTA</span></div>
+          <div class="post-title-txt">Invite NOVALAND & BECAMEX to PRISM site visit at KCN Đức Hòa III</div>
+          <div class="post-meta">📧 Formal email invitation</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Format</div><div class="expand-val">Formal letter on VSG/IPSV letterhead. Propose 3 date options in late June. Include agenda: site tour + PRISM briefing + Q&A lunch.</div></div>
+            <div class="expand-row"><div class="expand-label">Host</div><div class="expand-val">Chavis + PRISM consortium partners present</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ JULY ══════════ -->
+  <div class="month-panel" id="panel-2">
+    <div class="month-header">
+      <span class="month-title">July 2026 — Conversion & Close</span>
+      <span class="phase-badge" style="background:var(--amber-light);color:var(--amber);">Phase 3: Push to MOU</span>
+      <div class="month-goal">
+        🎯 <strong>July goal:</strong> &nbsp;3 MOUs signed or in final review · Roundtable held · 12 total meetings completed
+      </div>
+    </div>
+
+    <div class="channel-section">
+      <div class="channel-label">LinkedIn</div>
+      <div class="col-headers">
+        <div class="col-h"></div>
+        <div class="col-h">Week 1</div>
+        <div class="col-h">Week 2</div>
+        <div class="col-h">Week 3–4</div>
+      </div>
+      <div class="week-row">
+        <div class="week-tag">LI</div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--amber);"></span><span class="type-label" style="color:var(--amber);">Social Proof</span></div>
+          <div class="post-title-txt">PRISM pilot result announcement: Speed, cost, quality results</div>
+          <div class="post-meta">📊 Results post + data visual</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Content</div><div class="expand-val">Share real numbers from any completed PCBS pilot or reference project. Even Thai Hoa IP construction data works as a proxy.</div></div>
+            <div class="expand-row"><div class="expand-label">Format</div><div class="expand-val">3-stat visual: Time saved / Cost delta / Quality score. Clean branded graphic.</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--purple);"></span><span class="type-label" style="color:var(--purple);">Video</span></div>
+          <div class="post-title-txt">Chavis CEO message: "Why PRISM for Vietnam real estate in 2026"</div>
+          <div class="post-meta">🎬 LinkedIn video · 90 sec</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Script direction</div><div class="expand-val">Personal, direct. Chavis to camera. Not corporate. Reference the 90-day journey, what PRISM learned, what's next. Authentic tone wins on LinkedIn.</div></div>
+            <div class="expand-row"><div class="expand-label">Setting</div><div class="expand-val">Thai Hoa IP outdoor or office — real environment, not studio</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--coral);"></span><span class="type-label" style="color:var(--coral);">CTA</span></div>
+          <div class="post-title-txt">PRISM 90-day campaign recap + call for developer partnerships</div>
+          <div class="post-meta">📄 Article + contact CTA</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Structure</div><div class="expand-val">What we did in 90 days → What we learned → What's next → Open invitation to partner with PRISM</div></div>
+            <div class="expand-row"><div class="expand-label">CTA</div><div class="expand-val">Direct email: chavis@vietsongroup.com · "Let's build Vietnam smarter together."</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="channel-section">
+      <div class="channel-label">Zalo / Direct Email</div>
+      <div class="week-row">
+        <div class="week-tag">ZL/EM</div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--coral);"></span><span class="type-label" style="color:var(--coral);">CTA</span></div>
+          <div class="post-title-txt">Send MOU draft to most engaged developer (Kim Oanh priority)</div>
+          <div class="post-meta">📧 Email + Zalo</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Document</div><div class="expand-val">MOU: PRISM Consortium × Kim Oanh Group — pilot project scope, deliverables, timeline, exclusivity window.</div></div>
+            <div class="expand-row"><div class="expand-label">Note</div><div class="expand-val">Send via Joy (CDO/GA) to ensure proper legal formatting before dispatch</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--teal);"></span><span class="type-label" style="color:var(--teal);">Case Study</span></div>
+          <div class="post-title-txt">Final PRISM pitch deck: customized per developer's pipeline</div>
+          <div class="post-meta">📎 Targeted email</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Versions needed</div><div class="expand-val">3 decks: Kim Oanh (residential), BECAMEX (industrial worker housing), NOVALAND (mixed-use)</div></div>
+            <div class="expand-row"><div class="expand-label">Owner</div><div class="expand-val">Lisa (CMO) prepares · Chavis reviews before send</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+        <div class="post-card" onclick="toggleCard(this)">
+          <div class="post-type-row"><span class="type-dot" style="background:var(--amber);"></span><span class="type-label" style="color:var(--amber);">Event</span></div>
+          <div class="post-title-txt">Host PRISM developer roundtable — HCMC or Long An venue</div>
+          <div class="post-meta">🏛️ Event invite · all 3 targets</div>
+          <div class="post-expand">
+            <div class="expand-row"><div class="expand-label">Format</div><div class="expand-val">Half-day event. Morning: PCBS technical briefing + PRISM consortium intro. Lunch: networking. Afternoon: site visit at Thai Hoa IP option.</div></div>
+            <div class="expand-row"><div class="expand-label">Guests</div><div class="expand-val">Kim Oanh, BECAMEX, NOVALAND BD teams + PRISM partners: McDB, Arcon, Do Gia, Finpro</div></div>
+            <div class="expand-row"><div class="expand-label">Owner</div><div class="expand-val">Joy (CDO/GA) coordinates logistics · Chavis hosts</div></div>
+          </div>
+          <div class="click-hint">Click to expand ▾</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- Footer -->
+  <div class="cal-footer">
+    <div class="footer-text"><strong>Target developers:</strong> Kim Oanh Group · BECAMEX · NOVALAND</div>
+    <div class="footer-targets">
+      <span class="target-chip">PRISM Consortium</span>
+      <span class="target-chip">McDB · Arcon · Do Gia · Finpro</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function switchTab(idx) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+    document.querySelectorAll('.month-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  }
+  function toggleCard(card) {
+    const wasExpanded = card.classList.contains('expanded');
+    card.closest('.week-row').querySelectorAll('.post-card').forEach(c => c.classList.remove('expanded'));
+    if (!wasExpanded) card.classList.add('expanded');
+    const hint = card.querySelector('.click-hint');
+    if (hint) hint.textContent = card.classList.contains('expanded') ? 'Click to collapse ▴' : 'Click to expand ▾';
+  }
+</script>
+</body>
+</html>
