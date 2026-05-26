@@ -30,15 +30,18 @@
         const d = await r.json();
         if (d.records && d.records.length > 0) {
           AT_RID = d.records[0].id;
-          return JSON.parse(d.records[0].fields.Value || "{}");
+          const parsed = JSON.parse(d.records[0].fields.Value || "{}");
+          // Handle both old format {key:true} and new format {checks:{}, timestamps:{}}
+          if (parsed.checks) return { checks: parsed.checks, timestamps: parsed.timestamps || {}, verifications: parsed.verifications || {} };
+          return { checks: parsed, timestamps: {}, verifications: {} };
         }
         return null;
       } catch(e) { return null; }
     }
 
-    async function atSave(checks) {
+    async function atSave(checks, timestamps, verifications) {
       try {
-        const body = { fields:{ Key:AT_KEY, Value:JSON.stringify(checks) } };
+        const body = { fields:{ Key:AT_KEY, Value:JSON.stringify({ checks, timestamps, verifications: verifications||{}, savedAt: new Date().toISOString() }) } };
         if (AT_RID) {
           await fetch(`${AT_URL}/${AT_RID}`, {
             method:"PATCH",
@@ -102,23 +105,50 @@
       const [checks, setChecks] = useState(() => {
         try { const s = localStorage.getItem("vsg_sprint_checks"); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
       });
+      const [timestamps, setTimestamps] = useState(() => {
+        try { const s = localStorage.getItem("vsg_sprint_ts"); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
+      });
+      const [verifications, setVerifications] = useState(() => {
+        try { const s = localStorage.getItem("vsg_sprint_verif"); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
+      });
+      const [adminUnlocked, setAdminUnlocked] = useState(false);
+      const unlockAdmin = () => {
+        const pin = prompt("Enter Admin PIN to verify tasks:");
+        if (pin === "CHAVIS2026") { setAdminUnlocked(true); alert("✅ Admin mode unlocked!"); }
+        else if (pin !== null) { alert("❌ Wrong PIN. Contact Chavis."); }
+      };
+      const resetVerifications = () => {
+        if (!adminUnlocked) { unlockAdmin(); return; }
+        if (!confirm("Reset ALL verifications to 0/9?")) return;
+        setVerifications({});
+        try { localStorage.setItem("vsg_sprint_verif", JSON.stringify({})); } catch(e) {}
+        const curC = (() => { try{const s=localStorage.getItem("vsg_sprint_checks");return s?JSON.parse(s):{};}catch(e){return{};} })();
+        const curT = (() => { try{const s=localStorage.getItem("vsg_sprint_ts");return s?JSON.parse(s):{};}catch(e){return{};} })();
+        atSave(curC, curT, {}).then(()=>setSyncMsg("☁️ Verifications reset ✓"));
+      };
       const [selected, setSelected] = useState(null);
       const [syncing, setSyncing] = useState(false);
       const [syncMsg, setSyncMsg] = useState("⏳ Loading from cloud...");
 
       useEffect(() => {
-        atLoad().then(atData => {
-          const atCount  = atData  ? Object.values(atData).filter(Boolean).length  : 0;
-          let lsData = {};
-          try { const s = localStorage.getItem("vsg_sprint_checks"); lsData = s ? JSON.parse(s) : {}; } catch(e) {}
-          const lsCount  = Object.values(lsData).filter(Boolean).length;
+        atLoad().then(result => {
+          const atChecks = result ? result.checks : {};
+          const atTs     = result ? result.timestamps : {};
+          const atCount  = Object.values(atChecks).filter(Boolean).length;
+          let lsChecks = {}, lsTs = {};
+          try { const s = localStorage.getItem("vsg_sprint_checks"); lsChecks = s ? JSON.parse(s) : {}; } catch(e) {}
+          try { const s = localStorage.getItem("vsg_sprint_ts");     lsTs     = s ? JSON.parse(s) : {}; } catch(e) {}
+          const lsCount = Object.values(lsChecks).filter(Boolean).length;
           if (atCount >= lsCount && atCount > 0) {
-            setChecks(atData);
-            try { localStorage.setItem("vsg_sprint_checks", JSON.stringify(atData)); } catch(e) {}
+            const atVerif = result.verifications || {};
+            setChecks(atChecks); setTimestamps(atTs); setVerifications(atVerif);
+            try { localStorage.setItem("vsg_sprint_checks", JSON.stringify(atChecks)); } catch(e) {}
+            try { localStorage.setItem("vsg_sprint_ts",     JSON.stringify(atTs));     } catch(e) {}
+            try { localStorage.setItem("vsg_sprint_verif",  JSON.stringify(atVerif));  } catch(e) {}
             setSyncMsg("☁️ Loaded from cloud (" + atCount + " tasks)");
           } else if (lsCount > 0) {
             setSyncMsg("☁️ Using local data (" + lsCount + " tasks) — saving to cloud...");
-            atSave(lsData).then(() => setSyncMsg("☁️ Synced to cloud ✓ (" + lsCount + " tasks)"));
+            atSave(lsChecks, lsTs, {}).then(() => setSyncMsg("☁️ Synced to cloud ✓ (" + lsCount + " tasks)"));
           } else {
             setSyncMsg("☁️ Ready — no data yet");
           }
@@ -133,19 +163,47 @@
 
       const toggle = (id, wk, ti) => {
         const k = `${id}-${wk}-${ti}`;
-        setChecks(prev => {
-          const next = { ...prev, [k]: !prev[k] };
-          try { localStorage.setItem("vsg_sprint_checks", JSON.stringify(next)); } catch(e) {}
+        const now = new Date().toISOString();
+        setChecks(prevC => {
+          const nextC = { ...prevC, [k]: !prevC[k] };
+          setTimestamps(prevT => {
+            const nextT = { ...prevT };
+            if (nextC[k]) { nextT[k] = now; } else { delete nextT[k]; }
+            try { localStorage.setItem("vsg_sprint_checks", JSON.stringify(nextC)); } catch(e) {}
+            try { localStorage.setItem("vsg_sprint_ts",     JSON.stringify(nextT)); } catch(e) {}
+            setTimeout(() => {
+              setSyncMsg("💾 Saving...");
+              const curVerif = (() => { try { const s=localStorage.getItem("vsg_sprint_verif"); return s?JSON.parse(s):{};} catch(e){return{};} })();
+              atSave(nextC, nextT, curVerif).then(() => setSyncMsg("☁️ Saved ✓ " + new Date().toLocaleTimeString('vi-VN')));
+            }, 0);
+            return nextT;
+          });
+          return nextC;
+        });
+      };
+
+      const verifyMember = (id) => {
+        const now = new Date().toISOString();
+        setVerifications(prev => {
+          const next = { ...prev, [id]: now };
+          try { localStorage.setItem("vsg_sprint_verif", JSON.stringify(next)); } catch(e) {}
           setTimeout(() => {
-            setSyncMsg("💾 Saving to cloud...");
-            atSave(next).then(() => setSyncMsg("☁️ Cloud saved ✓ — " + new Date().toLocaleTimeString('vi-VN')));
+            atSave({...checks}, {...timestamps}, next).then(()=>setSyncMsg("☁️ Verified ✓ " + new Date().toLocaleTimeString('vi-VN')));
           }, 0);
           return next;
         });
       };
 
+      const unverifyMember = (id) => {
+        setVerifications(prev => {
+          const next = { ...prev }; delete next[id];
+          try { localStorage.setItem("vsg_sprint_verif", JSON.stringify(next)); } catch(e) {}
+          return next;
+        });
+      };
+
       const saveProgress = () => {
-        const data = { checks, savedAt: new Date().toISOString(), version: "VSG-Sprint-v1" };
+        const data = { checks, timestamps, savedAt: new Date().toISOString(), version: "VSG-Sprint-v2" };
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -162,9 +220,11 @@
         reader.onload = (ev) => {
           try {
             const data = JSON.parse(ev.target.result);
-            const loaded = data.checks || data;
-            setChecks(loaded);
+            const loaded   = data.checks || data;
+            const loadedTs = data.timestamps || {};
+            setChecks(loaded); setTimestamps(loadedTs);
             try { localStorage.setItem("vsg_sprint_checks", JSON.stringify(loaded)); } catch(err) {}
+            try { localStorage.setItem("vsg_sprint_ts",     JSON.stringify(loadedTs)); } catch(err) {}
             alert("✅ Progress loaded successfully! / Đã tải tiến độ thành công!");
           } catch(err) {
             alert("❌ Invalid file. Please use a VSG Sprint save file.");
@@ -176,9 +236,31 @@
       const totalChecks   = Object.values(checks).filter(Boolean).length;
       const totalPossible = TEAM.length * 16;
       const teamPct       = Math.round((totalChecks / totalPossible) * 100);
-      const champions     = TEAM.filter(m => getScore(m.id) >= 13).length;
-      const ranked        = [...TEAM].map(m => ({ ...m, score: getScore(m.id) })).sort((a,b) => b.score - a.score);
-      const wk            = WEEKS.find(w => w.wk === activeWk);
+      const hasWeekComplete = (id) => WEEKS.some(w =>
+        w.tasks.every((_,ti) => checks[`${id}-${w.wk}-${ti}`])
+      );
+      // Wk Completed card: tasks done this active week across ALL team members
+      const wkCompleted = TEAM.reduce((sum,m) =>
+        sum + WEEKS.find(w=>w.wk===activeWk).tasks.filter((_,ti)=>checks[`${m.id}-${activeWk}-${ti}`]).length, 0);
+      const wkTotal = TEAM.length * 4;
+      // Champion: person with most recently ticked task
+      const getLatestTs = (id) => {
+        const keys = Object.keys(timestamps).filter(k => k.startsWith(`${id}-`) && checks[k] && timestamps[k]);
+        return keys.length ? keys.reduce((l,k) => timestamps[k]>l ? timestamps[k] : l, "") : "";
+      };
+      // Champion = person who FIRST completed all 4 tasks of any sprint week
+      const getWeekFinishTime = (id, wk) => {
+        const allDone = WEEKS.find(w=>w.wk===wk).tasks.every((_,ti) => checks[`${id}-${wk}-${ti}`]);
+        if (!allDone) return null;
+        const ts = WEEKS.find(w=>w.wk===wk).tasks.map((_,ti) => timestamps[`${id}-${wk}-${ti}`]||"").filter(Boolean);
+        return ts.length === 4 ? ts.reduce((l,t)=>t>l?t:l,"") : null;
+      };
+      const allFinishes = TEAM.flatMap(m => WEEKS.map(w => ({ m, t: getWeekFinishTime(m.id, w.wk) }))).filter(x=>x.t);
+      const firstFinish  = allFinishes.sort((a,b)=>a.t.localeCompare(b.t))[0] || null;
+      const championMember = firstFinish ? firstFinish.m : null;
+      const championTime   = firstFinish ? firstFinish.t : null;
+      const ranked = [...TEAM].map(m => ({ ...m, score: getScore(m.id) })).sort((a,b) => b.score - a.score);
+      const wk     = WEEKS.find(w => w.wk === activeWk);
 
       const s = {
         wrap:    { fontFamily:"'Segoe UI',Arial,sans-serif", background:"#C7F068", minHeight:"100vh", color:"#1a2332" },
@@ -197,7 +279,7 @@
         progSub: { fontSize:11, color:"rgba(255,255,255,.4)" },
         wfBtn:   { background:ORANGE, color:"#fff", border:"none", borderRadius:8, padding:"9px 16px", fontSize:12.5, fontWeight:700, cursor:"pointer", letterSpacing:"0.03em", whiteSpace:"nowrap", textDecoration:"none", display:"inline-flex", alignItems:"center", gap:6 },
         main:    { maxWidth:900, margin:"0 auto", padding:"16px 24px 40px" },
-        cards:   { display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10, marginBottom:16 },
+        cards:   { display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10, marginBottom:10 },
         card:    { background:"#fff", borderRadius:10, border:"1px solid #e2e8f0", padding:"14px 16px" },
         cardLbl: { fontSize:10, fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:"#94a3b8", marginBottom:4 },
         cardVal: { fontSize:28, fontWeight:800, color:NAVY, lineHeight:1 },
@@ -279,13 +361,24 @@
 
           {/* MAIN */}
           <div style={s.main}>
-            {/* Stats */}
+            {/* Admin Bar */}
+          <div style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:8,marginBottom:10}}>
+            {adminUnlocked
+              ? <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <span style={{fontSize:11,color:"#166534",fontWeight:600,background:"#dcfce7",padding:"4px 12px",borderRadius:20}}>🔓 Admin Mode Active</span>
+                  <button onClick={resetVerifications} style={{fontSize:11,fontWeight:600,background:"#fee2e2",color:"#dc2626",border:"1px solid #fca5a5",borderRadius:20,padding:"4px 12px",cursor:"pointer"}}>Reset Verifications</button>
+                  <button onClick={()=>setAdminUnlocked(false)} style={{fontSize:11,fontWeight:600,background:"#f1f5f9",color:"#64748b",border:"1px solid #e2e8f0",borderRadius:20,padding:"4px 12px",cursor:"pointer"}}>🔒 Lock</button>
+                </div>
+              : <button onClick={unlockAdmin} style={{fontSize:11,fontWeight:600,background:"#f1f5f9",color:"#64748b",border:"1px solid #e2e8f0",borderRadius:20,padding:"4px 12px",cursor:"pointer"}}>🔒 Admin Login</button>
+            }
+          </div>
+          {/* Stats */}
             <div style={s.cards}>
               {[
-                { lbl:"Team Members", val:9,       sub:"active" },
-                { lbl:"Sprint Length", val:"30",    sub:"days" },
-                { lbl:"Target Gain",  val:"30%",    sub:"per person" },
-                { lbl:"Champions 🏆", val:champions, sub:"so far" },
+                { lbl:"Team Members",             val:9,          sub:"active" },
+                { lbl:`Wk ${activeWk} Completed`, val:`${wkCompleted}/${wkTotal}`, sub:"tasks this week" },
+                { lbl:"Champion 🏆",              val: championMember ? championMember.name : "—", sub: championTime ? "First finish: " + new Date(championTime).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}) : "first to finish a full week" },
+                { lbl:"✅ Verified",              val:`${Object.keys(verifications).length}/9`, sub:"by Chavis · Wk 4" },
               ].map((c,i) => (
                 <div key={i} style={s.card}>
                   <div style={s.cardLbl}>{c.lbl}</div>
@@ -296,12 +389,21 @@
             </div>
 
             {/* Week tabs */}
-            <div style={s.wkTabs}>
-              {WEEKS.map(w => (
-                <button key={w.wk} style={s.wkTab(activeWk===w.wk)} onClick={()=>setActiveWk(w.wk)}>
-                  {w.emoji} {w.label}
+            <div style={{display:"flex",gap:8,marginBottom:16,width:"100%"}}>
+              {WEEKS.map((w,wi) => {
+                const WK_DATES=["Wk21 · May 18–24","Wk22 · May 25–31","Wk23 · Jun 1–7","Wk24 · Jun 8–14"];
+                const on = activeWk===w.wk;
+                return (
+                <button key={w.wk} onClick={()=>setActiveWk(w.wk)}
+                  style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
+                    padding:"10px 8px",borderRadius:20,flex:1,height:64,
+                    border:`1.5px solid ${on?ORANGE:"#e2e8f0"}`,
+                    background:on?ORANGE:"#fff",color:on?"#fff":"#64748b",
+                    cursor:"pointer"}}>
+                  <span style={{fontSize:13,fontWeight:700}}>{w.emoji} {w.label}</span>
+                  <span style={{fontSize:11,fontWeight:500,opacity:.8,marginTop:3}}>{WK_DATES[wi]}</span>
                 </button>
-              ))}
+              )})}
             </div>
 
             {/* Week band */}
@@ -339,6 +441,8 @@
                           <span style={s.mName}>{m.name}</span>
                           <span style={{fontSize:11,background:"#f1f5f9",color:"#64748b",padding:"2px 8px",borderRadius:20,fontWeight:600}}>{m.role}</span>
                           <span style={s.badge(bdg.bg,bdg.color)}>{bdg.emoji} {bdg.label}</span>
+                          {hasWeekComplete(m.id) && <span style={{fontSize:10,fontWeight:700,background:"#fef3c7",color:"#92400e",padding:"2px 7px",borderRadius:20}}>🏆</span>}
+                          {hasWeekComplete(m.id) && <span style={{fontSize:11,fontWeight:700,background:"#fef3c7",color:"#92400e",padding:"2px 9px",borderRadius:20}}>🏆 Champion</span>}
                         </div>
                         <div style={{fontSize:11,color:"#94a3b8",marginTop:2}}>{m.mission}</div>
                         <div style={{marginTop:8}}>
@@ -377,6 +481,8 @@
                             <span style={{fontSize:10,background:"#f1f5f9",color:"#64748b",padding:"2px 7px",borderRadius:20,fontWeight:600}}>{m.role}</span>
                           </div>
                           <span style={s.badge(bdg.bg,bdg.color)}>{bdg.emoji} {bdg.label}</span>
+                          {hasWeekComplete(m.id) && <span style={{fontSize:10,fontWeight:700,background:"#fef3c7",color:"#92400e",padding:"2px 7px",borderRadius:20}}>🏆</span>}
+                          {hasWeekComplete(m.id) && <span style={{fontSize:11,fontWeight:700,background:"#fef3c7",color:"#92400e",padding:"2px 9px",borderRadius:20}}>🏆 Champion</span>}
                         </div>
                         <div style={{fontSize:18,fontWeight:800,color:m.color}}>{score}<span style={{fontSize:11,color:"#94a3b8"}}>/16</span></div>
                       </div>
@@ -409,13 +515,14 @@
                         <div style={s.ttAvRow}>
                           <div style={s.av(m.color)}>{m.initials}</div>
                           <div>
-                            <div style={{display:"flex",alignItems:"center",gap:8}}>
+                            <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
                               <span style={{fontWeight:800,fontSize:14,color:NAVY}}>{m.name}</span>
                               <span style={{fontSize:11,background:"#f1f5f9",color:"#64748b",padding:"2px 8px",borderRadius:20,fontWeight:600}}>{m.role}</span>
                             </div>
                             <div style={{fontSize:11,color:"#94a3b8",marginTop:1}}>{m.mission}</div>
                           </div>
                         </div>
+
                         <div style={{display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
                           <div style={{textAlign:"center"}}>
                             <div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.08em"}}>This week</div>
@@ -431,13 +538,43 @@
                       {isOpen && (
                         <div style={s.ttTasks}>
                           {wk.tasks.map((task,ti) => {
-                            const done = !!checks[`${m.id}-${activeWk}-${ti}`];
+                            const done   = !!checks[`${m.id}-${activeWk}-${ti}`];
+                            const locked = activeWk === 4 && !verifications[m.id];
+                            const ts_key = `${m.id}-${activeWk}-${ti}`;
                             return (
-                              <div key={ti} style={s.ttTask(done)} onClick={()=>toggle(m.id,activeWk,ti)}>
+                              <div key={ti}
+                                style={{...s.ttTask(done), opacity:locked?0.5:1, cursor:locked?"not-allowed":"pointer", background:locked?"#f8fafc":done?"#f0fdf4":"#f8fafc"}}
+                                onClick={locked ? undefined : ()=>toggle(m.id,activeWk,ti)}>
                                 <div style={s.ttChk(done)}>
-                                  {done && <span style={{color:"#fff",fontSize:10,fontWeight:700}}>✓</span>}
+                                  {locked
+                                    ? <span style={{fontSize:10}}>🔒</span>
+                                    : done && <span style={{color:"#fff",fontSize:10,fontWeight:700}}>✓</span>}
                                 </div>
-                                <span style={s.ttTxt(done)}>{task}</span>
+                                <div style={{flex:1}}>
+                                  <span style={s.ttTxt(done)}>
+                                    <span style={{fontWeight:700,color:done?"#166534":locked?"#94a3b8":"#1a3a5c",marginRight:4}}>{ti+1}.</span>{task}
+                                  </span>
+                                  {done && timestamps[ts_key] && (
+                                    <div style={{fontSize:10,color:"#16a34a",marginTop:2,fontWeight:500}}>
+                                      ✓ {new Date(timestamps[ts_key]).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+                                    </div>
+                                  )}
+                                  {locked && <div style={{fontSize:10,color:"#94a3b8",marginTop:2}}>🔒 Requires Chavis verification</div>}
+                                </div>
+                                {/* Chavis verify badge per task */}
+                                <div style={{flexShrink:0,marginLeft:6}} onClick={e=>e.stopPropagation()}>
+                                  {verifications[m.id]
+                                    ? <div style={{background:"#dcfce7",border:"1px solid #16a34a",borderRadius:6,padding:"3px 8px",textAlign:"center",minWidth:80}}>
+                                        <div style={{fontSize:9,fontWeight:700,color:"#166534"}}>✅ Chavis</div>
+                                        <div style={{fontSize:9,color:"#16a34a",whiteSpace:"nowrap"}}>{new Date(verifications[m.id]).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>
+                                        {ti===0 && <div style={{fontSize:8,color:"#94a3b8",cursor:"pointer",textDecoration:"underline"}} onClick={()=>unverifyMember(m.id)}>undo</div>}
+                                      </div>
+                                    : <button onClick={adminUnlocked ? ()=>verifyMember(m.id) : unlockAdmin}
+                                        style={{background:adminUnlocked?"#1a3a5c":"#64748b",color:"#fff",border:"none",borderRadius:6,padding:"4px 8px",fontSize:9,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>
+                                        {adminUnlocked ? "🔏 Verify" : "🔒 Locked"}
+                                      </button>
+                                  }
+                                </div>
                               </div>
                             );
                           })}
