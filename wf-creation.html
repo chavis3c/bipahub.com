@@ -130,6 +130,11 @@
       const [syncing, setSyncing] = useState(false);
       const [syncMsg, setSyncMsg] = useState("⏳ Loading from cloud...");
 
+      // Auto-redirect away from Wk4 if not admin
+      useEffect(() => {
+        if (activeWk === 4 && !adminUnlocked) setActiveWk(1);
+      }, [adminUnlocked]);
+
       useEffect(() => {
         atLoad().then(result => {
           const atChecks = result ? result.checks : {};
@@ -393,15 +398,23 @@
               {WEEKS.map((w,wi) => {
                 const WK_DATES=["Wk21 · May 18–24","Wk22 · May 25–31","Wk23 · Jun 1–7","Wk24 · Jun 8–14"];
                 const on = activeWk===w.wk;
+                const isWk4    = w.wk === 4;
+                const disabled = isWk4 && !adminUnlocked;
                 return (
-                <button key={w.wk} onClick={()=>setActiveWk(w.wk)}
+                <button key={w.wk}
+                  onClick={disabled ? unlockAdmin : ()=>setActiveWk(w.wk)}
+                  title={disabled ? "🔒 Wk4 requires Admin Login" : ""}
                   style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
                     padding:"10px 8px",borderRadius:20,flex:1,height:64,
-                    border:`1.5px solid ${on?ORANGE:"#e2e8f0"}`,
-                    background:on?ORANGE:"#fff",color:on?"#fff":"#64748b",
-                    cursor:"pointer"}}>
-                  <span style={{fontSize:13,fontWeight:700}}>{w.emoji} {w.label}</span>
-                  <span style={{fontSize:11,fontWeight:500,opacity:.8,marginTop:3}}>{WK_DATES[wi]}</span>
+                    border:`1.5px solid ${disabled?"#e2e8f0":on?ORANGE:"#e2e8f0"}`,
+                    background:disabled?"#f8fafc":on?ORANGE:"#fff",
+                    color:disabled?"#cbd5e1":on?"#fff":"#64748b",
+                    cursor:disabled?"not-allowed":"pointer",
+                    opacity:disabled?0.6:1}}>
+                  <span style={{fontSize:13,fontWeight:700}}>{disabled?"🔒":w.emoji} {w.label}</span>
+                  <span style={{fontSize:11,fontWeight:500,opacity:.8,marginTop:3}}>
+                    {disabled ? "Admin only" : WK_DATES[wi]}
+                  </span>
                 </button>
               )})}
             </div>
