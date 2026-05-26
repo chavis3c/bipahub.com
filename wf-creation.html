@@ -32,16 +32,16 @@
           AT_RID = d.records[0].id;
           const parsed = JSON.parse(d.records[0].fields.Value || "{}");
           // Handle both old format {key:true} and new format {checks:{}, timestamps:{}}
-          if (parsed.checks) return { checks: parsed.checks, timestamps: parsed.timestamps || {}, verifications: parsed.verifications || {} };
-          return { checks: parsed, timestamps: {}, verifications: {} };
+          if (parsed.checks) return { checks: parsed.checks, timestamps: parsed.timestamps || {}, verifications: parsed.verifications || {}, scores: parsed.scores || {} };
+          return { checks: parsed, timestamps: {}, verifications: {}, scores: {} };
         }
         return null;
       } catch(e) { return null; }
     }
 
-    async function atSave(checks, timestamps, verifications) {
+    async function atSave(checks, timestamps, verifications, scores) {
       try {
-        const body = { fields:{ Key:AT_KEY, Value:JSON.stringify({ checks, timestamps, verifications: verifications||{}, savedAt: new Date().toISOString() }) } };
+        const body = { fields:{ Key:AT_KEY, Value:JSON.stringify({ checks, timestamps, verifications: verifications||{}, scores: scores||{}, savedAt: new Date().toISOString() }) } };
         if (AT_RID) {
           await fetch(`${AT_URL}/${AT_RID}`, {
             method:"PATCH",
@@ -111,20 +111,34 @@
       const [verifications, setVerifications] = useState(() => {
         try { const s = localStorage.getItem("vsg_sprint_verif"); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
       });
+      const [scores, setScores] = useState(() => {
+        try { const s = localStorage.getItem("vsg_sprint_scores"); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
+      });
       const [adminUnlocked, setAdminUnlocked] = useState(false);
       const unlockAdmin = () => {
         const pin = prompt("Enter Admin PIN to verify tasks:");
         if (pin === "CHAVIS2026") { setAdminUnlocked(true); alert("✅ Admin mode unlocked!"); }
         else if (pin !== null) { alert("❌ Wrong PIN. Contact Chavis."); }
       };
+      const resetTasks = () => {
+        if (!adminUnlocked) { unlockAdmin(); return; }
+        if (!confirm("Reset ALL tasks & timestamps only? (Verifications & scores are kept)")) return;
+        setChecks({}); setTimestamps({});
+        try { localStorage.setItem("vsg_sprint_checks", JSON.stringify({})); } catch(e) {}
+        try { localStorage.setItem("vsg_sprint_ts",     JSON.stringify({})); } catch(e) {}
+        const curV = (() => { try{const s=localStorage.getItem("vsg_sprint_verif");return s?JSON.parse(s):{};}catch(e){return{};} })();
+        const curS = (() => { try{const s=localStorage.getItem("vsg_sprint_scores");return s?JSON.parse(s):{};}catch(e){return{};} })();
+        atSave({}, {}, curV, curS).then(()=>setSyncMsg("☁️ Tasks reset ✓"));
+      };
       const resetVerifications = () => {
         if (!adminUnlocked) { unlockAdmin(); return; }
-        if (!confirm("Reset ALL verifications to 0/9?")) return;
+        if (!confirm("Reset ALL verifications only? (Tasks & scores are kept)")) return;
         setVerifications({});
         try { localStorage.setItem("vsg_sprint_verif", JSON.stringify({})); } catch(e) {}
         const curC = (() => { try{const s=localStorage.getItem("vsg_sprint_checks");return s?JSON.parse(s):{};}catch(e){return{};} })();
         const curT = (() => { try{const s=localStorage.getItem("vsg_sprint_ts");return s?JSON.parse(s):{};}catch(e){return{};} })();
-        atSave(curC, curT, {}).then(()=>setSyncMsg("☁️ Verifications reset ✓"));
+        const curS = (() => { try{const s=localStorage.getItem("vsg_sprint_scores");return s?JSON.parse(s):{};}catch(e){return{};} })();
+        atSave(curC, curT, {}, curS).then(()=>setSyncMsg("☁️ Verifications reset ✓"));
       };
       const [selected, setSelected] = useState(null);
       const [syncing, setSyncing] = useState(false);
@@ -145,15 +159,17 @@
           try { const s = localStorage.getItem("vsg_sprint_ts");     lsTs     = s ? JSON.parse(s) : {}; } catch(e) {}
           const lsCount = Object.values(lsChecks).filter(Boolean).length;
           if (atCount >= lsCount && atCount > 0) {
-            const atVerif = result.verifications || {};
-            setChecks(atChecks); setTimestamps(atTs); setVerifications(atVerif);
-            try { localStorage.setItem("vsg_sprint_checks", JSON.stringify(atChecks)); } catch(e) {}
-            try { localStorage.setItem("vsg_sprint_ts",     JSON.stringify(atTs));     } catch(e) {}
-            try { localStorage.setItem("vsg_sprint_verif",  JSON.stringify(atVerif));  } catch(e) {}
+            const atVerif   = result.verifications || {};
+            const atScores  = result.scores || {};
+            setChecks(atChecks); setTimestamps(atTs); setVerifications(atVerif); setScores(atScores);
+            try { localStorage.setItem("vsg_sprint_checks",  JSON.stringify(atChecks)); } catch(e) {}
+            try { localStorage.setItem("vsg_sprint_ts",      JSON.stringify(atTs));     } catch(e) {}
+            try { localStorage.setItem("vsg_sprint_verif",   JSON.stringify(atVerif));  } catch(e) {}
+            try { localStorage.setItem("vsg_sprint_scores",  JSON.stringify(atScores)); } catch(e) {}
             setSyncMsg("☁️ Loaded from cloud (" + atCount + " tasks)");
           } else if (lsCount > 0) {
             setSyncMsg("☁️ Using local data (" + lsCount + " tasks) — saving to cloud...");
-            atSave(lsChecks, lsTs, {}).then(() => setSyncMsg("☁️ Synced to cloud ✓ (" + lsCount + " tasks)"));
+            atSave(lsChecks, lsTs, {}, {}).then(() => setSyncMsg("☁️ Synced to cloud ✓ (" + lsCount + " tasks)"));
           } else {
             setSyncMsg("☁️ Ready — no data yet");
           }
@@ -178,8 +194,9 @@
             try { localStorage.setItem("vsg_sprint_ts",     JSON.stringify(nextT)); } catch(e) {}
             setTimeout(() => {
               setSyncMsg("💾 Saving...");
-              const curVerif = (() => { try { const s=localStorage.getItem("vsg_sprint_verif"); return s?JSON.parse(s):{};} catch(e){return{};} })();
-              atSave(nextC, nextT, curVerif).then(() => setSyncMsg("☁️ Saved ✓ " + new Date().toLocaleTimeString('vi-VN')));
+              const curVerif  = (() => { try { const s=localStorage.getItem("vsg_sprint_verif");  return s?JSON.parse(s):{};} catch(e){return{};} })();
+              const curScores = (() => { try { const s=localStorage.getItem("vsg_sprint_scores"); return s?JSON.parse(s):{};} catch(e){return{};} })();
+              atSave(nextC, nextT, curVerif, curScores).then(() => setSyncMsg("☁️ Saved ✓ " + new Date().toLocaleTimeString('vi-VN')));
             }, 0);
             return nextT;
           });
@@ -187,21 +204,42 @@
         });
       };
 
-      const verifyMember = (id) => {
-        const now = new Date().toISOString();
-        setVerifications(prev => {
-          const next = { ...prev, [id]: now };
-          try { localStorage.setItem("vsg_sprint_verif", JSON.stringify(next)); } catch(e) {}
-          setTimeout(() => {
-            atSave({...checks}, {...timestamps}, next).then(()=>setSyncMsg("☁️ Verified ✓ " + new Date().toLocaleTimeString('vi-VN')));
-          }, 0);
+      const setScore = (memberId, wk, val) => {
+        const k = `${memberId}-${wk}`;
+        setScores(prev => {
+          const next = {...prev, [k]: Number(val)};
+          try { localStorage.setItem("vsg_sprint_scores", JSON.stringify(next)); } catch(e) {}
+          const curC = (() => { try{const s=localStorage.getItem("vsg_sprint_checks");return s?JSON.parse(s):{};}catch(e){return{};} })();
+          const curT = (() => { try{const s=localStorage.getItem("vsg_sprint_ts");return s?JSON.parse(s):{};}catch(e){return{};} })();
+          const curV = (() => { try{const s=localStorage.getItem("vsg_sprint_verif");return s?JSON.parse(s):{};}catch(e){return{};} })();
+          setTimeout(() => atSave(curC, curT, curV, next).then(()=>setSyncMsg("☁️ Score saved ✓")), 0);
           return next;
         });
       };
 
-      const unverifyMember = (id) => {
+      // Per-TASK verification: key = "memberId-wk-ti"
+      const isTaskVerified = (id, wk, ti) => !!verifications[`${id}-${wk}-${ti}`];
+      const isMemberFullyVerified = (id, wk) =>
+        WEEKS.find(w=>w.wk===wk).tasks.every((_,ti) => isTaskVerified(id, wk, ti));
+
+      const verifyTask = (id, wk, ti) => {
+        const k = `${id}-${wk}-${ti}`;
+        const now = new Date().toISOString();
         setVerifications(prev => {
-          const next = { ...prev }; delete next[id];
+          const next = { ...prev, [k]: now };
+          try { localStorage.setItem("vsg_sprint_verif", JSON.stringify(next)); } catch(e) {}
+          const curC = (() => { try{const s=localStorage.getItem("vsg_sprint_checks");return s?JSON.parse(s):{};}catch(e){return{};} })();
+          const curT = (() => { try{const s=localStorage.getItem("vsg_sprint_ts");return s?JSON.parse(s):{};}catch(e){return{};} })();
+          const curS = (() => { try{const s=localStorage.getItem("vsg_sprint_scores");return s?JSON.parse(s):{};}catch(e){return{};} })();
+          setTimeout(() => atSave(curC, curT, next, curS).then(()=>setSyncMsg("☁️ Task verified ✓")), 0);
+          return next;
+        });
+      };
+
+      const unverifyTask = (id, wk, ti) => {
+        const k = `${id}-${wk}-${ti}`;
+        setVerifications(prev => {
+          const next = { ...prev }; delete next[k];
           try { localStorage.setItem("vsg_sprint_verif", JSON.stringify(next)); } catch(e) {}
           return next;
         });
@@ -260,10 +298,50 @@
         const ts = WEEKS.find(w=>w.wk===wk).tasks.map((_,ti) => timestamps[`${id}-${wk}-${ti}`]||"").filter(Boolean);
         return ts.length === 4 ? ts.reduce((l,t)=>t>l?t:l,"") : null;
       };
-      const allFinishes = TEAM.flatMap(m => WEEKS.map(w => ({ m, t: getWeekFinishTime(m.id, w.wk) }))).filter(x=>x.t);
-      const firstFinish  = allFinishes.sort((a,b)=>a.t.localeCompare(b.t))[0] || null;
-      const championMember = firstFinish ? firstFinish.m : null;
-      const championTime   = firstFinish ? firstFinish.t : null;
+      // ── CHAMPION RULES (3-tier tiebreaker) ──────────────────────────────
+      // Rule 1: Highest TOTAL score across all 4 weeks (max 40)
+      // Rule 2 (tie): Highest TASK completion count (max 16)
+      // Rule 3 (still tied): Earliest last-task timestamp (first to finish)
+      // ─────────────────────────────────────────────────────────────────────
+      const getTotalScore  = (id) => WEEKS.reduce((sum,w)=>sum+(scores[`${id}-${w.wk}`]||0),0);
+      const getEarliestFinish = (id) => {
+        const ts = Object.keys(timestamps).filter(k=>k.startsWith(`${id}-`)&&checks[k]&&timestamps[k]).map(k=>timestamps[k]);
+        return ts.length ? ts.sort()[ts.length-1] : "9999"; // latest task done = when they finished
+      };
+      const championSort = (a, b) => {
+        const scoreDiff = getTotalScore(b.id) - getTotalScore(a.id);    // Rule 1: higher score wins
+        if (scoreDiff !== 0) return scoreDiff;
+        const taskDiff  = getScore(b.id) - getScore(a.id);             // Rule 2: more tasks done
+        if (taskDiff  !== 0) return taskDiff;
+        return getEarliestFinish(a.id).localeCompare(getEarliestFinish(b.id)); // Rule 3: finished earlier
+      };
+      // Only eligible if they have score AND completed all 4 tasks in at least one week
+      const isEligible = (id) => WEEKS.some(wk =>
+        scores[`${id}-${wk.wk}`] > 0 &&
+        wk.tasks.every((_,ti) => checks[`${id}-${wk.wk}-${ti}`]) &&
+        isMemberFullyVerified(id, wk.wk)
+      );
+      const rankedAll      = [...TEAM].filter(m=>isEligible(m.id)).sort(championSort);
+      const championMember = rankedAll[0] || null;
+      const championTotal  = championMember ? getTotalScore(championMember.id) : 0;
+
+      // Per-week champion = same tiebreaker applied to that week only
+      const getWeekChampion = (wk) => {
+        const wkRanked = TEAM.map(m => {
+          const done = WEEKS.find(w=>w.wk===wk).tasks.filter((_,ti)=>checks[`${m.id}-${wk}-${ti}`]).length;
+          return {m, s: scores[`${m.id}-${wk}`]||0, done};
+        })
+        .filter(x => x.s > 0 && x.done === 4) // must have ALL 4 tasks + score
+        .sort((a,b)=> {
+            if (b.s !== a.s) return b.s - a.s;
+            const aDone = a.done; const bDone = b.done;
+            if (bDone !== aDone) return bDone - aDone;
+            const aTs = Object.keys(timestamps).filter(k=>k.startsWith(`${a.m.id}-${wk}-`)&&checks[k]).map(k=>timestamps[k]).sort().pop()||"9999";
+            const bTs = Object.keys(timestamps).filter(k=>k.startsWith(`${b.m.id}-${wk}-`)&&checks[k]).map(k=>timestamps[k]).sort().pop()||"9999";
+            return aTs.localeCompare(bTs);                              // Rule 3: earliest finish
+          });
+        return wkRanked[0]||null;
+      };
       const ranked = [...TEAM].map(m => ({ ...m, score: getScore(m.id) })).sort((a,b) => b.score - a.score);
       const wk     = WEEKS.find(w => w.wk === activeWk);
 
@@ -342,14 +420,16 @@
                   <div style={s.progSub}>{totalChecks} / {totalPossible} tasks</div>
                   <div style={{fontSize:10,color:"rgba(255,255,255,.5)",marginTop:4,fontStyle:"italic"}}>{syncMsg}</div>
                 </div>
-                <a href="https://vsg-crm-form.netlify.app/" target="_blank" rel="noopener noreferrer" style={s.wfBtn}>
-                  <span style={{fontSize:14}}>📋</span> Submit Workflow Request
-                </a>
-                <div style={{display:"flex",gap:6,marginTop:6}}>
-                  <button onClick={saveProgress} style={{background:"#166534",color:"#fff",border:"none",borderRadius:8,padding:"7px 13px",fontSize:12,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:5}}>
+                <div style={{display:"flex",gap:6,alignItems:"center",flexWrap:"nowrap"}}>
+                  <a href="https://vsg-crm-form.netlify.app/" target="_blank" rel="noopener noreferrer"
+                    style={{background:"#e85d1a",color:"#fff",border:"none",borderRadius:8,padding:"7px 12px",fontSize:11,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:5,textDecoration:"none",whiteSpace:"nowrap"}}>
+                    <span style={{fontSize:12}}>📋</span> Submit WF Request
+                  </a>
+                  <button onClick={saveProgress}
+                    style={{background:"#166534",color:"#fff",border:"none",borderRadius:8,padding:"7px 12px",fontSize:11,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:5,whiteSpace:"nowrap"}}>
                     💾 Save Progress
                   </button>
-                  <label style={{background:"#1e40af",color:"#fff",border:"none",borderRadius:8,padding:"7px 13px",fontSize:12,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:5}}>
+                  <label style={{background:"#1e40af",color:"#fff",border:"none",borderRadius:8,padding:"7px 12px",fontSize:11,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:5,whiteSpace:"nowrap"}}>
                     📂 Load Save
                     <input type="file" accept=".json" onChange={loadProgress} style={{display:"none"}}/>
                   </label>
@@ -371,7 +451,8 @@
             {adminUnlocked
               ? <div style={{display:"flex",alignItems:"center",gap:8}}>
                   <span style={{fontSize:11,color:"#166534",fontWeight:600,background:"#dcfce7",padding:"4px 12px",borderRadius:20}}>🔓 Admin Mode Active</span>
-                  <button onClick={resetVerifications} style={{fontSize:11,fontWeight:600,background:"#fee2e2",color:"#dc2626",border:"1px solid #fca5a5",borderRadius:20,padding:"4px 12px",cursor:"pointer"}}>Reset Verifications</button>
+                  <button onClick={resetTasks} style={{fontSize:11,fontWeight:600,background:"#fee2e2",color:"#dc2626",border:"1px solid #fca5a5",borderRadius:20,padding:"4px 12px",cursor:"pointer"}}>🔄 Reset Tasks</button>
+                  <button onClick={resetVerifications} style={{fontSize:11,fontWeight:600,background:"#fef3c7",color:"#b45309",border:"1px solid #fcd34d",borderRadius:20,padding:"4px 12px",cursor:"pointer"}}>🔓 Reset Verified</button>
                   <button onClick={()=>setAdminUnlocked(false)} style={{fontSize:11,fontWeight:600,background:"#f1f5f9",color:"#64748b",border:"1px solid #e2e8f0",borderRadius:20,padding:"4px 12px",cursor:"pointer"}}>🔒 Lock</button>
                 </div>
               : <button onClick={unlockAdmin} style={{fontSize:11,fontWeight:600,background:"#f1f5f9",color:"#64748b",border:"1px solid #e2e8f0",borderRadius:20,padding:"4px 12px",cursor:"pointer"}}>🔒 Admin Login</button>
@@ -382,8 +463,8 @@
               {[
                 { lbl:"Team Members",             val:9,          sub:"active" },
                 { lbl:`Wk ${activeWk} Completed`, val:`${wkCompleted}/${wkTotal}`, sub:"tasks this week" },
-                { lbl:"Champion 🏆",              val: championMember ? championMember.name : "—", sub: championTime ? "First finish: " + new Date(championTime).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}) : "first to finish a full week" },
-                { lbl:"✅ Verified",              val:`${Object.keys(verifications).length}/9`, sub:"by Chavis · Wk 4" },
+                { lbl:"Champion 🏆",              val: championMember ? championMember.name : "—", sub: championMember ? `Total score: ${championTotal}/40` : "set scores to rank" },
+                { lbl:"✅ Verified",              val:`${TEAM.filter(m=>isMemberFullyVerified(m.id,activeWk)).length}/9`, sub:`all 4 tasks · Wk ${activeWk}` },
               ].map((c,i) => (
                 <div key={i} style={s.card}>
                   <div style={s.cardLbl}>{c.lbl}</div>
@@ -392,6 +473,31 @@
                 </div>
               ))}
             </div>
+
+            {/* Champion Rules T&C */}
+            <details style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:10,padding:"10px 16px",marginBottom:12,cursor:"pointer"}}>
+              <summary style={{fontSize:13,fontWeight:700,color:"#1a3a5c",listStyle:"none",display:"flex",alignItems:"center",gap:8}}>
+                <span>📋 Champion Rules &amp; Tiebreaker Criteria</span>
+                <span style={{fontSize:11,color:"#94a3b8",marginLeft:"auto"}}>▸ click to expand</span>
+              </summary>
+              <div style={{marginTop:10,display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
+                <div style={{background:"#fef3c7",borderRadius:8,padding:"10px 12px"}}>
+                  <div style={{fontSize:12,fontWeight:800,color:"#92400e",marginBottom:4}}>🥇 Rule 1 — Score</div>
+                  <div style={{fontSize:11,color:"#78350f"}}>Highest <strong>total score</strong> across all 4 weeks wins. Max 40 pts (10/week). Set by Chavis after evaluating each member.</div>
+                </div>
+                <div style={{background:"#dbeafe",borderRadius:8,padding:"10px 12px"}}>
+                  <div style={{fontSize:12,fontWeight:800,color:"#1e40af",marginBottom:4}}>🥈 Rule 2 — Tasks Done (Tiebreaker)</div>
+                  <div style={{fontSize:11,color:"#1e3a8a"}}>If scores are <strong>equal</strong>, most <strong>tasks completed</strong> (out of 16) wins. Rewards consistent effort.</div>
+                </div>
+                <div style={{background:"#dcfce7",borderRadius:8,padding:"10px 12px"}}>
+                  <div style={{fontSize:12,fontWeight:800,color:"#166534",marginBottom:4}}>🥉 Rule 3 — Speed (Final)</div>
+                  <div style={{fontSize:11,color:"#14532d"}}>If both tied, whoever <strong>finished their last task earliest</strong> wins. Rewards fast movers.</div>
+                </div>
+              </div>
+              <div style={{marginTop:8,fontSize:11,color:"#64748b",fontStyle:"italic",textAlign:"center"}}>
+                Weekly champion = highest scorer that week, same tiebreaker order applies.
+              </div>
+            </details>
 
             {/* Week tabs */}
             <div style={{display:"flex",gap:8,marginBottom:16,width:"100%"}}>
@@ -412,9 +518,10 @@
                     cursor:disabled?"not-allowed":"pointer",
                     opacity:disabled?0.6:1}}>
                   <span style={{fontSize:13,fontWeight:700}}>{disabled?"🔒":w.emoji} {w.label}</span>
-                  <span style={{fontSize:11,fontWeight:500,opacity:.8,marginTop:3}}>
+                  <span style={{fontSize:11,fontWeight:500,opacity:.8,marginTop:2}}>
                     {disabled ? "Admin only" : WK_DATES[wi]}
                   </span>
+                  {!disabled && (() => { const wc = getWeekChampion(w.wk); return wc ? <span style={{fontSize:10,fontWeight:700,color:on?"#fff":"#e85d1a",marginTop:1}}>🏆 {wc.m.name} ({wc.s})</span> : null; })()}
                 </button>
               )})}
             </div>
@@ -434,9 +541,16 @@
             </div>
 
             {/* View toggle */}
-            <div style={s.viewRow}>
-              {[["leaderboard","🏆 Leaderboard"],["teamgrid","👥 Team Grid"],["tasks","✅ Task Tracker"]].map(([v,lbl]) => (
-                <button key={v} style={s.viewBtn(view===v)} onClick={()=>setView(v)}>{lbl}</button>
+            <div style={{display:"flex",gap:8,marginBottom:14,width:"100%"}}>
+              {[["leaderboard","🏆 Leaderboard"],["teamgrid","👥 Team Grid"],["tasks","✅ Task Tracker"],["summary","📊 Summary"]].map(([v,lbl]) => (
+                <button key={v} onClick={()=>setView(v)}
+                  style={{flex:1,padding:"10px 8px",borderRadius:20,
+                    border:`1.5px solid ${view===v?"#1a3a5c":"#e2e8f0"}`,
+                    background:view===v?"#1a3a5c":"#fff",
+                    color:view===v?"#fff":"#64748b",
+                    fontSize:13,fontWeight:700,cursor:"pointer"}}>
+                  {lbl}
+                </button>
               ))}
             </div>
 
@@ -536,7 +650,30 @@
                           </div>
                         </div>
 
-                        <div style={{display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
+                        <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
+                          {adminUnlocked && (
+                            <div style={{textAlign:"center"}} onClick={e=>e.stopPropagation()}>
+                              <div style={{fontSize:9,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",marginBottom:2}}>Score Wk{activeWk}</div>
+                              {wkScore === 4
+                                ? <select value={scores[`${m.id}-${activeWk}`]||0}
+                                    onChange={e=>setScore(m.id,activeWk,e.target.value)}
+                                    style={{fontSize:13,fontWeight:700,color:NAVY,border:"1.5px solid #e2e8f0",borderRadius:6,padding:"3px 6px",background:"#fff",cursor:"pointer"}}>
+                                    {[0,1,2,3,4,5,6,7,8,9,10].map(n=>(
+                                      <option key={n} value={n}>{n===0?"— / 10":`${n} / 10`}</option>
+                                    ))}
+                                  </select>
+                                : <div style={{fontSize:10,color:"#f59e0b",fontWeight:600,background:"#fef3c7",borderRadius:6,padding:"3px 8px",whiteSpace:"nowrap"}}>
+                                    ⚠️ {wkScore}/4 tasks
+                                  </div>
+                              }
+                            </div>
+                          )}
+                          {!adminUnlocked && scores[`${m.id}-${activeWk}`] > 0 && (
+                            <div style={{textAlign:"center"}}>
+                              <div style={{fontSize:9,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",marginBottom:2}}>Score</div>
+                              <div style={{fontSize:15,fontWeight:800,color:ORANGE}}>{scores[`${m.id}-${activeWk}`]}/10</div>
+                            </div>
+                          )}
                           <div style={{textAlign:"center"}}>
                             <div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.08em"}}>This week</div>
                             <div style={{fontSize:16,fontWeight:800,color:m.color}}>{wkScore}/4</div>
@@ -552,7 +689,7 @@
                         <div style={s.ttTasks}>
                           {wk.tasks.map((task,ti) => {
                             const done   = !!checks[`${m.id}-${activeWk}-${ti}`];
-                            const locked = activeWk === 4 && !verifications[m.id];
+                            const locked = activeWk === 4 && !adminUnlocked; // Admin can tick Wk4, non-admin cannot
                             const ts_key = `${m.id}-${activeWk}-${ti}`;
                             return (
                               <div key={ti}
@@ -574,17 +711,17 @@
                                   )}
                                   {locked && <div style={{fontSize:10,color:"#94a3b8",marginTop:2}}>🔒 Requires Chavis verification</div>}
                                 </div>
-                                {/* Chavis verify badge per task */}
+                                {/* Per-task Chavis verify badge */}
                                 <div style={{flexShrink:0,marginLeft:6}} onClick={e=>e.stopPropagation()}>
-                                  {verifications[m.id]
-                                    ? <div style={{background:"#dcfce7",border:"1px solid #16a34a",borderRadius:6,padding:"3px 8px",textAlign:"center",minWidth:80}}>
+                                  {isTaskVerified(m.id, activeWk, ti)
+                                    ? <div style={{background:"#dcfce7",border:"1px solid #16a34a",borderRadius:6,padding:"3px 7px",textAlign:"center",minWidth:78}}>
                                         <div style={{fontSize:9,fontWeight:700,color:"#166534"}}>✅ Chavis</div>
-                                        <div style={{fontSize:9,color:"#16a34a",whiteSpace:"nowrap"}}>{new Date(verifications[m.id]).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>
-                                        {ti===0 && <div style={{fontSize:8,color:"#94a3b8",cursor:"pointer",textDecoration:"underline"}} onClick={()=>unverifyMember(m.id)}>undo</div>}
+                                        <div style={{fontSize:8,color:"#16a34a",whiteSpace:"nowrap"}}>{new Date(verifications[`${m.id}-${activeWk}-${ti}`]).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>
+                                        <div style={{fontSize:8,color:"#94a3b8",cursor:"pointer",textDecoration:"underline"}} onClick={()=>unverifyTask(m.id,activeWk,ti)}>undo</div>
                                       </div>
-                                    : <button onClick={adminUnlocked ? ()=>verifyMember(m.id) : unlockAdmin}
+                                    : <button onClick={adminUnlocked ? ()=>verifyTask(m.id,activeWk,ti) : unlockAdmin}
                                         style={{background:adminUnlocked?"#1a3a5c":"#64748b",color:"#fff",border:"none",borderRadius:6,padding:"4px 8px",fontSize:9,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>
-                                        {adminUnlocked ? "🔏 Verify" : "🔒 Locked"}
+                                        {adminUnlocked ? "🔏 Verify" : "🔒"}
                                       </button>
                                   }
                                 </div>
@@ -598,6 +735,84 @@
                 })}
               </div>
             )}
+
+            {/* SUMMARY DASHBOARD */}
+            {view==="summary" && (
+              <div>
+                {WEEKS.map(w => (
+                  <div key={w.wk} style={{background:"#fff",borderRadius:10,border:"1px solid #e2e8f0",marginBottom:14,overflow:"hidden"}}>
+                    <div style={{background:activeWk===w.wk?ORANGE:NAVY,padding:"10px 16px",display:"flex",alignItems:"center",gap:10}}>
+                      <span style={{fontSize:16}}>{w.emoji}</span>
+                      <span style={{fontSize:14,fontWeight:800,color:"#fff"}}>{w.label}</span>
+                      <span style={{fontSize:11,color:"rgba(255,255,255,.65)",marginLeft:4}}>{["Wk21 · May 18–24","Wk22 · May 25–31","Wk23 · Jun 1–7","Wk24 · Jun 8–14"][w.wk-1]}</span>
+                      <span style={{marginLeft:"auto",fontSize:11,fontWeight:700,color:"rgba(255,255,255,.9)"}}>
+                        ✅ {TEAM.filter(m=>isMemberFullyVerified(m.id,w.wk)).length}/9 fully verified
+                      </span>
+                    </div>
+                    <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+                      <thead>
+                        <tr style={{background:"#f8fafc"}}>
+                          <th style={{padding:"8px 12px",textAlign:"left",fontWeight:700,color:"#64748b",borderBottom:"1px solid #e2e8f0",width:140}}>Member</th>
+                          {w.tasks.map((t,ti)=>(
+                            <th key={ti} style={{padding:"7px 6px",textAlign:"center",fontWeight:600,color:"#64748b",borderBottom:"1px solid #e2e8f0",fontSize:10}}>{ti+1}. {t.length>16?t.slice(0,16)+"…":t}</th>
+                          ))}
+                          <th style={{padding:"7px 8px",textAlign:"center",fontWeight:700,color:NAVY,borderBottom:"1px solid #e2e8f0"}}>Score</th>
+                          <th style={{padding:"7px 8px",textAlign:"center",fontWeight:700,color:"#166534",borderBottom:"1px solid #e2e8f0"}}>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {TEAM.map((m,ri) => {
+                          const fullyVerif = isMemberFullyVerified(m.id, w.wk);
+                          const wkScr = scores[`${m.id}-${w.wk}`]||0;
+                          return (
+                            <tr key={m.id} style={{background:ri%2===0?"#fff":"#f8fafc",borderBottom:"1px solid #f1f5f9"}}>
+                              <td style={{padding:"8px 12px"}}>
+                                <div style={{display:"flex",alignItems:"center",gap:7}}>
+                                  <div style={{width:24,height:24,borderRadius:"50%",background:m.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:9,fontWeight:800,flexShrink:0}}>{m.initials}</div>
+                                  <div>
+                                    <div style={{fontWeight:700,color:NAVY,fontSize:12}}>{m.name}</div>
+                                    <div style={{fontSize:10,color:"#94a3b8"}}>{m.role}</div>
+                                  </div>
+                                </div>
+                              </td>
+                              {w.tasks.map((_,ti) => {
+                                const done  = !!checks[`${m.id}-${w.wk}-${ti}`];
+                                const verif = isTaskVerified(m.id, w.wk, ti);
+                                return (
+                                  <td key={ti} style={{padding:"6px 6px",textAlign:"center",background:verif?"#f0fdf4":done?"#f8fafc":"#fff"}}>
+                                    {done
+                                      ? <div>
+                                          <div style={{fontSize:12}}>{verif?"✅":"✔️"}</div>
+                                          {verif && <div style={{fontSize:8,color:"#16a34a",whiteSpace:"nowrap"}}>{new Date(verifications[`${m.id}-${w.wk}-${ti}`]).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>}
+                                          {!verif && <div style={{fontSize:8,color:"#f59e0b"}}>⏳</div>}
+                                        </div>
+                                      : <span style={{color:"#e2e8f0",fontSize:13}}>—</span>}
+                                  </td>
+                                );
+                              })}
+                              <td style={{padding:"6px 8px",textAlign:"center"}}>
+                                {(() => {
+                                  const wkTasksDone = w.tasks.filter((_,ti)=>checks[`${m.id}-${w.wk}-${ti}`]).length;
+                                  return wkTasksDone > 0 && wkScr > 0
+                                    ? <span style={{fontSize:14,fontWeight:800,color:wkScr>=8?ORANGE:NAVY}}>{wkScr}/10</span>
+                                    : <span style={{color:"#e2e8f0",fontSize:12}}>0/10</span>;
+                                })()}
+                              </td>
+                              <td style={{padding:"6px 8px",textAlign:"center"}}>
+                                {fullyVerif
+                                  ? <span style={{fontSize:11,fontWeight:700,color:"#166534",background:"#dcfce7",padding:"2px 9px",borderRadius:20}}>✅ Done</span>
+                                  : <span style={{fontSize:11,color:"#94a3b8",background:"#f1f5f9",padding:"2px 9px",borderRadius:20}}>⏳ Pending</span>}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                ))}
+              </div>
+            )}
+
           </div>
         </div>
       );
