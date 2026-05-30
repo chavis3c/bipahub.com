@@ -177,6 +177,7 @@
       const [verifications, setVerifications] = useState(() => lsGet("vsg_sprint_verif"));
       const [scores,        setScores]        = useState(() => lsGet("vsg_sprint_scores"));
       const [adminUnlocked, setAdminUnlocked] = useState(false);
+      const [chartMode,     setChartMode]     = useState("week"); // "week" | "total"
       const [selected,      setSelected]      = useState(null);
       const [syncing,       setSyncing]       = useState(false);
       const [syncMsg,       setSyncMsg]       = useState("⏳ Loading from cloud...");
@@ -963,55 +964,145 @@
             {view==="chart" && (
               <div>
                 <div style={{background:"#fff",borderRadius:10,border:"1px solid #e2e8f0",padding:"16px 20px",marginBottom:14}}>
-                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+
+                  {/* ── Chart mode toggle: This Week vs All Weeks ── */}
+                  {(() => {
+                    // chartMode stored in state — we piggyback on a local var via closure trick
+                    // We'll use a data attribute on the wrapper to track mode; simplest: add chartMode to App state
+                    return null;
+                  })()}
+
+                  {/* Header */}
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10,gap:12,flexWrap:"wrap"}}>
                     <div>
-                      <div style={{fontSize:16,fontWeight:800,color:NAVY}}>📈 Total Score — All Members</div>
-                      <div style={{fontSize:11,color:"#94a3b8"}}>Wk1(15) + Wk2(40) + Wk3(30) + Wk4(15) = 100 pts · Updated live</div>
+                      <div style={{fontSize:16,fontWeight:800,color:NAVY}}>
+                        📈 {chartMode==="week"
+                          ? `${wk.emoji} ${wk.label} — Scores (max ${WK_MAX[activeWk]} pts)`
+                          : "Total Score — All Members"}
+                      </div>
+                      <div style={{fontSize:11,color:"#94a3b8",marginTop:2}}>
+                        {chartMode==="week"
+                          ? `Showing Wk${activeWk} scores only · switch week tabs to compare · max ${WK_MAX[activeWk]} pts`
+                          : "Wk1(15) + Wk2(40) + Wk3(30) + Wk4(15) = 100 pts · all weeks combined"}
+                      </div>
                     </div>
-                    {champion1 && <div style={{textAlign:"right"}}>
-                      <div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase"}}>🥇 Champion</div>
-                      <div style={{fontSize:16,fontWeight:800,color:ORANGE}}>{champion1.name} · {getTotalScore(champion1.id)}/100</div>
-                    </div>}
+                    <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6}}>
+                      {/* Mode toggle buttons */}
+                      <div style={{display:"flex",gap:4,background:"#f1f5f9",borderRadius:10,padding:3}}>
+                        <button onClick={()=>setChartMode("week")}
+                          style={{fontSize:11,fontWeight:700,padding:"5px 12px",borderRadius:8,border:"none",cursor:"pointer",
+                            background:chartMode==="week"?ORANGE:"transparent",
+                            color:chartMode==="week"?"#fff":"#64748b"}}>
+                          {wk.emoji} This Week
+                        </button>
+                        <button onClick={()=>setChartMode("total")}
+                          style={{fontSize:11,fontWeight:700,padding:"5px 12px",borderRadius:8,border:"none",cursor:"pointer",
+                            background:chartMode==="total"?NAVY:"transparent",
+                            color:chartMode==="total"?"#fff":"#64748b"}}>
+                          📊 All Weeks
+                        </button>
+                      </div>
+                      {/* Champion badge */}
+                      {chartMode==="total" && champion1 && (
+                        <div style={{textAlign:"right"}}>
+                          <div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase"}}>🥇 Champion</div>
+                          <div style={{fontSize:15,fontWeight:800,color:ORANGE}}>{champion1.name} · {getTotalScore(champion1.id)}/100</div>
+                        </div>
+                      )}
+                      {chartMode==="week" && (() => { const wc=getWeekChampion(activeWk); return wc ? (
+                        <div style={{textAlign:"right"}}>
+                          <div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase"}}>🥇 Wk{activeWk} Leader</div>
+                          <div style={{fontSize:15,fontWeight:800,color:ORANGE}}>{wc.m.name} · {wc.s}/{WK_MAX[activeWk]}</div>
+                        </div>
+                      ) : null; })()}
+                    </div>
                   </div>
-                  <div style={{display:"flex",alignItems:"flex-end",gap:8,height:200,padding:"10px 0 0",borderBottom:"2px solid #e2e8f0",marginTop:16}}>
+
+                  {/* Bar Chart */}
+                  <div style={{display:"flex",alignItems:"flex-end",gap:6,height:240,padding:"30px 0 0",borderBottom:"2px solid #e2e8f0",marginTop:4}}>
                     {TEAM.map(m => {
-                      const total = getTotalScore(m.id);
-                      const pct   = (total/100)*100;
-                      const tier  = total>=90?"#166534":total>=70?"#1e40af":total>=50?"#92400e":total>=30?"#c2410c":"#94a3b8";
-                      const isChamp = champion1?.id === m.id;
+                      const score   = chartMode==="week" ? getWkTotalFromCriteria(m.id,activeWk) : getTotalScore(m.id);
+                      const maxPts  = chartMode==="week" ? WK_MAX[activeWk] : 100;
+                      const barH    = Math.max((score/maxPts)*160, score>0?12:0);
+                      const tiers   = chartMode==="week" ? WK_TIERS[activeWk] : [
+                        {min:90,color:"#166534"},{min:70,color:"#1e40af"},{min:50,color:"#92400e"},{min:30,color:"#c2410c"},{min:0,color:"#94a3b8"}
+                      ];
+                      const tierColor = (tiers.find(t=>score>=(t.min/( chartMode==="week"?1:1 )))|| tiers[tiers.length-1]).color;
+                      // for week mode use WK_TIERS pct
+                      const pctScore = score/maxPts*100;
+                      const tierCol  = chartMode==="week"
+                        ? (WK_TIERS[activeWk].find(t=>score>=t.min&&score<=t.max)||{color:"#94a3b8"}).color
+                        : pctScore>=90?"#166534":pctScore>=70?"#1e40af":pctScore>=50?"#92400e":pctScore>=30?"#c2410c":"#94a3b8";
+
+                      // For week mode: rank by wk score
+                      const wkRanked = chartMode==="week"
+                        ? [...TEAM].sort((a,b)=>getWkTotalFromCriteria(b.id,activeWk)-getWkTotalFromCriteria(a.id,activeWk))
+                        : null;
+                      const wkRank   = wkRanked ? wkRanked.findIndex(x=>x.id===m.id) : -1;
+                      const isTop1   = chartMode==="week" ? wkRank===0 && score>0 : champion1?.id===m.id;
+                      const isTop2   = chartMode==="week" ? wkRank===1 && score>0 : champion2?.id===m.id;
+                      const isTop3   = chartMode==="week" ? wkRank===2 && score>0 : champion3?.id===m.id;
+
                       return (
-                        <div key={m.id} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-                          {total > 0 && <div style={{fontSize:11,fontWeight:800,color:tier}}>{total}</div>}
-                          <div style={{width:"100%",display:"flex",flexDirection:"column",justifyContent:"flex-end",height:160}}>
+                        <div key={m.id} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}>
+                          <div style={{width:"100%",height:160,display:"flex",flexDirection:"column",justifyContent:"flex-end",position:"relative"}}>
+                            {/* Medal */}
+                            {(isTop1||isTop2||isTop3) && (
+                              <div style={{position:"absolute",bottom:barH+4,left:"50%",transform:"translateX(-50%)",fontSize:13,lineHeight:1}}>
+                                {isTop1?"🏆":isTop2?"🥈":"🥉"}
+                              </div>
+                            )}
+                            {/* Score badge */}
+                            {score > 0 && (
+                              <div style={{
+                                position:"absolute",
+                                bottom: barH + ((isTop1||isTop2||isTop3)?20:4),
+                                left:"50%",transform:"translateX(-50%)",
+                                fontSize:11,fontWeight:900,color:"#fff",
+                                background:isTop1?ORANGE:tierCol,
+                                padding:"1px 6px",borderRadius:6,
+                                whiteSpace:"nowrap",
+                                boxShadow:"0 1px 3px rgba(0,0,0,.25)",
+                              }}>
+                                {score}<span style={{fontSize:8,opacity:.8}}>/{maxPts}</span>
+                              </div>
+                            )}
+                            {/* Bar */}
                             <div style={{
-                              width:"100%",
-                              height:`${Math.max(pct*1.6,total>0?8:0)}px`,
-                              background:isChamp?ORANGE:m.color,
-                              borderRadius:"4px 4px 0 0",
-                              position:"relative",
-                              transition:"height .3s ease",
-                              border:isChamp?"2px solid #fff":"none",
-                              boxShadow:isChamp?"0 0 0 2px "+ORANGE:"none"
-                            }}>
-                              {isChamp && <div style={{position:"absolute",top:-18,left:"50%",transform:"translateX(-50%)",fontSize:14}}>🏆</div>}
-                            </div>
+                              width:"100%",height:`${barH}px`,
+                              background:isTop1?ORANGE:m.color,
+                              borderRadius:"5px 5px 0 0",
+                              transition:"height .4s ease",
+                              boxShadow:isTop1?`0 0 0 2px ${ORANGE}`:isTop2?"0 0 0 2px #1e40af":isTop3?"0 0 0 2px #166534":"none",
+                            }}/>
                           </div>
-                          <div style={{width:32,height:32,borderRadius:"50%",background:m.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:9,fontWeight:800}}>{m.initials}</div>
+                          <div style={{width:30,height:30,borderRadius:"50%",background:m.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:9,fontWeight:800,flexShrink:0}}>{m.initials}</div>
                           <div style={{fontSize:9,fontWeight:700,color:NAVY,textAlign:"center",lineHeight:1.2}}>{m.name}</div>
                           <div style={{fontSize:8,color:"#94a3b8",textAlign:"center"}}>{m.seq}</div>
                         </div>
                       );
                     })}
                   </div>
-                  <div style={{display:"flex",justifyContent:"flex-end",gap:8,marginTop:8,flexWrap:"wrap"}}>
-                    {[{min:90,max:100,label:"🏆 Outstanding",col:"#166534",bg:"#dcfce7"},
-                      {min:70,max:89, label:"🌟 Above Avg",  col:"#1e40af",bg:"#dbeafe"},
-                      {min:50,max:69, label:"✅ Satisfactory",col:"#92400e",bg:"#fef3c7"},
-                      {min:30,max:49, label:"⚠️ Needs Impr.",col:"#c2410c",bg:"#ffedd5"},
-                      {min:0, max:29, label:"❌ Unsatisfactory",col:"#991b1b",bg:"#fee2e2"},
-                    ].map((t,i)=>(
-                      <span key={i} style={{fontSize:9,fontWeight:700,color:t.col,background:t.bg,padding:"2px 8px",borderRadius:20}}>{t.label} {t.min}–{t.max}</span>
-                    ))}
+
+                  {/* Tier legend — adapts to mode */}
+                  <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:10,flexWrap:"wrap"}}>
+                    {chartMode==="week"
+                      ? WK_TIERS[activeWk].map((t,i)=>(
+                          <span key={i} style={{fontSize:9,fontWeight:700,color:t.color,background:t.bg,padding:"2px 8px",borderRadius:20}}>
+                            {t.label} {t.min}{t.min===t.max?"":"-"+t.max}pts
+                          </span>
+                        ))
+                      : [{min:90,max:100,label:"🏆 Outstanding",col:"#166534",bg:"#dcfce7"},
+                         {min:70,max:89, label:"🌟 Above Avg",  col:"#1e40af",bg:"#dbeafe"},
+                         {min:50,max:69, label:"✅ Satisfactory",col:"#92400e",bg:"#fef3c7"},
+                         {min:30,max:49, label:"⚠️ Needs Impr.",col:"#c2410c",bg:"#ffedd5"},
+                         {min:0, max:29, label:"❌ Unsatisfactory",col:"#991b1b",bg:"#fee2e2"},
+                        ].map((t,i)=>(
+                          <span key={i} style={{fontSize:9,fontWeight:700,color:t.col,background:t.bg,padding:"2px 8px",borderRadius:20}}>
+                            {t.label} {t.min}–{t.max}
+                          </span>
+                        ))
+                    }
                   </div>
                 </div>
                 {/* Score breakdown table */}
