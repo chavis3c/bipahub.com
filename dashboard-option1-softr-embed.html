@@ -113,6 +113,15 @@
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; font-size: 15px; color: #556;
 }
+/* ── FY Year Chips ──────────────────────────── */
+#vsg-dash .fy-chip {
+  font-size: 11px; padding: 4px 10px; border-radius: 20px;
+  background: #eef0ff; color: #0D1391; cursor: pointer;
+  border: 1px solid #c5cdf7; font-weight: 600; transition: .15s;
+}
+#vsg-dash .fy-chip.active { background: #0D1391; color: #fff; border-color: #0D1391; }
+#vsg-dash .fy-chip:hover:not(.active) { background: #dde1fb; }
+#vsg-dash .topbar-divider { width: 1px; height: 18px; background: #e0e4ea; margin: 0 2px; }
 
 /* ── Pages ──────────────────────────────────── */
 #vsg-dash .page { display: none; flex-direction: column; gap: 16px; padding: 20px 24px; }
@@ -268,6 +277,10 @@
     <div class="topbar">
       <div class="breadcrumb">VSG Finance &rsaquo; <span id="vsg-breadcrumb">Dashboard</span></div>
       <div class="topbar-right">
+        <div class="fy-chip active" data-fy="2026">FY 2026</div>
+        <div class="fy-chip" data-fy="2025">FY 2025</div>
+        <div class="fy-chip" data-fy="2024">FY 2024</div>
+        <div class="topbar-divider"></div>
         <div class="chip active">Monthly</div>
         <div class="chip">Quarterly</div>
         <div class="chip">Annual</div>
@@ -665,13 +678,21 @@
   };
   var rendered = {};
 
-  /* ── Active period ── */
+  /* ── Active filters ── */
+  var currentYear   = '2026';
   var currentPeriod = 'monthly';
 
-  /* ══════════════════════════════════════════════════════
-     ALL-PAGE PERIOD DATA  (₫ Billion unless noted)
-  ══════════════════════════════════════════════════════ */
-  var PERIODS = {
+  /* ══════════════════════════════════════════════════════════════
+     FULL DATA  — DATA[year][period]   (₫ Billion unless noted)
+     Years: 2024, 2025, 2026   ×   Periods: monthly, quarterly, annual
+  ══════════════════════════════════════════════════════════════ */
+  var DATA = {};
+
+  /* helper — shorthand kpi object */
+  function kpi(v,d,dir){ return {val:v,delta:d,dir:dir}; }
+
+  /* ════════════════ FY 2026 ════════════════ */
+  DATA['2026'] = {
     monthly: {
       label:'June 2026', periodSub:'June 2026',
       barLabels:['Jan','Feb','Mar','Apr','May','Jun'],
@@ -769,6 +790,146 @@
     }
   };
 
+  /* ════════════════ FY 2025 ════════════════ */
+  DATA['2025'] = {
+    monthly: {
+      label:'June 2025', periodSub:'June 2025',
+      barLabels:['Jan','Feb','Mar','Apr','May','Jun'],
+      revenue:  [2.4,2.7,2.5,2.9,2.7,2.6],
+      expenses: [1.4,1.6,1.5,1.7,1.6,1.5],
+      netProfit:[0.9,1.1,1.0,1.3,1.1,1.1],
+      cfOp:     [0.9,1.2,1.0,1.4,1.1,1.2],
+      cfNet:    [0.5,0.7,0.6,0.9,0.7,0.65],
+      donut:    [48,28,15,9],
+      kpi:{ revYTD:'₫16.2B',revDelta:'+9.8% vs 2024',revDir:'up', margin:'32.6%',marginDelta:'+1.8 pts',marginDir:'up', ar:'₫1.8B',arDelta:'6 tenants overdue',arDir:'down', cash:'₫6.1B',cashDelta:'Healthy buffer',cashDir:'up' },
+      pl:{ rev:'₫2.76B',revD:'+7% MoM',revDir:'up', gp:'₫1.98B',gpD:'Margin 71.7%',gpDir:'up', exp:'₫1.32B',expD:'+2.8% MoM',expDir:'down', net:'₫1.18B',netD:'Margin 42.8%',netDir:'up',
+        rows:[['Gross Revenue','₫2,760M','₫16,200M','₫15,800M','green','+₫400M'],['Management Fees','₫1,325M','₫7,776M','₫7,584M','green','+₫192M'],['Utility Charges','₫745M','₫4,374M','₫4,266M','green','+₫108M'],['Land Lease','₫414M','₫2,430M','₫2,376M','green','+₫54M'],['Cost of Revenue','₫778M','₫4,536M','₫4,740M','green','Saved ₫204M'],['Gross Profit','₫1,982M','₫11,664M','₫11,060M','green','+₫604M'],['Operating Expenses','₫538M','₫3,128M','₫3,160M','green','Under budget'],['Net Profit','₫1,180M','₫6,988M','₫6,600M','green','+₫388M']] },
+      bs:{ assets:'₫136.8B',assD:'As at Jun 30 2025',assDir:'neu', equity:'₫83.9B',eqD:'+4.9% YTD',eqDir:'up', liab:'₫52.9B',liabD:'Debt ratio 38.7%',liabDir:'neu', wc:'₫11.6B',wcD:'Current ratio 2.2x',wcDir:'up' },
+      cf:{ op:'+₫1.2B',opD:'Positive',opDir:'up', inv:'−₫460M',invD:'Capex spend',invDir:'neu', fin:'−₫160M',finD:'Loan repayment',finDir:'neu', net:'+₫580M',netD:'Surplus',netDir:'up',
+        rows:[['Cash received from tenants','+₫2,760M','pos'],['Payments to suppliers & staff','−₫940M','neg'],['Utility & operating costs','−₫588M','neg'],['Operating Cash Flow','+₫1,200M','total pos'],['Infrastructure capex','−₫460M','neg'],['Loan principal repayment','−₫160M','neg'],['Net Cash Movement','+₫580M','total pos']] },
+      tenant:{ active:'98',fee:'₫1,325M',overdue:'6',avg:'₫16.1M',
+        rows:[['A-01','Placeholder Tenant A-01','Zone A','5,200','₫5,148M','01 Jun 2025','green','Paid'],['A-12','Placeholder Tenant A-12','Zone A','6,100','₫6,042M','14 Apr 2025','red','Overdue 38d'],['B-07','Placeholder Tenant B-07','Zone B','4,400','₫4,356M','08 May 2025','amber','Due Soon'],['B-15','Placeholder Tenant B-15','Zone B','2,900','₫2,871M','01 Jun 2025','green','Paid']] },
+      opex:{ total:'₫9.4B',totalD:'vs ₫9.9B budget',totalDir:'neu', rem:'₫0.5B',remD:'Under budget',remDir:'up', over:'1',overD:'Maintenance only',overDir:'down',
+        bars:[[64,'#4f9cf9','Operations (₫3,300M / ₫5,150M)'],[43,'#1d9e75','Payroll (₫2,020M / ₫4,700M)'],[79,'#e05a2b','Maintenance (₫1,422M / ₫1,800M)'],[49,'#7f77dd','Environmental (₫686M / ₫1,400M)'],[33,'#f0c040','Admin & Legal (₫370M / ₫1,120M)']] },
+      fcast:{ target:'₫32.0B',tD:'50.6% achieved',tDir:'up', q3:'₫8.6B',q3D:'+5% vs Q2 2025',q3Dir:'up', risk:'4 lots',rD:'Lease expiring Q3',rDir:'down', pipe:'₫2.1B',pD:'30 Jun deadline',pDir:'neu' },
+      tax:{ vout:'₫276M',vouD:'10% on revenue',vouDir:'neu', vin:'₫77M',vinD:'Creditable',vinDir:'up', vpay:'₫199M',vpayD:'Due 15 Jul 2025',vpayDir:'down', cit:'₫236M',citD:'20% CIT rate',citDir:'neu' }
+    },
+    quarterly: {
+      label:'Q2 2025', periodSub:'Q2 2025 (Apr–Jun)',
+      barLabels:['Q1 2024','Q2 2024','Q3 2024','Q4 2024','Q1 2025','Q2 2025'],
+      revenue:  [6.8,7.2,7.0,7.8,7.4,8.4],
+      expenses: [4.0,4.5,4.2,4.8,4.4,4.6],
+      netProfit:[2.7,2.6,2.9,3.2,3.0,3.4],
+      cfOp:     [2.5,3.0,2.8,3.5,3.2,3.6],
+      cfNet:    [1.5,1.7,1.8,2.2,2.0,2.4],
+      donut:    [49,26,16,9],
+      kpi:{ revYTD:'₫8.4B',revDelta:'+16.7% vs Q2 2024',revDir:'up', margin:'33.4%',marginDelta:'+2.1 pts',marginDir:'up', ar:'₫3.0B',arDelta:'10 tenants overdue',arDir:'down', cash:'₫6.4B',cashDelta:'Healthy buffer',cashDir:'up' },
+      pl:{ rev:'₫8.4B',revD:'+16.7% vs Q2 2024',revDir:'up', gp:'₫6.1B',gpD:'Margin 72.6%',gpDir:'up', exp:'₫4.0B',expD:'+4.0% vs Q1',expDir:'down', net:'₫3.6B',netD:'Margin 42.9%',netDir:'up',
+        rows:[['Gross Revenue','₫8,400M','₫16,200M','₫15,800M','green','+₫400M'],['Management Fees','₫4,116M','₫7,938M','₫7,742M','green','+₫196M'],['Utility Charges','₫2,268M','₫4,374M','₫4,266M','green','+₫108M'],['Land Lease','₫1,260M','₫2,430M','₫2,376M','green','+₫54M'],['Cost of Revenue','₫2,310M','₫4,536M','₫4,740M','green','Saved ₫204M'],['Gross Profit','₫6,090M','₫11,664M','₫11,060M','green','+₫604M'],['Operating Expenses','₫1,620M','₫3,128M','₫3,160M','green','Under budget'],['Net Profit','₫3,600M','₫6,988M','₫6,600M','green','+₫388M']] },
+      bs:{ assets:'₫138.2B',assD:'As at Q2 2025 end',assDir:'neu', equity:'₫84.8B',eqD:'+5.5% YTD',eqDir:'up', liab:'₫53.4B',liabD:'Debt ratio 38.6%',liabDir:'neu', wc:'₫11.9B',wcD:'Current ratio 2.2x',wcDir:'up' },
+      cf:{ op:'+₫3.6B',opD:'Good quarter',opDir:'up', inv:'−₫1.4B',invD:'Capex spend',invDir:'neu', fin:'−₫480M',finD:'Loan repayment',finDir:'neu', net:'+₫1.8B',netD:'Q surplus',netDir:'up',
+        rows:[['Cash received from tenants','+₫8,400M','pos'],['Payments to suppliers & staff','−₫2,820M','neg'],['Utility & operating costs','−₫1,764M','neg'],['Operating Cash Flow','+₫3,600M','total pos'],['Infrastructure capex','−₫1,400M','neg'],['Loan principal repayment','−₫480M','neg'],['Net Cash Movement','+₫1,720M','total pos']] },
+      tenant:{ active:'98',fee:'₫3,978M',overdue:'10',avg:'₫40.6M',
+        rows:[['A-01','Placeholder Tenant A-01','Zone A','5,200','₫15,444M','01 Jun 2025','green','Paid'],['A-12','Placeholder Tenant A-12','Zone A','6,100','₫18,126M','14 Apr 2025','red','Overdue 38d'],['B-07','Placeholder Tenant B-07','Zone B','4,400','₫13,068M','08 May 2025','amber','Due Soon'],['B-15','Placeholder Tenant B-15','Zone B','2,900','₫8,613M','01 Jun 2025','green','Paid']] },
+      opex:{ total:'₫4.0B',totalD:'vs ₫4.4B budget',totalDir:'neu', rem:'₫0.4B',remD:'Under budget',remDir:'up', over:'1',overD:'Maintenance only',overDir:'down',
+        bars:[[68,'#4f9cf9','Operations (₫9,900M / ₫14,560M)'],[46,'#1d9e75','Payroll (₫6,440M / ₫14,000M)'],[82,'#e05a2b','Maintenance (₫4,428M / ₫5,400M)'],[52,'#7f77dd','Environmental (₫2,106M / ₫4,050M)'],[36,'#f0c040','Admin & Legal (₫1,188M / ₫3,300M)']] },
+      fcast:{ target:'₫32.0B',tD:'50.6% achieved',tDir:'up', q3:'₫8.6B',q3D:'+5% vs Q2 2025',q3Dir:'up', risk:'4 lots',rD:'Lease expiring Q3',rDir:'down', pipe:'₫2.1B',pD:'30 Jun deadline',pDir:'neu' },
+      tax:{ vout:'₫840M',vouD:'10% on Q2 revenue',vouDir:'neu', vin:'₫228M',vinD:'Creditable',vinDir:'up', vpay:'₫612M',vpayD:'Due 15 Jul 2025',vpayDir:'down', cit:'₫720M',citD:'20% CIT rate',citDir:'neu' }
+    },
+    annual: {
+      label:'FY 2025', periodSub:'FY 2025 (Jan–Dec)',
+      barLabels:['FY 2020','FY 2021','FY 2022','FY 2023','FY 2024','FY 2025'],
+      revenue:  [13.2,15.6,18.0,21.5,29.2,32.6],
+      expenses: [9.0,10.5,12.0,13.8,17.8,19.4],
+      netProfit:[4.2,5.1,6.0,7.2,9.2,10.8],
+      cfOp:     [4.0,4.9,5.8,7.0,9.0,10.5],
+      cfNet:    [2.2,2.8,3.2,4.1,5.5,6.8],
+      donut:    [50,26,15,9],
+      kpi:{ revYTD:'₫29.2B',revDelta:'+17.7% vs FY 2023',revDir:'up', margin:'31.5%',marginDelta:'+1.2 pts',marginDir:'up', ar:'₫4.2B',arDelta:'Annual avg',arDir:'neu', cash:'₫7.4B',cashDelta:'Year-end balance',cashDir:'up' },
+      pl:{ rev:'₫29.2B',revD:'+17.7% vs FY 2023',revDir:'up', gp:'₫21.0B',gpD:'Margin 71.9%',gpDir:'up', exp:'₫6.8B',expD:'+2.0% vs FY 2023',expDir:'down', net:'₫9.2B',netD:'Margin 31.5%',netDir:'up',
+        rows:[['Gross Revenue','₫29,200M','₫29,200M','₫27,000M','green','+₫2,200M'],['Management Fees','₫14,308M','₫14,308M','₫13,230M','green','+₫1,078M'],['Utility Charges','₫7,884M','₫7,884M','₫7,290M','green','+₫594M'],['Land Lease','₫4,380M','₫4,380M','₫4,050M','green','+₫330M'],['Cost of Revenue','₫8,200M','₫8,200M','₫8,800M','green','Saved ₫600M'],['Gross Profit','₫21,000M','₫21,000M','₫18,200M','green','+₫2,800M'],['Operating Expenses','₫6,800M','₫6,800M','₫7,200M','green','Under budget'],['Net Profit','₫9,200M','₫9,200M','₫7,800M','green','+₫1,400M']] },
+      bs:{ assets:'₫139.4B',assD:'As at Dec 31 2024',assDir:'neu', equity:'₫85.6B',eqD:'+7.2% YoY',eqDir:'up', liab:'₫53.8B',liabD:'Debt ratio 38.6%',liabDir:'neu', wc:'₫12.2B',wcD:'Current ratio 2.2x',wcDir:'up' },
+      cf:{ op:'+₫9.0B',opD:'Strong CF',opDir:'up', inv:'−₫5.4B',invD:'Capex spend',invDir:'neu', fin:'−₫1.8B',finD:'Loan repayment',finDir:'neu', net:'+₫6.2B',netD:'Annual surplus',netDir:'up',
+        rows:[['Cash received from tenants','+₫29,200M','pos'],['Payments to suppliers & staff','−₫11,800M','neg'],['Utility & operating costs','−₫6,600M','neg'],['Operating Cash Flow','+₫9,000M','total pos'],['Infrastructure capex','−₫5,400M','neg'],['Loan principal repayment','−₫1,800M','neg'],['Net Cash Movement','+₫1,800M','total pos']] },
+      tenant:{ active:'98',fee:'₫15,890M',overdue:'4',avg:'₫162M',
+        rows:[['A-01','Placeholder Tenant A-01','Zone A','5,200','₫62,088M','Dec 2024','green','Paid'],['A-12','Placeholder Tenant A-12','Zone A','6,100','₫72,894M','Sep 2024','red','Outstanding'],['B-07','Placeholder Tenant B-07','Zone B','4,400','₫52,272M','Dec 2024','green','Paid'],['B-15','Placeholder Tenant B-15','Zone B','2,900','₫34,452M','Dec 2024','green','Paid']] },
+      opex:{ total:'₫6.8B',totalD:'vs ₫7.2B budget',totalDir:'neu', rem:'₫0.4B',remD:'Under budget',remDir:'up', over:'0',overD:'All within budget',overDir:'up',
+        bars:[[62,'#4f9cf9','Operations (₫33,480M / ₫54,000M)'],[42,'#1d9e75','Payroll (₫19,320M / ₫46,000M)'],[75,'#e05a2b','Maintenance (₫13,500M / ₫18,000M)'],[47,'#7f77dd','Environmental (₫6,580M / ₫14,000M)'],[32,'#f0c040','Admin & Legal (₫3,520M / ₫11,000M)']] },
+      fcast:{ target:'₫32.0B',tD:'FY 2025 achieved',tDir:'up', q3:'₫9.0B',q3D:'+4.5% vs FY 2024 H2',q3Dir:'up', risk:'3 lots',rD:'Lease renewal FY 2025',rDir:'down', pipe:'₫2.8B',pD:'Q1 2025 pipeline',pDir:'neu' },
+      tax:{ vout:'₫2,920M',vouD:'10% on annual revenue',vouDir:'neu', vin:'₫816M',vinD:'Creditable',vinDir:'up', vpay:'₫2,104M',vpayD:'Annual settlement',vpayDir:'down', cit:'₫1,840M',citD:'20% CIT rate',citDir:'neu' }
+    }
+  };
+
+  /* ════════════════ FY 2024 ════════════════ */
+  DATA['2024'] = {
+    monthly: {
+      label:'June 2024', periodSub:'June 2024',
+      barLabels:['Jan','Feb','Mar','Apr','May','Jun'],
+      revenue:  [2.1,2.3,2.2,2.5,2.4,2.3],
+      expenses: [1.2,1.4,1.3,1.6,1.4,1.4],
+      netProfit:[0.8,0.9,0.8,1.0,0.9,0.9],
+      cfOp:     [0.7,1.0,0.8,1.1,0.9,1.0],
+      cfNet:    [0.4,0.6,0.5,0.7,0.6,0.58],
+      donut:    [47,29,15,9],
+      kpi:{ revYTD:'₫14.1B',revDelta:'+8.5% vs 2023',revDir:'up', margin:'30.2%',marginDelta:'+1.4 pts',marginDir:'up', ar:'₫1.5B',arDelta:'5 tenants overdue',arDir:'down', cash:'₫5.4B',cashDelta:'Adequate buffer',cashDir:'up' },
+      pl:{ rev:'₫2.38B',revD:'+6% MoM',revDir:'up', gp:'₫1.70B',gpD:'Margin 71.4%',gpDir:'up', exp:'₫1.14B',expD:'+2.5% MoM',expDir:'down', net:'₫0.99B',netD:'Margin 41.6%',netDir:'up',
+        rows:[['Gross Revenue','₫2,380M','₫14,100M','₫13,800M','green','+₫300M'],['Management Fees','₫1,119M','₫6,627M','₫6,486M','green','+₫141M'],['Utility Charges','₫643M','₫3,807M','₫3,726M','green','+₫81M'],['Land Lease','₫357M','₫2,115M','₫2,070M','green','+₫45M'],['Cost of Revenue','₫674M','₫3,969M','₫4,140M','green','Saved ₫171M'],['Gross Profit','₫1,706M','₫10,131M','₫9,660M','green','+₫471M'],['Operating Expenses','₫464M','₫2,726M','₫2,760M','green','Under budget'],['Net Profit','₫990M','₫6,074M','₫5,760M','green','+₫314M']] },
+      bs:{ assets:'₫131.2B',assD:'As at Jun 30 2024',assDir:'neu', equity:'₫79.8B',eqD:'+4.2% YTD',eqDir:'up', liab:'₫51.4B',liabD:'Debt ratio 39.2%',liabDir:'neu', wc:'₫10.4B',wcD:'Current ratio 2.1x',wcDir:'up' },
+      cf:{ op:'+₫1.0B',opD:'Positive',opDir:'up', inv:'−₫400M',invD:'Capex spend',invDir:'neu', fin:'−₫140M',finD:'Loan repayment',finDir:'neu', net:'+₫460M',netD:'Surplus',netDir:'up',
+        rows:[['Cash received from tenants','+₫2,380M','pos'],['Payments to suppliers & staff','−₫806M','neg'],['Utility & operating costs','−₫510M','neg'],['Operating Cash Flow','+₫1,000M','total pos'],['Infrastructure capex','−₫400M','neg'],['Loan principal repayment','−₫140M','neg'],['Net Cash Movement','+₫460M','total pos']] },
+      tenant:{ active:'94',fee:'₫1,119M',overdue:'5',avg:'₫14.2M',
+        rows:[['A-01','Placeholder Tenant A-01','Zone A','5,200','₫4,368M','01 Jun 2024','green','Paid'],['A-12','Placeholder Tenant A-12','Zone A','6,100','₫5,124M','16 Apr 2024','red','Overdue 35d'],['B-07','Placeholder Tenant B-07','Zone B','4,400','₫3,696M','10 May 2024','amber','Due Soon'],['B-15','Placeholder Tenant B-15','Zone B','2,900','₫2,436M','01 Jun 2024','green','Paid']] },
+      opex:{ total:'₫8.2B',totalD:'vs ₫8.6B budget',totalDir:'neu', rem:'₫0.4B',remD:'Under budget',remDir:'up', over:'1',overD:'Maintenance only',overDir:'down',
+        bars:[[60,'#4f9cf9','Operations (₫2,880M / ₫4,800M)'],[41,'#1d9e75','Payroll (₫1,804M / ₫4,400M)'],[76,'#e05a2b','Maintenance (₫1,216M / ₫1,600M)'],[47,'#7f77dd','Environmental (₫611M / ₫1,300M)'],[31,'#f0c040','Admin & Legal (₫326M / ₫1,050M)']] },
+      fcast:{ target:'₫28.0B',tD:'50.4% achieved',tDir:'up', q3:'₫7.6B',q3D:'+4% vs Q2 2024',q3Dir:'up', risk:'5 lots',rD:'Lease expiring Q3',rDir:'down', pipe:'₫1.8B',pD:'30 Jun deadline',pDir:'neu' },
+      tax:{ vout:'₫238M',vouD:'10% on revenue',vouDir:'neu', vin:'₫67M',vinD:'Creditable',vinDir:'up', vpay:'₫171M',vpayD:'Due 15 Jul 2024',vpayDir:'down', cit:'₫198M',citD:'20% CIT rate',citDir:'neu' }
+    },
+    quarterly: {
+      label:'Q2 2024', periodSub:'Q2 2024 (Apr–Jun)',
+      barLabels:['Q1 2023','Q2 2023','Q3 2023','Q4 2023','Q1 2024','Q2 2024'],
+      revenue:  [5.6,5.9,5.8,6.4,6.4,7.2],
+      expenses: [3.5,3.8,3.6,4.0,3.8,4.0],
+      netProfit:[2.1,2.1,2.2,2.6,2.5,2.9],
+      cfOp:     [2.0,2.2,2.1,2.8,2.4,2.9],
+      cfNet:    [1.1,1.3,1.4,1.8,1.6,2.0],
+      donut:    [48,27,16,9],
+      kpi:{ revYTD:'₫7.2B',revDelta:'+22.0% vs Q2 2023',revDir:'up', margin:'30.6%',marginDelta:'+1.6 pts',marginDir:'up', ar:'₫2.6B',arDelta:'9 tenants overdue',arDir:'down', cash:'₫5.7B',cashDelta:'Adequate buffer',cashDir:'up' },
+      pl:{ rev:'₫7.2B',revD:'+22.0% vs Q2 2023',revDir:'up', gp:'₫5.2B',gpD:'Margin 72.2%',gpDir:'up', exp:'₫3.4B',expD:'+3.8% vs Q1',expDir:'down', net:'₫2.9B',netD:'Margin 40.3%',netDir:'up',
+        rows:[['Gross Revenue','₫7,200M','₫14,100M','₫13,800M','green','+₫300M'],['Management Fees','₫3,456M','₫6,768M','₫6,624M','green','+₫144M'],['Utility Charges','₫1,944M','₫3,807M','₫3,726M','green','+₫81M'],['Land Lease','₫1,080M','₫2,115M','₫2,070M','green','+₫45M'],['Cost of Revenue','₫2,000M','₫3,969M','₫4,140M','green','Saved ₫171M'],['Gross Profit','₫5,200M','₫10,131M','₫9,660M','green','+₫471M'],['Operating Expenses','₫1,380M','₫2,726M','₫2,760M','green','Under budget'],['Net Profit','₫2,900M','₫6,074M','₫5,760M','green','+₫314M']] },
+      bs:{ assets:'₫133.4B',assD:'As at Q2 2024 end',assDir:'neu', equity:'₫80.9B',eqD:'+5.1% YTD',eqDir:'up', liab:'₫52.5B',liabD:'Debt ratio 39.4%',liabDir:'neu', wc:'₫10.8B',wcD:'Current ratio 2.1x',wcDir:'up' },
+      cf:{ op:'+₫2.9B',opD:'Good quarter',opDir:'up', inv:'−₫1.2B',invD:'Capex spend',invDir:'neu', fin:'−₫420M',finD:'Loan repayment',finDir:'neu', net:'+₫1.4B',netD:'Q surplus',netDir:'up',
+        rows:[['Cash received from tenants','+₫7,200M','pos'],['Payments to suppliers & staff','−₫2,400M','neg'],['Utility & operating costs','−₫1,500M','neg'],['Operating Cash Flow','+₫2,900M','total pos'],['Infrastructure capex','−₫1,200M','neg'],['Loan principal repayment','−₫420M','neg'],['Net Cash Movement','+₫1,280M','total pos']] },
+      tenant:{ active:'94',fee:'₫3,357M',overdue:'9',avg:'₫35.7M',
+        rows:[['A-01','Placeholder Tenant A-01','Zone A','5,200','₫13,104M','01 Jun 2024','green','Paid'],['A-12','Placeholder Tenant A-12','Zone A','6,100','₫15,372M','16 Apr 2024','red','Overdue 35d'],['B-07','Placeholder Tenant B-07','Zone B','4,400','₫11,088M','10 May 2024','amber','Due Soon'],['B-15','Placeholder Tenant B-15','Zone B','2,900','₫7,308M','01 Jun 2024','green','Paid']] },
+      opex:{ total:'₫3.4B',totalD:'vs ₫3.8B budget',totalDir:'neu', rem:'₫0.4B',remD:'Under budget',remDir:'up', over:'0',overD:'All within budget',overDir:'up',
+        bars:[[63,'#4f9cf9','Operations (₫8,316M / ₫13,200M)'],[44,'#1d9e75','Payroll (₫5,720M / ₫13,000M)'],[80,'#e05a2b','Maintenance (₫3,840M / ₫4,800M)'],[50,'#7f77dd','Environmental (₫1,800M / ₫3,600M)'],[34,'#f0c040','Admin & Legal (₫1,054M / ₫3,100M)']] },
+      fcast:{ target:'₫28.0B',tD:'50.4% achieved',tDir:'up', q3:'₫7.6B',q3D:'+4% vs Q2 2024',q3Dir:'up', risk:'5 lots',rD:'Lease expiring Q3',rDir:'down', pipe:'₫1.8B',pD:'30 Jun deadline',pDir:'neu' },
+      tax:{ vout:'₫720M',vouD:'10% on Q2 revenue',vouDir:'neu', vin:'₫196M',vinD:'Creditable',vinDir:'up', vpay:'₫524M',vpayD:'Due 15 Jul 2024',vpayDir:'down', cit:'₫580M',citD:'20% CIT rate',citDir:'neu' }
+    },
+    annual: {
+      label:'FY 2024', periodSub:'FY 2024 (Jan–Dec)',
+      barLabels:['FY 2019','FY 2020','FY 2021','FY 2022','FY 2023','FY 2024'],
+      revenue:  [10.2,13.2,15.6,18.0,21.5,29.2],
+      expenses: [7.2,9.0,10.5,12.0,13.8,17.8],
+      netProfit:[3.0,4.2,5.1,6.0,7.2,9.2],
+      cfOp:     [2.8,4.0,4.9,5.8,7.0,9.0],
+      cfNet:    [1.6,2.2,2.8,3.2,4.1,5.5],
+      donut:    [49,26,16,9],
+      kpi:{ revYTD:'₫29.2B',revDelta:'+35.8% vs FY 2023',revDir:'up', margin:'31.5%',marginDelta:'+0.9 pts',marginDir:'up', ar:'₫3.8B',arDelta:'Annual avg',arDir:'neu', cash:'₫6.8B',cashDelta:'Year-end balance',cashDir:'up' },
+      pl:{ rev:'₫29.2B',revD:'+35.8% vs FY 2023',revDir:'up', gp:'₫21.0B',gpD:'Margin 71.9%',gpDir:'up', exp:'₫6.0B',expD:'+1.8% vs FY 2023',expDir:'down', net:'₫9.2B',netD:'Margin 31.5%',netDir:'up',
+        rows:[['Gross Revenue','₫29,200M','₫29,200M','₫26,000M','green','+₫3,200M'],['Management Fees','₫14,308M','₫14,308M','₫12,740M','green','+₫1,568M'],['Utility Charges','₫7,884M','₫7,884M','₫7,020M','green','+₫864M'],['Land Lease','₫4,380M','₫4,380M','₫3,900M','green','+₫480M'],['Cost of Revenue','₫8,200M','₫8,200M','₫9,100M','green','Saved ₫900M'],['Gross Profit','₫21,000M','₫21,000M','₫16,900M','green','+₫4,100M'],['Operating Expenses','₫6,000M','₫6,000M','₫6,600M','green','Under budget'],['Net Profit','₫9,200M','₫9,200M','₫7,000M','green','+₫2,200M']] },
+      bs:{ assets:'₫135.0B',assD:'As at Dec 31 2023',assDir:'neu', equity:'₫81.8B',eqD:'+6.8% YoY',eqDir:'up', liab:'₫53.2B',liabD:'Debt ratio 39.4%',liabDir:'neu', wc:'₫11.2B',wcD:'Current ratio 2.1x',wcDir:'up' },
+      cf:{ op:'+₫9.0B',opD:'Strong CF',opDir:'up', inv:'−₫5.0B',invD:'Capex spend',invDir:'neu', fin:'−₫1.6B',finD:'Loan repayment',finDir:'neu', net:'+₫2.4B',netD:'Annual surplus',netDir:'up',
+        rows:[['Cash received from tenants','+₫29,200M','pos'],['Payments to suppliers & staff','−₫10,800M','neg'],['Utility & operating costs','−₫6,000M','neg'],['Operating Cash Flow','+₫9,000M','total pos'],['Infrastructure capex','−₫5,000M','neg'],['Loan principal repayment','−₫1,600M','neg'],['Net Cash Movement','+₫2,400M','total pos']] },
+      tenant:{ active:'94',fee:'₫13,432M',overdue:'3',avg:'₫143M',
+        rows:[['A-01','Placeholder Tenant A-01','Zone A','5,200','₫52,416M','Dec 2023','green','Paid'],['A-12','Placeholder Tenant A-12','Zone A','6,100','₫61,586M','Aug 2023','red','Outstanding'],['B-07','Placeholder Tenant B-07','Zone B','4,400','₫44,352M','Dec 2023','green','Paid'],['B-15','Placeholder Tenant B-15','Zone B','2,900','₫29,232M','Dec 2023','green','Paid']] },
+      opex:{ total:'₫6.0B',totalD:'vs ₫6.6B budget',totalDir:'neu', rem:'₫0.6B',remD:'Under budget',remDir:'up', over:'0',overD:'All within budget',overDir:'up',
+        bars:[[59,'#4f9cf9','Operations (₫28,320M / ₫48,000M)'],[40,'#1d9e75','Payroll (₫17,200M / ₫43,000M)'],[73,'#e05a2b','Maintenance (₫12,045M / ₫16,500M)'],[45,'#7f77dd','Environmental (₫5,850M / ₫13,000M)'],[30,'#f0c040','Admin & Legal (₫3,000M / ₫10,000M)']] },
+      fcast:{ target:'₫28.0B',tD:'FY 2024 achieved',tDir:'up', q3:'₫7.6B',q3D:'+4% vs FY 2023 H2',q3Dir:'up', risk:'4 lots',rD:'Lease renewal FY 2024',rDir:'down', pipe:'₫2.2B',pD:'Q1 2024 pipeline',pDir:'neu' },
+      tax:{ vout:'₫2,920M',vouD:'10% on annual revenue',vouDir:'neu', vin:'₫756M',vinD:'Creditable',vinDir:'up', vpay:'₫2,164M',vpayD:'Annual settlement',vpayDir:'down', cit:'₫1,840M',citD:'20% CIT rate',citDir:'neu' }
+    }
+  };
+
   var charts = {};
 
   /* ── Sidebar navigation ── */
@@ -786,6 +947,23 @@
     });
   });
 
+  /* ── FY year chip switcher ── */
+  var fyChips = dash.querySelectorAll('.fy-chip');
+  fyChips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var y = chip.dataset.fy;
+      if(!y || y === currentYear) return;
+      currentYear = y;
+      fyChips.forEach(function(c){ c.classList.remove('active'); });
+      chip.classList.add('active');
+      /* re-init charts for new year data */
+      rendered = {};
+      Object.keys(charts).forEach(function(k){ if(charts[k] && charts[k].destroy) charts[k].destroy(); delete charts[k]; });
+      renderPage('dashboard');
+      applyPeriod();
+    });
+  });
+
   /* ── Period chip switcher ── */
   var chips = dash.querySelectorAll('.chip');
   var periodMap = {'Monthly':'monthly','Quarterly':'quarterly','Annual':'annual'};
@@ -800,7 +978,7 @@
     });
   });
 
-  /* ── Apply period to ALL pages ── */
+  /* ── Apply to ALL pages ── */
   function applyPeriod(){
     ['dashboard','pl','balance','cashflow','tenant','opex','forecast','tax'].forEach(function(p){
       applyPeriodToPage(p);
@@ -808,7 +986,7 @@
   }
 
   function applyPeriodToPage(p){
-    var d = PERIODS[currentPeriod];
+    var d = DATA[currentYear][currentPeriod];
     /* update every page-sub across the whole dashboard */
     dash.querySelectorAll('.page-sub').forEach(function(el){
       if(el.dataset.dynamic) el.textContent = el.dataset.dynamic.replace('{period}', d.periodSub);
@@ -935,7 +1113,7 @@
 
   function buildBar(){
     var c=document.getElementById('vsg-revenueChart'); if(!c)return;
-    var d=PERIODS[currentPeriod];
+    var d=DATA[currentYear][currentPeriod];
     charts['bar']=new Chart(c,{type:'bar',data:{labels:d.barLabels,datasets:[
       {label:'Revenue', data:[...d.revenue], backgroundColor:'#4f9cf9',borderRadius:4,borderSkipped:false},
       {label:'Expenses',data:[...d.expenses],backgroundColor:'#e05a2b',borderRadius:4,borderSkipped:false}
@@ -943,25 +1121,25 @@
   }
   function refreshBar(){
     var ch=charts['bar']; if(!ch)return;
-    var d=PERIODS[currentPeriod];
+    var d=DATA[currentYear][currentPeriod];
     ch.data.labels=d.barLabels; ch.data.datasets[0].data=[...d.revenue]; ch.data.datasets[1].data=[...d.expenses]; ch.update();
   }
 
   function buildDonut(){
     var c=document.getElementById('vsg-donutChart'); if(!c)return;
-    var d=PERIODS[currentPeriod];
+    var d=DATA[currentYear][currentPeriod];
     charts['donut']=new Chart(c,{type:'doughnut',data:{labels:['Mgmt Fees','Utilities','Land Lease','Other'],datasets:[{
       data:[...d.donut],backgroundColor:['#4f9cf9','#1d9e75','#e05a2b','#f0c040'],borderWidth:0,hoverOffset:4
     }]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}});
   }
   function refreshDonut(){
     var ch=charts['donut']; if(!ch)return;
-    ch.data.datasets[0].data=[...PERIODS[currentPeriod].donut]; ch.update();
+    ch.data.datasets[0].data=[...DATA[currentYear][currentPeriod].donut]; ch.update();
   }
 
   function buildPL(){
     var c=document.getElementById('vsg-plChart'); if(!c)return;
-    var d=PERIODS[currentPeriod];
+    var d=DATA[currentYear][currentPeriod];
     charts['pl']=new Chart(c,{type:'line',data:{labels:d.barLabels,datasets:[{
       label:'Net Profit',data:[...d.netProfit],borderColor:'#4f9cf9',
       backgroundColor:'rgba(79,156,249,.08)',fill:true,tension:.4,pointRadius:4,pointBackgroundColor:'#4f9cf9'
@@ -969,13 +1147,13 @@
   }
   function refreshPL(){
     var ch=charts['pl']; if(!ch)return;
-    var d=PERIODS[currentPeriod];
+    var d=DATA[currentYear][currentPeriod];
     ch.data.labels=d.barLabels; ch.data.datasets[0].data=[...d.netProfit]; ch.update();
   }
 
   function buildCF(){
     var c=document.getElementById('vsg-cfChart'); if(!c)return;
-    var d=PERIODS[currentPeriod];
+    var d=DATA[currentYear][currentPeriod];
     charts['cashflow']=new Chart(c,{type:'line',data:{labels:d.barLabels,datasets:[
       {label:'Operating CF',data:[...d.cfOp], borderColor:'#1d9e75',tension:.4,fill:false,pointRadius:3},
       {label:'Net CF',      data:[...d.cfNet],borderColor:'#4f9cf9', tension:.4,fill:false,pointRadius:3,borderDash:[4,3]}
@@ -983,7 +1161,7 @@
   }
   function refreshCF(){
     var ch=charts['cashflow']; if(!ch)return;
-    var d=PERIODS[currentPeriod];
+    var d=DATA[currentYear][currentPeriod];
     ch.data.labels=d.barLabels; ch.data.datasets[0].data=[...d.cfOp]; ch.data.datasets[1].data=[...d.cfNet]; ch.update();
   }
 
@@ -994,6 +1172,85 @@
       {label:'Forecast',data:[null,null,null,null,null,3.0,3.2,3.4,3.5,3.3,3.6,3.8],borderColor:'#e05a2b',tension:.4,fill:false,borderDash:[5,4],pointRadius:3}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#8a9bb0',boxWidth:10}}},scales:{x:xScale,y:yScale}}});
   }
+
+  /* ════════════════════════════════════════════════
+     AIRTABLE CSV EXPORT
+     Generates a flat CSV of all KPI values across
+     all years × periods — ready to import into Airtable.
+  ════════════════════════════════════════════════ */
+  function exportToCSV(){
+    var rows = [['Year','Period','Page','Metric','Value','Delta','Direction']];
+    var years   = ['2024','2025','2026'];
+    var periods = ['monthly','quarterly','annual'];
+    var pLabels = {monthly:'Monthly',quarterly:'Quarterly',annual:'Annual'};
+
+    years.forEach(function(yr){
+      periods.forEach(function(pd){
+        var d = DATA[yr][pd];
+        if(!d) return;
+        var pg = d.label;
+
+        /* Dashboard KPIs */
+        rows.push([yr,pLabels[pd],'Dashboard','Total Revenue YTD',     d.kpi.revYTD,      d.kpi.revDelta,      d.kpi.revDir]);
+        rows.push([yr,pLabels[pd],'Dashboard','Net Profit Margin',      d.kpi.margin,      d.kpi.marginDelta,   d.kpi.marginDir]);
+        rows.push([yr,pLabels[pd],'Dashboard','Outstanding Receivables',d.kpi.ar,          d.kpi.arDelta,       d.kpi.arDir]);
+        rows.push([yr,pLabels[pd],'Dashboard','Cash Reserve',           d.kpi.cash,        d.kpi.cashDelta,     d.kpi.cashDir]);
+        /* P&L */
+        rows.push([yr,pLabels[pd],'P&L','Gross Revenue',  d.pl.rev,  d.pl.revD,  d.pl.revDir]);
+        rows.push([yr,pLabels[pd],'P&L','Gross Profit',   d.pl.gp,   d.pl.gpD,   d.pl.gpDir]);
+        rows.push([yr,pLabels[pd],'P&L','Total Expenses', d.pl.exp,  d.pl.expD,  d.pl.expDir]);
+        rows.push([yr,pLabels[pd],'P&L','Net Profit',     d.pl.net,  d.pl.netD,  d.pl.netDir]);
+        /* Balance Sheet */
+        rows.push([yr,pLabels[pd],'Balance Sheet','Total Assets',     d.bs.assets, d.bs.assD,  d.bs.assDir]);
+        rows.push([yr,pLabels[pd],'Balance Sheet','Total Equity',     d.bs.equity, d.bs.eqD,   d.bs.eqDir]);
+        rows.push([yr,pLabels[pd],'Balance Sheet','Total Liabilities',d.bs.liab,   d.bs.liabD, d.bs.liabDir]);
+        rows.push([yr,pLabels[pd],'Balance Sheet','Working Capital',  d.bs.wc,     d.bs.wcD,   d.bs.wcDir]);
+        /* Cash Flow */
+        rows.push([yr,pLabels[pd],'Cash Flow','Operating CF',     d.cf.op,  d.cf.opD,  d.cf.opDir]);
+        rows.push([yr,pLabels[pd],'Cash Flow','Investing CF',     d.cf.inv, d.cf.invD, d.cf.invDir]);
+        rows.push([yr,pLabels[pd],'Cash Flow','Financing CF',     d.cf.fin, d.cf.finD, d.cf.finDir]);
+        rows.push([yr,pLabels[pd],'Cash Flow','Net Cash Change',  d.cf.net, d.cf.netD, d.cf.netDir]);
+        /* Tenant */
+        rows.push([yr,pLabels[pd],'Tenant Revenue','Active Tenants',    d.tenant.active,  'tenants',         'neu']);
+        rows.push([yr,pLabels[pd],'Tenant Revenue','Period Mgmt Fee',   d.tenant.fee,     'period fee',      'up']);
+        rows.push([yr,pLabels[pd],'Tenant Revenue','Overdue Accounts',  d.tenant.overdue, 'action needed',   'down']);
+        rows.push([yr,pLabels[pd],'Tenant Revenue','Avg Rev / Tenant',  d.tenant.avg,     'per period',      'neu']);
+        /* Opex */
+        rows.push([yr,pLabels[pd],'Opex','Total Opex',        d.opex.total, d.opex.totalD, d.opex.totalDir]);
+        rows.push([yr,pLabels[pd],'Opex','Budget Remaining',  d.opex.rem,   d.opex.remD,   d.opex.remDir]);
+        rows.push([yr,pLabels[pd],'Opex','Over-budget Items', d.opex.over,  d.opex.overD,  d.opex.overDir]);
+        /* Forecast */
+        rows.push([yr,pLabels[pd],'Forecast','FY Target',          d.fcast.target, d.fcast.tD,  d.fcast.tDir]);
+        rows.push([yr,pLabels[pd],'Forecast','Next Period Forecast',d.fcast.q3,     d.fcast.q3D, d.fcast.q3Dir]);
+        rows.push([yr,pLabels[pd],'Forecast','Occupancy Risk',      d.fcast.risk,   d.fcast.rD,  d.fcast.rDir]);
+        rows.push([yr,pLabels[pd],'Forecast','PRISM Pipeline',      d.fcast.pipe,   d.fcast.pD,  d.fcast.pDir]);
+        /* Tax */
+        rows.push([yr,pLabels[pd],'Tax & VAT','VAT Output',    d.tax.vout, d.tax.vouD,  d.tax.vouDir]);
+        rows.push([yr,pLabels[pd],'Tax & VAT','VAT Input',     d.tax.vin,  d.tax.vinD,  d.tax.vinDir]);
+        rows.push([yr,pLabels[pd],'Tax & VAT','VAT Payable',   d.tax.vpay, d.tax.vpayD, d.tax.vpayDir]);
+        rows.push([yr,pLabels[pd],'Tax & VAT','CIT Estimated', d.tax.cit,  d.tax.citD,  d.tax.citDir]);
+      });
+    });
+
+    var csv = rows.map(function(r){
+      return r.map(function(v){ return '"'+(v||'').replace(/"/g,'""')+'"'; }).join(',');
+    }).join('\n');
+
+    var blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8;'});
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href = url;
+    a.download = 'VSG_Finance_Dashboard_Airtable_Export.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /* Wire Export button */
+  dash.querySelectorAll('.btn').forEach(function(btn){
+    if(btn.textContent.trim().indexOf('Export') > -1){
+      btn.addEventListener('click', exportToCSV);
+    }
+  });
 
   renderPage('dashboard');
   applyPeriodToPage('dashboard');
