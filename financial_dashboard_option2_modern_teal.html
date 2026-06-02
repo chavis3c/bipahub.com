@@ -1,0 +1,142 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.w2{display:flex;height:580px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.s2{width:210px;min-width:210px;background:#0a2e2a;display:flex;flex-direction:column}
+.s2-head{padding:16px;border-bottom:0.5px solid rgba(255,255,255,.08)}
+.s2-brand{font-size:14px;font-weight:500;color:#5dcaa5;letter-spacing:.2px}
+.s2-period{font-size:10px;color:rgba(255,255,255,.35);margin-top:2px}
+.s2-nav{padding:8px 0;flex:1;overflow-y:auto}
+.s2-group{font-size:9px;color:rgba(255,255,255,.28);letter-spacing:1px;padding:12px 16px 4px}
+.s2-link{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:11.5px;color:rgba(255,255,255,.5);cursor:pointer}
+.s2-link:hover{color:#fff;background:rgba(255,255,255,.05)}
+.s2-link.on{color:#5dcaa5;background:rgba(93,202,165,.1);border-left:2px solid #5dcaa5}
+.s2-link i{font-size:14px}
+.s2-link .dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:#5dcaa5}
+.s2-foot{padding:12px 16px;border-top:0.5px solid rgba(255,255,255,.08)}
+.s2-prof{display:flex;align-items:center;gap:9px}
+.s2-av{width:30px;height:30px;border-radius:50%;background:rgba(93,202,165,.2);border:1px solid #5dcaa5;display:flex;align-items:center;justify-content:center;font-size:11px;color:#5dcaa5;font-weight:500}
+.s2-nm{font-size:11px;color:rgba(255,255,255,.75)}
+.s2-rl{font-size:9px;color:rgba(255,255,255,.35)}
+.m2{flex:1;overflow-y:auto;background:#f4f7f6;padding:16px}
+.m2-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.m2-title{font-size:15px;font-weight:500;color:#0a2e2a}
+.m2-sub{font-size:11px;color:#5f7f7a;margin-top:2px}
+.tabs{display:flex;gap:0;background:#e0ece9;border-radius:6px;padding:2px;width:fit-content}
+.tab{padding:4px 12px;font-size:11px;border-radius:4px;cursor:pointer;color:#5f7f7a}
+.tab.on{background:#fff;color:#0a2e2a;font-weight:500}
+.kpi2{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.k2{background:#fff;border:0.5px solid #cde0db;border-radius:8px;padding:12px 14px;position:relative;overflow:hidden}
+.k2-acc{position:absolute;top:0;left:0;width:3px;height:100%}
+.k2-lbl{font-size:10px;color:#5f7f7a;margin-bottom:6px}
+.k2-val{font-size:20px;font-weight:500;color:#0a2e2a}
+.k2-chg{font-size:10px;margin-top:3px}
+.k2-up{color:#0f6e56}.k2-dn{color:#993c1d}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.p2{background:#fff;border:0.5px solid #cde0db;border-radius:8px;padding:14px}
+.p2-title{font-size:11px;font-weight:500;color:#0a2e2a;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.p2-badge{font-size:9px;background:#e1f5ee;color:#0f6e56;padding:2px 7px;border-radius:10px}
+.spark{display:flex;align-items:flex-end;gap:3px;height:70px;margin-bottom:6px}
+.sp-b{border-radius:2px 2px 0 0}
+.cf-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid #e0ece9;font-size:11px}
+.cf-label{color:#5f7f7a}
+.cf-val{font-weight:500;color:#0a2e2a}
+.cf-val.pos{color:#0f6e56}.cf-val.neg{color:#993c1d}
+.wide-panel{background:#fff;border:0.5px solid #cde0db;border-radius:8px;padding:14px;margin-bottom:10px}
+.hbar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:11px}
+.hbar-name{width:90px;color:#5f7f7a;flex-shrink:0}
+.hbar-track{flex:1;height:6px;background:#e0ece9;border-radius:3px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:3px}
+.hbar-val{width:50px;text-align:right;color:#0a2e2a;font-weight:500;font-size:10px}
+</style>
+<h2 class="sr-only">Option 2: Modern Teal Dashboard — clean contemporary finance interface</h2>
+<div class="w2">
+<div class="s2">
+  <div class="s2-head">
+    <div class="s2-brand">FinanceOS</div>
+    <div class="s2-period">THIP · FY 2026</div>
+  </div>
+  <div class="s2-nav">
+    <div class="s2-group">MAIN</div>
+    <div class="s2-link on"><i class="ti ti-home-2" aria-hidden="true"></i>Overview<div class="dot"></div></div>
+    <div class="s2-link"><i class="ti ti-trending-up" aria-hidden="true"></i>Revenue</div>
+    <div class="s2-link"><i class="ti ti-arrows-exchange" aria-hidden="true"></i>Cash Flow</div>
+    <div class="s2-link"><i class="ti ti-report-money" aria-hidden="true"></i>P&amp;L Report</div>
+    <div class="s2-group">OPERATIONS</div>
+    <div class="s2-link"><i class="ti ti-building-community" aria-hidden="true"></i>Tenant Billing</div>
+    <div class="s2-link"><i class="ti ti-truck-delivery" aria-hidden="true"></i>Utilities Mgmt</div>
+    <div class="s2-link"><i class="ti ti-coin" aria-hidden="true"></i>Expense Mgmt</div>
+    <div class="s2-link"><i class="ti ti-calculator" aria-hidden="true"></i>Budget Planner</div>
+    <div class="s2-group">REPORTING</div>
+    <div class="s2-link"><i class="ti ti-chart-dots-2" aria-hidden="true"></i>Analytics</div>
+    <div class="s2-link"><i class="ti ti-file-analytics" aria-hidden="true"></i>Board Reports</div>
+    <div class="s2-link"><i class="ti ti-calendar-stats" aria-hidden="true"></i>Forecasts</div>
+    <div class="s2-group">ADMIN</div>
+    <div class="s2-link"><i class="ti ti-users-group" aria-hidden="true"></i>Shareholders</div>
+    <div class="s2-link"><i class="ti ti-lock" aria-hidden="true"></i>Permissions</div>
+    <div class="s2-link"><i class="ti ti-settings-2" aria-hidden="true"></i>Settings</div>
+  </div>
+  <div class="s2-foot">
+    <div class="s2-prof">
+      <div class="s2-av">CC</div>
+      <div><div class="s2-nm">Chavis C.</div><div class="s2-rl">CEO · VSG</div></div>
+    </div>
+  </div>
+</div>
+<div class="m2">
+  <div class="m2-top">
+    <div><div class="m2-title">Financial Overview</div><div class="m2-sub">Last updated: Today, 14:30 ICT</div></div>
+    <div class="tabs"><div class="tab on">Monthly</div><div class="tab">Quarterly</div><div class="tab">Annual</div></div>
+  </div>
+  <div class="kpi2">
+    <div class="k2"><div class="k2-acc" style="background:#5dcaa5"></div><div class="k2-lbl">Total Revenue YTD</div><div class="k2-val">₫18.4B</div><div class="k2-chg k2-up">↑ 12.3% year-on-year</div></div>
+    <div class="k2"><div class="k2-acc" style="background:#4f9cf9"></div><div class="k2-lbl">Net Operating Income</div><div class="k2-val">₫6.4B</div><div class="k2-chg k2-up">↑ 8.7% vs target</div></div>
+    <div class="k2"><div class="k2-acc" style="background:#e05a2b"></div><div class="k2-lbl">Accounts Receivable</div><div class="k2-val">₫2.1B</div><div class="k2-chg k2-dn">↑ 8 overdue accounts</div></div>
+  </div>
+  <div class="panels">
+    <div class="p2">
+      <div class="p2-title">Revenue Trend (₫B) <span class="p2-badge">↑ Healthy</span></div>
+      <div class="spark" id="sparkLine"></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:#5f7f7a">
+        <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+      </div>
+    </div>
+    <div class="p2">
+      <div class="p2-title">Cash Flow Summary</div>
+      <div class="cf-row"><div class="cf-label">Operating Inflow</div><div class="cf-val pos">+₫3.2B</div></div>
+      <div class="cf-row"><div class="cf-label">Operating Outflow</div><div class="cf-val neg">−₫1.8B</div></div>
+      <div class="cf-row"><div class="cf-label">Net Cash Flow</div><div class="cf-val pos">+₫1.4B</div></div>
+      <div class="cf-row"><div class="cf-label">Investing Activities</div><div class="cf-val neg">−₫520M</div></div>
+      <div class="cf-row" style="border:none"><div class="cf-label">Free Cash Flow</div><div class="cf-val pos" style="font-size:13px">+₫880M</div></div>
+    </div>
+  </div>
+  <div class="wide-panel">
+    <div class="p2-title">Zone Performance — Revenue vs Budget</div>
+    <div id="hbars"></div>
+  </div>
+</div>
+</div>
+<script>
+const sparkData=[2.8,3.1,2.9,3.4,3.2,3.0];
+const maxS=Math.max(...sparkData);
+const sl=document.getElementById('sparkLine');
+sparkData.forEach(v=>{
+  const b=document.createElement('div');
+  b.className='sp-b';
+  b.style.cssText=`height:${Math.round((v/maxS)*64)}px;flex:1;background:${v===maxS?'#5dcaa5':'#9fe1cb'}`;
+  sl.appendChild(b);
+});
+const hdata=[
+  {name:'Zone A North',rev:78,color:'#5dcaa5'},
+  {name:'Zone B South',rev:65,color:'#4f9cf9'},
+  {name:'Utilities Fee',rev:91,color:'#f0c040'},
+  {name:'PRISM / Dev',rev:42,color:'#e05a2b'},
+];
+const hc=document.getElementById('hbars');
+hdata.forEach(d=>{
+  hc.innerHTML+=`<div class="hbar-row">
+    <div class="hbar-name">${d.name}</div>
+    <div class="hbar-track"><div class="hbar-fill" style="width:${d.rev}%;background:${d.color}"></div></div>
+    <div class="hbar-val">${d.rev}% of budget</div>
+  </div>`;
+});
+</script>
