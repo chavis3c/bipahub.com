@@ -5,6 +5,9 @@
      "Custom Code Block" editor
 ══════════════════════════════════════════ -->
 
+<!-- Encoding -->
+<meta charset="UTF-8"/>
+
 <!-- External Dependencies -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -23,13 +26,13 @@
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #e0e4ea;
-  background: #f0f2f5;
+  background: #5AF3F9;
 }
 
 /* ── Sidebar ────────────────────────────────── */
 #vsg-dash .sidebar {
   width: 220px; min-width: 220px; height: 100%;
-  background: #0c1e3c;
+  background: #0D1391;
   display: flex; flex-direction: column;
   overflow-y: auto; overflow-x: hidden;
 }
@@ -103,7 +106,7 @@
   background: #f0f2f5; color: #556; cursor: pointer;
   border: 1px solid #e0e4ea;
 }
-#vsg-dash .chip.active { background: #0c1e3c; color: #fff; border-color: #0c1e3c; }
+#vsg-dash .chip.active { background: #0D1391; color: #fff; border-color: #0D1391; }
 #vsg-dash .topbar-btn {
   width: 30px; height: 30px; border-radius: 6px;
   background: #f0f2f5; border: 1px solid #e0e4ea;
@@ -117,7 +120,7 @@
 
 /* ── Page Header ────────────────────────────── */
 #vsg-dash .page-header { display: flex; justify-content: space-between; align-items: flex-start; }
-#vsg-dash .page-title  { font-size: 18px; font-weight: 600; color: #0c1e3c; }
+#vsg-dash .page-title  { font-size: 18px; font-weight: 600; color: #0D1391; }
 #vsg-dash .page-sub    { font-size: 11px; color: #8a9bb0; margin-top: 3px; }
 #vsg-dash .action-row  { display: flex; gap: 8px; }
 #vsg-dash .btn {
@@ -125,7 +128,7 @@
   cursor: pointer; font-family: 'DM Sans', sans-serif; transition: .15s;
   border: 1px solid #e0e4ea; background: #fff; color: #334;
 }
-#vsg-dash .btn.primary { background: #0c1e3c; color: #fff; border-color: #0c1e3c; }
+#vsg-dash .btn.primary { background: #0D1391; color: #fff; border-color: #0D1391; }
 #vsg-dash .btn.success { background: #1d9e75; color: #fff; border-color: #1d9e75; }
 
 /* ── KPI Grid ───────────────────────────────── */
@@ -144,7 +147,7 @@
 #vsg-dash .kpi-card.purple::before { background: #7f77dd; }
 #vsg-dash .kpi-card.red::before    { background: #e24b4a; }
 #vsg-dash .kpi-label { font-size: 10px; color: #8a9bb0; margin-bottom: 6px; font-weight: 500; }
-#vsg-dash .kpi-value { font-size: 20px; font-weight: 600; color: #0c1e3c; font-family: 'DM Mono', monospace; }
+#vsg-dash .kpi-value { font-size: 20px; font-weight: 600; color: #0D1391; font-family: 'DM Mono', monospace; }
 #vsg-dash .kpi-delta { font-size: 10px; margin-top: 4px; display: flex; align-items: center; gap: 3px; }
 #vsg-dash .kpi-delta.up   { color: #1d9e75; }
 #vsg-dash .kpi-delta.down { color: #e24b4a; }
@@ -159,7 +162,7 @@
 #vsg-dash .card-header {
   display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
 }
-#vsg-dash .card-title  { font-size: 12px; font-weight: 600; color: #0c1e3c; }
+#vsg-dash .card-title  { font-size: 12px; font-weight: 600; color: #0D1391; }
 #vsg-dash .card-sub    { font-size: 10px; color: #8a9bb0; margin-top: 2px; }
 #vsg-dash .card-action { font-size: 11px; color: #4f9cf9; cursor: pointer; }
 
@@ -189,7 +192,7 @@
 #vsg-dash .progress-list { display: flex; flex-direction: column; gap: 10px; }
 #vsg-dash .progress-meta { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
 #vsg-dash .progress-label { color: #556; }
-#vsg-dash .progress-pct   { font-weight: 600; color: #0c1e3c; font-family: 'DM Mono', monospace; }
+#vsg-dash .progress-pct   { font-weight: 600; color: #0D1391; font-family: 'DM Mono', monospace; }
 #vsg-dash .progress-track { height: 5px; background: #f0f2f5; border-radius: 3px; overflow: hidden; }
 #vsg-dash .progress-fill  { height: 100%; border-radius: 3px; }
 
@@ -211,7 +214,7 @@
 #vsg-dash .cf-value { font-family: 'DM Mono', monospace; font-weight: 500; }
 #vsg-dash .cf-value.pos { color: #1d9e75; }
 #vsg-dash .cf-value.neg { color: #e24b4a; }
-#vsg-dash .cf-value.total { color: #0c1e3c; font-size: 13px; }
+#vsg-dash .cf-value.total { color: #0D1391; font-size: 13px; }
 
 /* ── Scrollbar ──────────────────────────────── */
 #vsg-dash ::-webkit-scrollbar { width: 4px; }
@@ -284,10 +287,10 @@
       </div>
       <div class="placeholder-notice"><i class="ti ti-info-circle"></i><span><strong>Placeholder data.</strong> Connect Airtable / Google Sheets to populate live figures.</span></div>
       <div class="kpi-grid">
-        <div class="kpi-card blue"><div class="kpi-label">Total Revenue YTD</div><div class="kpi-value">₫18.4B</div><div class="kpi-delta up"><i class="ti ti-arrow-up-right"></i> +12.3% vs 2025</div></div>
-        <div class="kpi-card green"><div class="kpi-label">Net Profit Margin</div><div class="kpi-value">34.7%</div><div class="kpi-delta up"><i class="ti ti-arrow-up-right"></i> +2.1 pts</div></div>
-        <div class="kpi-card orange"><div class="kpi-label">Outstanding Receivables</div><div class="kpi-value">₫2.1B</div><div class="kpi-delta down"><i class="ti ti-alert-circle"></i> 8 tenants overdue</div></div>
-        <div class="kpi-card gold"><div class="kpi-label">Cash Reserve</div><div class="kpi-value">₫6.8B</div><div class="kpi-delta up"><i class="ti ti-check"></i> Healthy buffer</div></div>
+        <div id="vsg-kpi-rev"    class="kpi-card blue"><div class="kpi-label">Total Revenue YTD</div><div class="kpi-value">₫18.4B</div><div class="kpi-delta up">↑ +12.3% vs 2025</div></div>
+        <div id="vsg-kpi-margin" class="kpi-card green"><div class="kpi-label">Net Profit Margin</div><div class="kpi-value">34.7%</div><div class="kpi-delta up">↑ +2.1 pts</div></div>
+        <div id="vsg-kpi-ar"     class="kpi-card orange"><div class="kpi-label">Outstanding Receivables</div><div class="kpi-value">₫2.1B</div><div class="kpi-delta down">↓ 8 tenants overdue</div></div>
+        <div id="vsg-kpi-cash"   class="kpi-card gold"><div class="kpi-label">Cash Reserve</div><div class="kpi-value">₫6.8B</div><div class="kpi-delta up">↑ Healthy buffer</div></div>
       </div>
       <div class="chart-row two">
         <div class="card">
@@ -660,6 +663,68 @@
   };
   var rendered = {};
 
+  /* ── Active period (monthly default) ── */
+  var currentPeriod = 'monthly';
+
+  /* ══════════════════════════════════════════════
+     PERIOD DATA SETS
+     All values in ₫ Billion unless noted
+  ══════════════════════════════════════════════ */
+  var PERIODS = {
+    monthly: {
+      label: 'June 2026',
+      barLabels: ['Jan','Feb','Mar','Apr','May','Jun'],
+      revenue:   [2.8, 3.1, 2.9, 3.4, 3.2, 3.0],
+      expenses:  [1.6, 1.9, 1.7, 2.0, 1.8, 1.7],
+      netProfit: [1.1, 1.3, 1.2, 1.5, 1.4, 1.4],
+      cfOp:      [1.1, 1.4, 1.2, 1.6, 1.3, 1.4],
+      cfNet:     [0.6, 0.9, 0.7, 1.0, 0.8, 0.72],
+      donut:     [49, 27, 15, 9],
+      kpi: {
+        revYTD:   '₫18.4B', revDelta: '+12.3% vs 2025', revDir: 'up',
+        margin:   '34.7%',  marginDelta: '+2.1 pts',     marginDir: 'up',
+        ar:       '₫2.1B',  arDelta: '8 tenants overdue',arDir: 'down',
+        cash:     '₫6.8B',  cashDelta: 'Healthy buffer', cashDir: 'up'
+      }
+    },
+    quarterly: {
+      label: 'Q2 2026',
+      barLabels: ['Q1 2025','Q2 2025','Q3 2025','Q4 2025','Q1 2026','Q2 2026'],
+      revenue:   [7.8, 8.4, 8.1, 9.0, 8.6, 9.8],
+      expenses:  [4.6, 5.2, 4.9, 5.6, 5.1, 5.3],
+      netProfit: [3.2, 3.1, 3.4, 3.7, 3.5, 4.0],
+      cfOp:      [3.0, 3.5, 3.2, 4.0, 3.8, 4.2],
+      cfNet:     [1.8, 2.0, 2.1, 2.5, 2.3, 2.8],
+      donut:     [51, 25, 16, 8],
+      kpi: {
+        revYTD:   '₫9.8B',  revDelta: '+14.0% vs Q2 2025', revDir: 'up',
+        margin:   '35.8%',  marginDelta: '+2.8 pts',        marginDir: 'up',
+        ar:       '₫3.4B',  arDelta: '12 tenants overdue',  arDir: 'down',
+        cash:     '₫7.2B',  cashDelta: 'Healthy buffer',    cashDir: 'up'
+      }
+    },
+    annual: {
+      label: 'FY 2025',
+      barLabels: ['FY 2021','FY 2022','FY 2023','FY 2024','FY 2025','FY 2026F'],
+      revenue:   [18.0, 21.5, 24.8, 29.2, 32.6, 36.0],
+      expenses:  [12.0, 13.8, 15.2, 17.8, 19.4, 21.0],
+      netProfit: [6.0,  7.2,  9.2, 10.8, 12.4, 14.8],
+      cfOp:      [5.8,  7.0,  9.0, 10.5, 12.0, 14.2],
+      cfNet:     [3.2,  4.1,  5.5,  6.8,  8.0, 10.0],
+      donut:     [52, 24, 15, 9],
+      kpi: {
+        revYTD:   '₫32.6B', revDelta: '+11.8% vs FY 2024', revDir: 'up',
+        margin:   '33.1%',  marginDelta: '+1.6 pts',        marginDir: 'up',
+        ar:       '₫4.8B',  arDelta: 'Annual avg',          arDir: 'neu',
+        cash:     '₫8.1B',  cashDelta: 'Year-end balance',  cashDir: 'up'
+      }
+    }
+  };
+
+  /* ── Shared chart instances ── */
+  var charts = {};
+
+  /* ── Sidebar navigation ── */
   items.forEach(function(item){
     item.addEventListener('click', function(){
       var t = item.dataset.page;
@@ -667,72 +732,142 @@
       item.classList.add('active');
       pages.forEach(function(p){ p.classList.remove('active'); });
       var pg = document.getElementById('vsg-page-'+t);
-      if(pg){ pg.classList.add('active'); }
-      if(bc) bc.textContent = labels[t]||t;
+      if(pg) pg.classList.add('active');
+      if(bc)  bc.textContent = labels[t]||t;
       renderPage(t);
     });
   });
 
+  /* ── Period chip switcher ── */
+  var chips = dash.querySelectorAll('.chip');
+  var periodMap = {'Monthly':'monthly','Quarterly':'quarterly','Annual':'annual'};
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var p = periodMap[chip.textContent.trim()];
+      if(!p || p === currentPeriod) return;
+      currentPeriod = p;
+      chips.forEach(function(c){ c.classList.remove('active'); });
+      chip.classList.add('active');
+      applyPeriod();
+    });
+  });
+
+  function applyPeriod(){
+    var d = PERIODS[currentPeriod];
+    /* Update KPI cards on the dashboard page */
+    updateKPI('vsg-kpi-rev',    d.kpi.revYTD,   d.kpi.revDelta,   d.kpi.revDir);
+    updateKPI('vsg-kpi-margin', d.kpi.margin,   d.kpi.marginDelta, d.kpi.marginDir);
+    updateKPI('vsg-kpi-ar',     d.kpi.ar,       d.kpi.arDelta,    d.kpi.arDir);
+    updateKPI('vsg-kpi-cash',   d.kpi.cash,     d.kpi.cashDelta,  d.kpi.cashDir);
+    /* Update subtitle */
+    var sub = document.querySelector('#vsg-page-dashboard .page-sub');
+    if(sub) sub.textContent = 'Thai Hoa Industrial Park · Long An Province · ' + d.label;
+    /* Rebuild or update charts */
+    refreshBar();
+    refreshDonut();
+    if(charts['pl'])       refreshPL();
+    if(charts['cashflow']) refreshCF();
+  }
+
+  function updateKPI(id, value, delta, dir){
+    var el = document.getElementById(id); if(!el) return;
+    var v = el.querySelector('.kpi-value');
+    var dd = el.querySelector('.kpi-delta');
+    if(v)  v.textContent = value;
+    if(dd){
+      dd.className = 'kpi-delta ' + dir;
+      var icon = dir==='up' ? '↑' : dir==='down' ? '↓' : '→';
+      dd.textContent = icon + ' ' + delta;
+    }
+  }
+
+  /* ── Page render (once-only init) ── */
   function renderPage(p){
     if(rendered[p]) return; rendered[p]=true;
     if(p==='dashboard'){ buildBar(); buildDonut(); }
-    if(p==='pl')       buildPL();
-    if(p==='cashflow') buildCF();
-    if(p==='forecast') buildForecast();
+    if(p==='pl')        buildPL();
+    if(p==='cashflow')  buildCF();
+    if(p==='forecast')  buildForecast();
   }
 
-  var m6=['Jan','Feb','Mar','Apr','May','Jun'];
   var m12=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var yScale = {grid:{color:'#f0f2f5'},ticks:{font:{size:10},color:'#8a9bb0',callback:function(v){return'₫'+v+'B';}}};
+  var xScale = {grid:{display:false},ticks:{font:{size:10},color:'#8a9bb0'}};
 
+  /* ── Bar chart (Revenue vs Expenses) ── */
   function buildBar(){
     var c=document.getElementById('vsg-revenueChart'); if(!c)return;
-    new Chart(c,{type:'bar',data:{labels:m6,datasets:[
-      {label:'Revenue',data:[2.8,3.1,2.9,3.4,3.2,3.0],backgroundColor:'#4f9cf9',borderRadius:4,borderSkipped:false},
-      {label:'Expenses',data:[1.6,1.9,1.7,2.0,1.8,1.7],backgroundColor:'#e05a2b',borderRadius:4,borderSkipped:false}
-    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
-      x:{grid:{display:false},ticks:{font:{size:10},color:'#8a9bb0'}},
-      y:{grid:{color:'#f0f2f5'},ticks:{font:{size:10},color:'#8a9bb0',callback:function(v){return'₫'+v+'B';}}}
-    }}});
+    var d=PERIODS[currentPeriod];
+    charts['bar'] = new Chart(c,{type:'bar',data:{labels:d.barLabels,datasets:[
+      {label:'Revenue', data:[...d.revenue], backgroundColor:'#4f9cf9',borderRadius:4,borderSkipped:false},
+      {label:'Expenses',data:[...d.expenses],backgroundColor:'#e05a2b',borderRadius:4,borderSkipped:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:xScale,y:yScale}}});
+  }
+  function refreshBar(){
+    var ch=charts['bar']; if(!ch)return;
+    var d=PERIODS[currentPeriod];
+    ch.data.labels = d.barLabels;
+    ch.data.datasets[0].data = [...d.revenue];
+    ch.data.datasets[1].data = [...d.expenses];
+    ch.update();
   }
 
+  /* ── Donut chart ── */
   function buildDonut(){
     var c=document.getElementById('vsg-donutChart'); if(!c)return;
-    new Chart(c,{type:'doughnut',data:{labels:['Mgmt Fees','Utilities','Land Lease','Other'],datasets:[{
-      data:[49,27,15,9],backgroundColor:['#4f9cf9','#1d9e75','#e05a2b','#f0c040'],borderWidth:0,hoverOffset:4
+    var d=PERIODS[currentPeriod];
+    charts['donut'] = new Chart(c,{type:'doughnut',data:{labels:['Mgmt Fees','Utilities','Land Lease','Other'],datasets:[{
+      data:[...d.donut],backgroundColor:['#4f9cf9','#1d9e75','#e05a2b','#f0c040'],borderWidth:0,hoverOffset:4
     }]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}});
   }
+  function refreshDonut(){
+    var ch=charts['donut']; if(!ch)return;
+    ch.data.datasets[0].data = [...PERIODS[currentPeriod].donut];
+    ch.update();
+  }
 
+  /* ── P&L line chart ── */
   function buildPL(){
     var c=document.getElementById('vsg-plChart'); if(!c)return;
-    new Chart(c,{type:'line',data:{labels:m6,datasets:[{
-      label:'Net Profit',data:[1.1,1.3,1.2,1.5,1.4,1.4],borderColor:'#4f9cf9',
+    var d=PERIODS[currentPeriod];
+    charts['pl'] = new Chart(c,{type:'line',data:{labels:d.barLabels,datasets:[{
+      label:'Net Profit',data:[...d.netProfit],borderColor:'#4f9cf9',
       backgroundColor:'rgba(79,156,249,.08)',fill:true,tension:.4,pointRadius:4,pointBackgroundColor:'#4f9cf9'
-    }]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
-      x:{grid:{display:false},ticks:{font:{size:10},color:'#8a9bb0'}},
-      y:{grid:{color:'#f0f2f5'},ticks:{font:{size:10},color:'#8a9bb0',callback:function(v){return'₫'+v+'B';}}}
-    }}});
+    }]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:xScale,y:yScale}}});
+  }
+  function refreshPL(){
+    var ch=charts['pl']; if(!ch)return;
+    var d=PERIODS[currentPeriod];
+    ch.data.labels = d.barLabels;
+    ch.data.datasets[0].data = [...d.netProfit];
+    ch.update();
   }
 
+  /* ── Cash Flow line chart ── */
   function buildCF(){
     var c=document.getElementById('vsg-cfChart'); if(!c)return;
-    new Chart(c,{type:'line',data:{labels:m6,datasets:[
-      {label:'Operating CF',data:[1.1,1.4,1.2,1.6,1.3,1.4],borderColor:'#1d9e75',tension:.4,fill:false,pointRadius:3},
-      {label:'Net CF',data:[0.6,0.9,0.7,1.0,0.8,0.72],borderColor:'#4f9cf9',tension:.4,fill:false,pointRadius:3,borderDash:[4,3]}
-    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#8a9bb0',boxWidth:10}}},scales:{
-      x:{grid:{display:false},ticks:{font:{size:10},color:'#8a9bb0'}},
-      y:{grid:{color:'#f0f2f5'},ticks:{font:{size:10},color:'#8a9bb0',callback:function(v){return'₫'+v+'B';}}}
-    }}});
+    var d=PERIODS[currentPeriod];
+    charts['cashflow'] = new Chart(c,{type:'line',data:{labels:d.barLabels,datasets:[
+      {label:'Operating CF',data:[...d.cfOp], borderColor:'#1d9e75',tension:.4,fill:false,pointRadius:3},
+      {label:'Net CF',      data:[...d.cfNet],borderColor:'#4f9cf9', tension:.4,fill:false,pointRadius:3,borderDash:[4,3]}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#8a9bb0',boxWidth:10}}},scales:{x:xScale,y:yScale}}});
+  }
+  function refreshCF(){
+    var ch=charts['cashflow']; if(!ch)return;
+    var d=PERIODS[currentPeriod];
+    ch.data.labels = d.barLabels;
+    ch.data.datasets[0].data = [...d.cfOp];
+    ch.data.datasets[1].data = [...d.cfNet];
+    ch.update();
   }
 
+  /* ── Forecast chart (fixed — always 12-month view) ── */
   function buildForecast(){
     var c=document.getElementById('vsg-forecastChart'); if(!c)return;
-    new Chart(c,{type:'line',data:{labels:m12,datasets:[
-      {label:'Actual',data:[2.8,3.1,2.9,3.4,3.2,3.0,null,null,null,null,null,null],borderColor:'#4f9cf9',tension:.4,fill:false,pointRadius:3},
+    charts['forecast'] = new Chart(c,{type:'line',data:{labels:m12,datasets:[
+      {label:'Actual',  data:[2.8,3.1,2.9,3.4,3.2,3.0,null,null,null,null,null,null],borderColor:'#4f9cf9',tension:.4,fill:false,pointRadius:3},
       {label:'Forecast',data:[null,null,null,null,null,3.0,3.2,3.4,3.5,3.3,3.6,3.8],borderColor:'#e05a2b',tension:.4,fill:false,borderDash:[5,4],pointRadius:3}
-    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#8a9bb0',boxWidth:10}}},scales:{
-      x:{grid:{display:false},ticks:{font:{size:10},color:'#8a9bb0'}},
-      y:{grid:{color:'#f0f2f5'},ticks:{font:{size:10},color:'#8a9bb0',callback:function(v){return'₫'+v+'B';}}}
-    }}});
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#8a9bb0',boxWidth:10}}},scales:{x:xScale,y:yScale}}});
   }
 
   renderPage('dashboard');
