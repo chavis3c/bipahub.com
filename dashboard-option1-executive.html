@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VSG Finance — Executive Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+/* ── Reset & Base ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; background: #f0f2f5; color: #1a1a2e; }
+
+/* ── Layout Shell ─────────────────────────────── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* ── Sidebar ──────────────────────────────────── */
+.sidebar {
+  width: 220px; min-width: 220px; height: 100vh;
+  background: #0c1e3c;
+  display: flex; flex-direction: column;
+  overflow-y: auto; overflow-x: hidden;
+  transition: width .25s ease;
+}
+.sb-logo {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  display: flex; align-items: center; gap: 10px;
+}
+.sb-logo-mark {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: #4f9cf9; display: flex; align-items: center;
+  justify-content: center; font-size: 14px; font-weight: 600; color: #fff;
+  flex-shrink: 0;
+}
+.sb-logo-text .name { font-size: 13px; font-weight: 600; color: #fff; }
+.sb-logo-text .sub  { font-size: 10px; color: rgba(255,255,255,.35); margin-top: 1px; }
+
+.sb-section {
+  padding: 16px 18px 4px;
+  font-size: 9px; font-weight: 600; letter-spacing: 1.2px;
+  color: rgba(255,255,255,.25); text-transform: uppercase;
+}
+.sb-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 18px; font-size: 12.5px;
+  color: rgba(255,255,255,.5); cursor: pointer;
+  transition: all .15s; position: relative;
+  border-right: 2px solid transparent;
+}
+.sb-item:hover { color: rgba(255,255,255,.85); background: rgba(255,255,255,.05); }
+.sb-item.active {
+  color: #fff; background: rgba(79,156,249,.12);
+  border-right-color: #4f9cf9;
+}
+.sb-item i { font-size: 16px; flex-shrink: 0; }
+.sb-item .label { flex: 1; }
+.sb-badge {
+  font-size: 9px; font-weight: 600; padding: 2px 6px;
+  border-radius: 10px; background: #e05a2b; color: #fff;
+}
+.sb-badge.green { background: #1d9e75; }
+.sb-badge.blue  { background: #4f9cf9; }
+
+.sb-footer {
+  margin-top: auto; padding: 14px 18px;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.sb-user { display: flex; align-items: center; gap: 10px; }
+.sb-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: #4f9cf9; display: flex; align-items: center;
+  justify-content: center; font-size: 12px; font-weight: 600; color: #fff;
+  flex-shrink: 0;
+}
+.sb-uname  { font-size: 12px; color: rgba(255,255,255,.8); font-weight: 500; }
+.sb-urole  { font-size: 10px; color: rgba(255,255,255,.35); margin-top: 1px; }
+
+/* ── Main Content ─────────────────────────────── */
+.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+/* ── Top Bar ──────────────────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  background: #fff; border-bottom: 1px solid #e8ecf0;
+  padding: 0 28px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-left { display: flex; align-items: center; gap: 8px; }
+.breadcrumb { font-size: 11px; color: #8a9bb0; }
+.breadcrumb span { color: #1a1a2e; font-weight: 500; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.chip {
+  font-size: 11px; padding: 5px 12px; border-radius: 20px;
+  background: #f0f2f5; color: #556; cursor: pointer;
+  border: 1px solid #e0e4ea;
+}
+.chip.active { background: #0c1e3c; color: #fff; border-color: #0c1e3c; }
+.topbar-btn {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: #f0f2f5; border: 1px solid #e0e4ea;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 17px; color: #556; transition: .15s;
+}
+.topbar-btn:hover { background: #0c1e3c; color: #fff; border-color: #0c1e3c; }
+
+/* ── Page Content ─────────────────────────────── */
+.page { display: none; flex-direction: column; gap: 20px; padding: 24px 28px; }
+.page.active { display: flex; }
+
+/* ── Page Header ──────────────────────────────── */
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.page-title  { font-size: 20px; font-weight: 600; color: #0c1e3c; }
+.page-sub    { font-size: 12px; color: #8a9bb0; margin-top: 3px; }
+.action-row  { display: flex; gap: 8px; }
+.btn {
+  font-size: 12px; padding: 7px 14px; border-radius: 7px;
+  cursor: pointer; font-family: inherit; transition: .15s;
+  border: 1px solid #e0e4ea; background: #fff; color: #334;
+}
+.btn:hover   { background: #f5f7fa; }
+.btn.primary { background: #0c1e3c; color: #fff; border-color: #0c1e3c; }
+.btn.primary:hover { background: #163258; }
+.btn.success { background: #1d9e75; color: #fff; border-color: #1d9e75; }
+
+/* ── KPI Cards ────────────────────────────────── */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.kpi-card {
+  background: #fff; border: 1px solid #e8ecf0; border-radius: 12px;
+  padding: 16px 18px; position: relative; overflow: hidden;
+}
+.kpi-card::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 4px; height: 100%;
+}
+.kpi-card.blue::before   { background: #4f9cf9; }
+.kpi-card.green::before  { background: #1d9e75; }
+.kpi-card.orange::before { background: #e05a2b; }
+.kpi-card.gold::before   { background: #f0c040; }
+.kpi-card.purple::before { background: #7f77dd; }
+.kpi-card.red::before    { background: #e24b4a; }
+
+.kpi-label { font-size: 10.5px; color: #8a9bb0; margin-bottom: 8px; font-weight: 500; }
+.kpi-value { font-size: 22px; font-weight: 600; color: #0c1e3c; font-family: 'DM Mono', monospace; }
+.kpi-delta { font-size: 11px; margin-top: 5px; display: flex; align-items: center; gap: 4px; }
+.kpi-delta.up   { color: #1d9e75; }
+.kpi-delta.down { color: #e24b4a; }
+.kpi-delta.neu  { color: #8a9bb0; }
+.kpi-icon {
+  position: absolute; top: 14px; right: 14px;
+  font-size: 22px; color: rgba(0,0,0,.06);
+}
+
+/* ── Chart Cards ──────────────────────────────── */
+.chart-row { display: grid; gap: 14px; }
+.chart-row.two   { grid-template-columns: 1.7fr 1fr; }
+.chart-row.three { grid-template-columns: 1fr 1fr 1fr; }
+.chart-row.full  { grid-template-columns: 1fr; }
+
+.card {
+  background: #fff; border: 1px solid #e8ecf0; border-radius: 12px;
+  padding: 18px 20px;
+}
+.card-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 14px;
+}
+.card-title { font-size: 13px; font-weight: 600; color: #0c1e3c; }
+.card-sub   { font-size: 10.5px; color: #8a9bb0; margin-top: 2px; }
+.card-action { font-size: 11px; color: #4f9cf9; cursor: pointer; }
+
+/* ── Table ────────────────────────────────────── */
+.data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.data-table th {
+  text-align: left; padding: 8px 10px;
+  font-size: 10.5px; font-weight: 600; color: #8a9bb0;
+  border-bottom: 1px solid #e8ecf0; text-transform: uppercase; letter-spacing: .5px;
+}
+.data-table td {
+  padding: 10px 10px; border-bottom: 1px solid #f4f6f9;
+  color: #334;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: #f9fafb; }
+
+/* ── Pills / Badges ───────────────────────────── */
+.pill {
+  display: inline-block; padding: 3px 9px; border-radius: 20px;
+  font-size: 10px; font-weight: 600;
+}
+.pill-green  { background: #eaf3de; color: #3b6d11; }
+.pill-red    { background: #fcebeb; color: #a32d2d; }
+.pill-amber  { background: #faeeda; color: #854f0b; }
+.pill-blue   { background: #e6f1fb; color: #185fa5; }
+.pill-purple { background: #eeedfe; color: #534ab7; }
+
+/* ── Progress Bars ────────────────────────────── */
+.progress-list { display: flex; flex-direction: column; gap: 12px; }
+.progress-item {}
+.progress-meta {
+  display: flex; justify-content: space-between;
+  font-size: 11.5px; margin-bottom: 5px;
+}
+.progress-label { color: #556; }
+.progress-pct   { font-weight: 600; color: #0c1e3c; font-family: 'DM Mono', monospace; }
+.progress-track {
+  height: 6px; background: #f0f2f5; border-radius: 3px; overflow: hidden;
+}
+.progress-fill { height: 100%; border-radius: 3px; transition: width .6s ease; }
+
+/* ── Placeholder Notice ───────────────────────── */
+.placeholder-notice {
+  background: #fffbf0; border: 1px dashed #f0c040;
+  border-radius: 8px; padding: 10px 14px;
+  font-size: 11px; color: #854f0b; display: flex; align-items: center; gap: 8px;
+}
+
+/* ── Cash Flow Item ───────────────────────────── */
+.cf-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 0; border-bottom: 1px solid #f0f2f5; font-size: 12px;
+}
+.cf-row:last-child { border-bottom: none; }
+.cf-label { color: #556; }
+.cf-value { font-family: 'DM Mono', monospace; font-weight: 500; }
+.cf-value.pos { color: #1d9e75; }
+.cf-value.neg { color: #e24b4a; }
+.cf-value.total { color: #0c1e3c; font-size: 14px; }
+
+/* ── Alert Items ──────────────────────────────── */
+.alert-list { display: flex; flex-direction: column; gap: 8px; }
+.alert-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 12px; border-radius: 8px; font-size: 11.5px;
+}
+.alert-item i { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+.alert-item.warn  { background: #fffbf0; border: 1px solid #faeeda; }
+.alert-item.warn i { color: #854f0b; }
+.alert-item.danger { background: #fff5f5; border: 1px solid #fcebeb; }
+.alert-item.danger i { color: #a32d2d; }
+.alert-item.ok    { background: #f0fbf5; border: 1px solid #eaf3de; }
+.alert-item.ok i  { color: #3b6d11; }
+.alert-title { font-weight: 600; color: #334; }
+.alert-body  { color: #8a9bb0; margin-top: 1px; font-size: 11px; }
+
+/* ── Stat Row ─────────────────────────────────── */
+.stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.stat-box {
+  background: #f5f7fb; border-radius: 8px;
+  padding: 12px 14px; text-align: center;
+}
+.stat-box .sv  { font-size: 20px; font-weight: 600; color: #0c1e3c; font-family: 'DM Mono', monospace; }
+.stat-box .sl  { font-size: 10px; color: #8a9bb0; margin-top: 3px; }
+
+/* ── Scrollbar ────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d0d6df; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══════════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-mark">V</div>
+    <div class="sb-logo-text">
+      <div class="name">VSG Finance</div>
+      <div class="sub">Thai Hoa IP · FY 2026</div>
+    </div>
+  </div>
+
+  <div class="sb-section">Overview</div>
+  <div class="sb-item active" data-page="dashboard">
+    <i class="ti ti-layout-dashboard"></i>
+    <span class="label">Dashboard</span>
+  </div>
+  <div class="sb-item" data-page="pl">
+    <i class="ti ti-chart-line"></i>
+    <span class="label">P&amp;L Statement</span>
+  </div>
+  <div class="sb-item" data-page="balance">
+    <i class="ti ti-scale"></i>
+    <span class="label">Balance Sheet</span>
+  </div>
+  <div class="sb-item" data-page="cashflow">
+    <i class="ti ti-arrows-exchange"></i>
+    <span class="label">Cash Flow</span>
+  </div>
+
+  <div class="sb-section">Revenue</div>
+  <div class="sb-item" data-page="tenant">
+    <i class="ti ti-building-factory"></i>
+    <span class="label">Tenant Revenue</span>
+  </div>
+  <div class="sb-item" data-page="billing">
+    <i class="ti ti-receipt"></i>
+    <span class="label">Fee Billing</span>
+    <span class="sb-badge">4</span>
+  </div>
+  <div class="sb-item" data-page="forecast">
+    <i class="ti ti-chart-bar"></i>
+    <span class="label">Forecasting</span>
+  </div>
+
+  <div class="sb-section">Expenses</div>
+  <div class="sb-item" data-page="opex">
+    <i class="ti ti-file-invoice"></i>
+    <span class="label">Opex Tracker</span>
+  </div>
+  <div class="sb-item" data-page="capex">
+    <i class="ti ti-crane"></i>
+    <span class="label">Capex Projects</span>
+    <span class="sb-badge blue">2</span>
+  </div>
+  <div class="sb-item" data-page="payroll">
+    <i class="ti ti-users"></i>
+    <span class="label">Payroll</span>
+  </div>
+
+  <div class="sb-section">Compliance</div>
+  <div class="sb-item" data-page="tax">
+    <i class="ti ti-certificate"></i>
+    <span class="label">Tax &amp; VAT</span>
+    <span class="sb-badge">!</span>
+  </div>
+  <div class="sb-item" data-page="audit">
+    <i class="ti ti-shield-check"></i>
+    <span class="label">Audit Logs</span>
+  </div>
+  <div class="sb-item" data-page="settings">
+    <i class="ti ti-settings"></i>
+    <span class="label">Settings</span>
+  </div>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">CC</div>
+      <div>
+        <div class="sb-uname">Chavis C.</div>
+        <div class="sb-urole">CEO &amp; Founder</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══════════════════════════════════════════════
+     MAIN AREA
+══════════════════════════════════════════════ -->
+<div class="main">
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="breadcrumb">VSG Finance &rsaquo; <span id="breadcrumb-label">Dashboard</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="chip active">Monthly</div>
+      <div class="chip">Quarterly</div>
+      <div class="chip">Annual</div>
+      <div class="topbar-btn"><i class="ti ti-bell"></i></div>
+      <div class="topbar-btn"><i class="ti ti-search"></i></div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: Dashboard ───────────────────── -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Financial Overview</div>
+        <div class="page-sub">Thai Hoa Industrial Park · Long An Province · June 2026</div>
+      </div>
+      <div class="action-row">
+        <button class="btn"><i class="ti ti-download"></i> Export</button>
+        <button class="btn primary"><i class="ti ti-plus"></i> New Report</button>
+      </div>
+    </div>
+
+    <div class="placeholder-notice">
+      <i class="ti ti-info-circle"></i>
+      <span><strong>Placeholder data.</strong> Connect your Airtable / Google Sheets source to populate live figures.</span>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card blue">
+        <i class="ti ti-trending-up kpi-icon"></i>
+        <div class="kpi-label">Total Revenue YTD</div>
+        <div class="kpi-value">₫18.4B</div>
+        <div class="kpi-delta up"><i class="ti ti-arrow-up-right"></i> +12.3% vs 2025</div>
+      </div>
+      <div class="kpi-card green">
+        <i class="ti ti-chart-pie kpi-icon"></i>
+        <div class="kpi-label">Net Profit Margin</div>
+        <div class="kpi-value">34.7%</div>
+        <div class="kpi-delta up"><i class="ti ti-arrow-up-right"></i> +2.1 pts</div>
+      </div>
+      <div class="kpi-card orange">
+        <i class="ti ti-alert-circle kpi-icon"></i>
+        <div class="kpi-label">Outstanding Receivables</div>
+        <div class="kpi-value">₫2.1B</div>
+        <div class="kpi-delta down"><i class="ti ti-arrow-up-right"></i> 8 tenants overdue</div>
+      </div>
+      <div class="kpi-card gold">
+        <i class="ti ti-building-bank kpi-icon"></i>
+        <div class="kpi-label">Cash Reserve</div>
+        <div class="kpi-value">₫6.8B</div>
+        <div class="kpi-delta up"><i class="ti ti-check"></i> Healthy buffer</div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="chart-row two">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Monthly Revenue vs Expenses</div>
+            <div class="card-sub">₫ Billion · Jan – Jun 2026</div>
+          </div>
+          <span class="card-action">View all →</span>
+        </div>
+        <div style="position:relative;height:200px">
+          <canvas id="revenueChart" role="img" aria-label="Bar chart showing monthly revenue vs expenses Jan to Jun 2026">Placeholder chart</canvas>
+        </div>
+        <div style="display:flex;gap:18px;margin-top:10px">
+          <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#8a9bb0"><span style="width:10px;height:10px;border-radius:2px;background:#4f9cf9;display:inline-block"></span>Revenue</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#8a9bb0"><span style="width:10px;height:10px;border-radius:2px;background:#e05a2b;display:inline-block"></span>Expenses</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Revenue Breakdown</div>
+            <div class="card-sub">By source category</div>
+          </div>
+        </div>
+        <div style="position:relative;height:160px">
+          <canvas id="donutChart" role="img" aria-label="Donut chart showing revenue breakdown by source">Placeholder chart</canvas>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px">
+          <span style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#8a9bb0"><span style="width:8px;height:8px;border-radius:2px;background:#4f9cf9;display:inline-block"></span>Mgmt Fees 49%</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#8a9bb0"><span style="width:8px;height:8px;border-radius:2px;background:#1d9e75;display:inline-block"></span>Utilities 27%</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#8a9bb0"><span style="width:8px;height:8px;border-radius:2px;background:#e05a2b;display:inline-block"></span>Land Lease 15%</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#8a9bb0"><span style="width:8px;height:8px;border-radius:2px;background:#f0c040;display:inline-block"></span>Other 9%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Row -->
+    <div class="chart-row two">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Top Tenant Receivables</div>
+          <span class="card-action">View all 8 →</span>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Tenant</th><th>Zone</th><th>Amount</th><th>Days Due</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Tenant A-12 [Placeholder]</td><td>Zone A</td><td style="font-family:'DM Mono',monospace">₫245M</td><td>42</td><td><span class="pill pill-red">Overdue</span></td></tr>
+            <tr><td>Tenant B-07 [Placeholder]</td><td>Zone B</td><td style="font-family:'DM Mono',monospace">₫180M</td><td>28</td><td><span class="pill pill-amber">Due Soon</span></td></tr>
+            <tr><td>Tenant A-31 [Placeholder]</td><td>Zone A</td><td style="font-family:'DM Mono',monospace">₫122M</td><td>15</td><td><span class="pill pill-green">On Track</span></td></tr>
+            <tr><td>Tenant B-22 [Placeholder]</td><td>Zone B</td><td style="font-family:'DM Mono',monospace">₫98M</td><td>7</td><td><span class="pill pill-green">On Track</span></td></tr>
+            <tr><td>Tenant A-08 [Placeholder]</td><td>Zone A</td><td style="font-family:'DM Mono',monospace">₫75M</td><td>55</td><td><span class="pill pill-red">Overdue</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Expense vs Budget</div>
+          <div class="card-sub">Current period utilisation</div>
+        </div>
+        <div class="progress-list">
+          <div class="progress-item">
+            <div class="progress-meta"><span class="progress-label">Operations</span><span class="progress-pct">68%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:68%;background:#4f9cf9"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-meta"><span class="progress-label">Payroll</span><span class="progress-pct">45%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:45%;background:#1d9e75"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-meta"><span class="progress-label">Maintenance</span><span class="progress-pct">81%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:81%;background:#e05a2b"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-meta"><span class="progress-label">Utilities Capex</span><span class="progress-pct">33%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:33%;background:#f0c040"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-meta"><span class="progress-label">Environmental</span><span class="progress-pct">52%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:52%;background:#7f77dd"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /dashboard -->
+
+  <!-- ── PAGE: P&L Statement ───────────────── -->
+  <div class="page" id="page-pl">
+    <div class="page-header">
+      <div><div class="page-title">Profit &amp; Loss Statement</div><div class="page-sub">June 2026 — Monthly View</div></div>
+      <div class="action-row">
+        <button class="btn"><i class="ti ti-download"></i> Export PDF</button>
+      </div>
+    </div>
+    <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Placeholder P&amp;L data — connect accounting source to populate.</div>
+    <div class="kpi-grid">
+      <div class="kpi-card green"><div class="kpi-label">Gross Revenue</div><div class="kpi-value">₫3.21B</div><div class="kpi-delta up"><i class="ti ti-arrow-up-right"></i> +8% MoM</div></div>
+      <div class="kpi-card blue"><div class="kpi-label">Gross Profit</div><div class="kpi-value">₫2.32B</div><div class="kpi-delta up"><i class="ti ti-arrow-up-right"></i> Margin 72%</div></div>
+      <div class="kpi-card orange"><div class="kpi-label">Total Expenses</div><div class="kpi-value">₫1.51B</div><div class="kpi-delta down"><i class="ti ti-arrow-up-right"></i> +3.2% MoM</div></div>
+      <div class="kpi-card gold"><div class="kpi-label">Net Profit</div><div class="kpi-value">₫1.40B</div><div class="kpi-delta up"><i class="ti ti-check"></i> Margin 43.6%</div></div>
+    </div>
+    <div class="chart-row two">
+      <div class="card">
+        <div class="card-header"><div class="card-title">P&amp;L Line Items</div></div>
+        <table class="data-table">
+          <thead><tr><th>Line Item</th><th>Current Month</th><th>YTD</th><th>Budget</th><th>Variance</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Gross Revenue</strong></td><td>₫3,210M</td><td>₫18,400M</td><td>₫18,000M</td><td><span class="pill pill-green">+₫400M</span></td></tr>
+            <tr><td style="padding-left:20px;color:#8a9bb0">Management Fees</td><td>₫1,573M</td><td>₫9,016M</td><td>₫8,800M</td><td><span class="pill pill-green">+₫216M</span></td></tr>
+            <tr><td style="padding-left:20px;color:#8a9bb0">Utility Charges</td><td>₫867M</td><td>₫4,968M</td><td>₫4,800M</td><td><span class="pill pill-green">+₫168M</span></td></tr>
+            <tr><td style="padding-left:20px;color:#8a9bb0">Land Lease</td><td>₫482M</td><td>₫2,760M</td><td>₫2,700M</td><td><span class="pill pill-green">+₫60M</span></td></tr>
+            <tr><td style="padding-left:20px;color:#8a9bb0">Other Income</td><td>₫288M</td><td>₫1,656M</td><td>₫1,700M</td><td><span class="pill pill-red">−₫44M</span></td></tr>
+            <tr><td><strong>Cost of Revenue</strong></td><td>₫890M</td><td>₫5,040M</td><td>₫5,200M</td><td><span class="pill pill-green">+₫160M saved</span></td></tr>
+            <tr><td><strong>Gross Profit</strong></td><td>₫2,320M</td><td>₫13,360M</td><td>₫12,800M</td><td><span class="pill pill-green">+₫560M</span></td></tr>
+            <tr><td><strong>Operating Expenses</strong></td><td>₫620M</td><td>₫3,540M</td><td>₫3,600M</td><td><span class="pill pill-green">Under budget</span></td></tr>
+            <tr><td><strong>EBIT</strong></td><td>₫1,700M</td><td>₫9,820M</td><td>₫9,200M</td><td><span class="pill pill-green">+₫620M</span></td></tr>
+            <tr><td><strong>Net Profit</strong></td><td>₫1,400M</td><td>₫8,060M</td><td>₫7,600M</td><td><span class="pill pill-green">+₫460M</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Monthly Net Profit Trend</div></div>
+        <div style="position:relative;height:260px">
+          <canvas id="plTrendChart" role="img" aria-label="Line chart of monthly net profit trend">Placeholder</canvas>
+        </div>
+      </div>
+    </div>
+  </div><!-- /pl -->
+
+  <!-- ── PAGE: Balance Sheet ───────────────── -->
+  <div class="page" id="page-balance">
+    <div class="page-header">
+      <div><div class="page-title">Balance Sheet</div><div class="page-sub">As at 30 June 2026 — Placeholder</div></div>
+      <button class="btn primary">Export</button>
+    </div>
+    <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Placeholder balance sheet — replace with live accounting data.</div>
+    <div class="kpi-grid">
+      <div class="kpi-card blue"><div class="kpi-label">Total Assets</div><div class="kpi-value">₫142.3B</div><div class="kpi-delta neu">As at Jun 30</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Total Equity</div><div class="kpi-value">₫88.7B</div><div class="kpi-delta up"><i class="ti ti-arrow-up-right"></i> +5.4% YTD</div></div>
+      <div class="kpi-card orange"><div class="kpi-label">Total Liabilities</div><div class="kpi-value">₫53.6B</div><div class="kpi-delta neu">Debt ratio 37.7%</div></div>
+      <div class="kpi-card gold"><div class="kpi-label">Working Capital</div><div class="kpi-value">₫12.4B</div><div class="kpi-delta up"><i class="ti ti-check"></i> Current ratio 2.3x</div></div>
+    </div>
+    <div class="chart-row two">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Assets</div></div>
+        <table class="data-table">
+          <thead><tr><th>Category</th><th>Value (₫M)</th><th>% of Total</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Current Assets</strong></td><td>—</td><td>—</td></tr>
+            <tr><td style="padding-left:20px;color:#556">Cash &amp; Equivalents [PH]</td><td>₫6,800M</td><td>4.8%</td></tr>
+            <tr><td style="padding-left:20px;color:#556">Accounts Receivable [PH]</td><td>₫2,100M</td><td>1.5%</td></tr>
+            <tr><td style="padding-left:20px;color:#556">Prepaid Expenses [PH]</td><td>₫450M</td><td>0.3%</td></tr>
+            <tr><td><strong>Non-Current Assets</strong></td><td>—</td><td>—</td></tr>
+            <tr><td style="padding-left:20px;color:#556">Land &amp; Infrastructure [PH]</td><td>₫118,000M</td><td>83.0%</td></tr>
+            <tr><td style="padding-left:20px;color:#556">Equipment &amp; Vehicles [PH]</td><td>₫12,800M</td><td>9.0%</td></tr>
+            <tr><td style="padding-left:20px;color:#556">Intangibles [PH]</td><td>₫2,150M</td><td>1.5%</td></tr>
+            <tr><td><strong>Total Assets</strong></td><td><strong>₫142,300M</strong></td><td>100%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Liabilities &amp; Equity</div></div>
+        <table class="data-table">
+          <thead><tr><th>Category</th><th>Value (₫M)</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Current Liabilities</strong></td><td>—</td></tr>
+            <tr><td style="padding-left:20px;color:#556">Accounts Payable [PH]</td><td>₫1,820M</td></tr>
+            <tr><td style="padding-left:20px;color:#556">Short-term Loans [PH]</td><td>₫3,500M</td></tr>
+            <tr><td><strong>Non-Current Liabilities</strong></td><td>—</td></tr>
+            <tr><td style="padding-left:20px;color:#556">Long-term Debt [PH]</td><td>₫45,000M</td></tr>
+            <tr><td style="padding-left:20px;color:#556">Deferred Tax [PH]</td><td>₫3,280M</td></tr>
+            <tr><td><strong>Total Liabilities</strong></td><td><strong>₫53,600M</strong></td></tr>
+            <tr><td><strong>Shareholders' Equity [PH]</strong></td><td><strong>₫88,700M</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /balance -->
+
+  <!-- ── PAGE: Cash Flow ───────────────────── -->
+  <div class="page" id="page-cashflow">
+    <div class="page-header">
+      <div><div class="page-title">Cash Flow Statement</div><div class="page-sub">June 2026 — Placeholder</div></div>
+      <button class="btn primary">Export</button>
+    </div>
+    <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Placeholder cash flow data.</div>
+    <div class="kpi-grid">
+      <div class="kpi-card green"><div class="kpi-label">Operating Cash Flow</div><div class="kpi-value">+₫1.4B</div><div class="kpi-delta up"><i class="ti ti-check"></i> Positive</div></div>
+      <div class="kpi-card orange"><div class="kpi-label">Investing Activities</div><div class="kpi-value">−₫520M</div><div class="kpi-delta neu">Capex spend</div></div>
+      <div class="kpi-card blue"><div class="kpi-label">Financing Activities</div><div class="kpi-value">−₫180M</div><div class="kpi-delta neu">Loan repayment</div></div>
+      <div class="kpi-card gold"><div class="kpi-label">Net Change in Cash</div><div class="kpi-value">+₫700M</div><div class="kpi-delta up"><i class="ti ti-arrow-up-right"></i> Surplus</div></div>
+    </div>
+    <div class="chart-row two">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Cash Flow Breakdown</div></div>
+        <div class="cf-row"><div class="cf-label">🟢 Cash received from tenants</div><div class="cf-value pos">+₫3,200M</div></div>
+        <div class="cf-row"><div class="cf-label">🔴 Payments to suppliers &amp; staff</div><div class="cf-value neg">−₫1,100M</div></div>
+        <div class="cf-row"><div class="cf-label">🔴 Utility &amp; operating costs</div><div class="cf-value neg">−₫680M</div></div>
+        <div class="cf-row"><div class="cf-label"><strong>Operating Cash Flow</strong></div><div class="cf-value total pos">+₫1,420M</div></div>
+        <div class="cf-row"><div class="cf-label">🔴 Infrastructure capex</div><div class="cf-value neg">−₫520M</div></div>
+        <div class="cf-row"><div class="cf-label">🔴 Loan principal repayment</div><div class="cf-value neg">−₫180M</div></div>
+        <div class="cf-row" style="border-top:2px solid #e8ecf0;margin-top:4px;padding-top:10px"><div class="cf-label"><strong>Net Cash Movement</strong></div><div class="cf-value total pos" style="font-size:16px">+₫720M</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">6-Month Cash Flow Trend</div></div>
+        <div style="position:relative;height:220px">
+          <canvas id="cfChart" role="img" aria-label="Line chart of 6-month cash flow trend">Placeholder</canvas>
+        </div>
+      </div>
+    </div>
+  </div><!-- /cashflow -->
+
+  <!-- ── PAGE: Tenant Revenue ──────────────── -->
+  <div class="page" id="page-tenant">
+    <div class="page-header">
+      <div><div class="page-title">Tenant Revenue</div><div class="page-sub">102 active tenants · Placeholder data</div></div>
+      <button class="btn primary"><i class="ti ti-plus"></i> Add Tenant</button>
+    </div>
+    <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Connect Airtable Tenants table to populate real tenant data.</div>
+    <div class="kpi-grid">
+      <div class="kpi-card blue"><div class="kpi-label">Active Tenants</div><div class="kpi-value">102</div><div class="kpi-delta up"><i class="ti ti-check"></i> 89 lots occupied</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Monthly Mgmt Fee Rev</div><div class="kpi-value">₫1,573M</div><div class="kpi-delta up"><i class="ti ti-arrow-up-right"></i> 1,155 VND/m²</div></div>
+      <div class="kpi-card orange"><div class="kpi-label">Overdue Accounts</div><div class="kpi-value">8</div><div class="kpi-delta down"><i class="ti ti-alert-circle"></i> Action needed</div></div>
+      <div class="kpi-card gold"><div class="kpi-label">Avg Revenue / Tenant</div><div class="kpi-value">₫18.2M</div><div class="kpi-delta neu">Per month</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Tenant Revenue List (Sample)</div><span class="card-action">View all 102 →</span></div>
+      <table class="data-table">
+        <thead><tr><th>#</th><th>Tenant Name</th><th>Zone</th><th>Lot Size m²</th><th>Monthly Fee</th><th>Last Payment</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>A-01</td><td>Placeholder Tenant A-01</td><td>Zone A</td><td>5,200</td><td>₫6,006M</td><td>01 Jun 2026</td><td><span class="pill pill-green">Paid</span></td></tr>
+          <tr><td>A-02</td><td>Placeholder Tenant A-02</td><td>Zone A</td><td>3,800</td><td>₫4,389M</td><td>01 Jun 2026</td><td><span class="pill pill-green">Paid</span></td></tr>
+          <tr><td>A-12</td><td>Placeholder Tenant A-12</td><td>Zone A</td><td>6,100</td><td>₫7,046M</td><td>12 Apr 2026</td><td><span class="pill pill-red">Overdue 42d</span></td></tr>
+          <tr><td>B-07</td><td>Placeholder Tenant B-07</td><td>Zone B</td><td>4,400</td><td>₫5,082M</td><td>05 May 2026</td><td><span class="pill pill-amber">Due Soon</span></td></tr>
+          <tr><td>B-15</td><td>Placeholder Tenant B-15</td><td>Zone B</td><td>2,900</td><td>₫3,350M</td><td>01 Jun 2026</td><td><span class="pill pill-green">Paid</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /tenant -->
+
+  <!-- ── PAGE: Fee Billing ─────────────────── -->
+  <div class="page" id="page-billing">
+    <div class="page-header">
+      <div><div class="page-title">Fee Billing</div><div class="page-sub">Management &amp; utility fee notices · Placeholder</div></div>
+      <div class="action-row">
+        <button class="btn"><i class="ti ti-send"></i> Send Notices</button>
+        <button class="btn primary"><i class="ti ti-plus"></i> New Notice</button>
+      </div>
+    </div>
+    <div class="placeholder-notice"><i class="ti ti-info-circle"></i> 4 fee notices pending dispatch. Connect Google Apps Script billing system to automate.</div>
+    <div class="kpi-grid">
+      <div class="kpi-card blue"><div class="kpi-label">Notices Issued (Jun)</div><div class="kpi-value">98</div><div class="kpi-delta neu">of 102 tenants</div></div>
+      <div class="kpi-card orange"><div class="kpi-label">Pending Dispatch</div><div class="kpi-value">4</div><div class="kpi-delta down"><i class="ti ti-alert-circle"></i> Action required</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Collected This Month</div><div class="kpi-value">₫2.8B</div><div class="kpi-delta up"><i class="ti ti-check"></i> 87% collection rate</div></div>
+      <div class="kpi-card red"><div class="kpi-label">Disputed Invoices</div><div class="kpi-value">2</div><div class="kpi-delta down"><i class="ti ti-alert-circle"></i> Under review</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Recent Billing Activity</div></div>
+      <table class="data-table">
+        <thead><tr><th>Notice #</th><th>Tenant</th><th>Type</th><th>Amount</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>BL-2026-0601</td><td>Tenant A-01 [PH]</td><td>Mgmt Fee</td><td>₫6,006M</td><td>10 Jun</td><td>25 Jun</td><td><span class="pill pill-green">Paid</span></td></tr>
+          <tr><td>BL-2026-0602</td><td>Tenant A-12 [PH]</td><td>Mgmt Fee</td><td>₫7,046M</td><td>10 Jun</td><td>25 Jun</td><td><span class="pill pill-red">Overdue</span></td></tr>
+          <tr><td>BL-2026-0603</td><td>Tenant B-07 [PH]</td><td>Utility</td><td>₫2,340M</td><td>28 May</td><td>15 Jun</td><td><span class="pill pill-amber">Due Soon</span></td></tr>
+          <tr><td>BL-2026-0604</td><td>Tenant B-22 [PH]</td><td>Utility</td><td>₫1,890M</td><td>28 May</td><td>15 Jun</td><td><span class="pill pill-blue">Disputed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /billing -->
+
+  <!-- ── PAGE: Forecasting ─────────────────── -->
+  <div class="page" id="page-forecast">
+    <div class="page-header">
+      <div><div class="page-title">Revenue Forecasting</div><div class="page-sub">FY 2026 projections — Placeholder model</div></div>
+      <button class="btn primary">Update Model</button>
+    </div>
+    <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Forecasting model uses placeholder assumptions. Connect actuals to refine projections.</div>
+    <div class="kpi-grid">
+      <div class="kpi-card blue"><div class="kpi-label">FY 2026 Revenue Target</div><div class="kpi-value">₫36.0B</div><div class="kpi-delta up">51.1% achieved YTD</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Q3 Forecast</div><div class="kpi-value">₫9.8B</div><div class="kpi-delta up"><i class="ti ti-arrow-up-right"></i> +6% vs Q2</div></div>
+      <div class="kpi-card orange"><div class="kpi-label">Occupancy Risk</div><div class="kpi-value">3 lots</div><div class="kpi-delta down">Lease expiring Q3</div></div>
+      <div class="kpi-card gold"><div class="kpi-label">PRISM Pipeline</div><div class="kpi-value">₫2.4B</div><div class="kpi-delta neu">30 Jun deadline</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">12-Month Revenue Forecast vs Actuals</div></div>
+      <div style="position:relative;height:240px">
+        <canvas id="forecastChart" role="img" aria-label="Line chart comparing forecast vs actual revenue over 12 months">Placeholder</canvas>
+      </div>
+      <div style="display:flex;gap:18px;margin-top:10px">
+        <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#8a9bb0"><span style="width:10px;height:3px;background:#4f9cf9;display:inline-block"></span>Actual</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#8a9bb0"><span style="width:10px;height:3px;background:#e05a2b;border-top:2px dashed #e05a2b;display:inline-block"></span>Forecast</span>
+      </div>
+    </div>
+  </div><!-- /forecast -->
+
+  <!-- ── PAGE: Opex Tracker ────────────────── -->
+  <div class="page" id="page-opex">
+    <div class="page-header">
+      <div><div class="page-title">Operating Expense Tracker</div><div class="page-sub">FY 2026 — Placeholder budget data</div></div>
+      <button class="btn primary"><i class="ti ti-plus"></i> Log Expense</button>
+    </div>
+    <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Replace with live data from your ERP / Zoho Books integration.</div>
+    <div class="kpi-grid">
+      <div class="kpi-card orange"><div class="kpi-label">Total Opex YTD</div><div class="kpi-value">₫10.6B</div><div class="kpi-delta neu">vs ₫11.2B budget</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Budget Remaining</div><div class="kpi-value">₫0.6B</div><div class="kpi-delta up"><i class="ti ti-check"></i> Under budget</div></div>
+      <div class="kpi-card blue"><div class="kpi-label">Largest Category</div><div class="kpi-value">Operations</div><div class="kpi-delta neu">₫3.8B YTD</div></div>
+      <div class="kpi-card red"><div class="kpi-label">Over-budget Items</div><div class="kpi-value">2</div><div class="kpi-delta down">Maintenance, ENV</div></div>
+    </div>
+    <div class="chart-row two">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Expense by Category</div></div>
+        <div class="progress-list">
+          <div class="progress-item"><div class="progress-meta"><span class="progress-label">Operations (₫3,800M / ₫5,600M)</span><span class="progress-pct">68%</span></div><div class="progress-track"><div class="progress-fill" style="width:68%;background:#4f9cf9"></div></div></div>
+          <div class="progress-item"><div class="progress-meta"><span class="progress-label">Payroll (₫2,250M / ₫5,000M)</span><span class="progress-pct">45%</span></div><div class="progress-track"><div class="progress-fill" style="width:45%;background:#1d9e75"></div></div></div>
+          <div class="progress-item"><div class="progress-meta"><span class="progress-label">Maintenance (₫1,620M / ₫2,000M)</span><span class="progress-pct">81%</span></div><div class="progress-track"><div class="progress-fill" style="width:81%;background:#e05a2b"></div></div></div>
+          <div class="progress-item"><div class="progress-meta"><span class="progress-label">Environmental (₫780M / ₫1,500M)</span><span class="progress-pct">52%</span></div><div class="progress-track"><div class="progress-fill" style="width:52%;background:#7f77dd"></div></div></div>
+          <div class="progress-item"><div class="progress-meta"><span class="progress-label">Admin &amp; Legal (₫420M / ₫1,200M)</span><span class="progress-pct">35%</span></div><div class="progress-track"><div class="progress-fill" style="width:35%;background:#f0c040"></div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Recent Expenses</div></div>
+        <table class="data-table">
+          <thead><tr><th>Description</th><th>Category</th><th>Amount</th></tr></thead>
+          <tbody>
+            <tr><td>WWTP chemical supply [PH]</td><td><span class="pill pill-purple">ENV</span></td><td>₫45M</td></tr>
+            <tr><td>Road maintenance Zone B [PH]</td><td><span class="pill pill-amber">Maint</span></td><td>₫120M</td></tr>
+            <tr><td>HR staffing cost [PH]</td><td><span class="pill pill-blue">Payroll</span></td><td>₫380M</td></tr>
+            <tr><td>Legal retainer Q2 [PH]</td><td><span class="pill pill-green">Admin</span></td><td>₫65M</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /opex -->
+
+  <!-- ── PAGE: Capex Projects ──────────────── -->
+  <div class="page" id="page-capex">
+    <div class="page-header">
+      <div><div class="page-title">Capex Projects</div><div class="page-sub">Active infrastructure investments — Placeholder</div></div>
+      <button class="btn primary"><i class="ti ti-plus"></i> New Project</button>
+    </div>
+    <div class="placeholder-notice"><i class="ti ti-info-circle"></i> 2 active capex projects. Connect project management data source.</div>
+    <div class="kpi-grid">
+      <div class="kpi-card blue"><div class="kpi-label">Total Capex Budget</div><div class="kpi-value">₫8.5B</div><div class="kpi-delta neu">FY 2026 approved</div></div>
+      <div class="kpi-card orange"><div class="kpi-label">Spent to Date</div><div class="kpi-value">₫3.1B</div><div class="kpi-delta neu">36.5% utilised</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Active Projects</div><div class="kpi-value">2</div><div class="kpi-delta up">On schedule</div></div>
+      <div class="kpi-card gold"><div class="kpi-label">Completion (Avg)</div><div class="kpi-value">58%</div><div class="kpi-delta up"><i class="ti ti-check"></i> On track</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Project Status</div></div>
+      <table class="data-table">
+        <thead><tr><th>Project</th><th>Budget</th><th>Spent</th><th>Progress</th><th>Status</th><th>Est. Completion</th></tr></thead>
+        <tbody>
+          <tr><td>WWTP Upgrade Phase 2 [PH]</td><td>₫4,200M</td><td>₫2,100M</td><td><div class="progress-track" style="width:120px"><div class="progress-fill" style="width:50%;background:#4f9cf9"></div></div></td><td><span class="pill pill-blue">In Progress</span></td><td>Sep 2026</td></tr>
+          <tr><td>Road Expansion Zone A [PH]</td><td>₫4,300M</td><td>₫1,000M</td><td><div class="progress-track" style="width:120px"><div class="progress-fill" style="width:23%;background:#1d9e75"></div></div></td><td><span class="pill pill-amber">Planning</span></td><td>Dec 2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /capex -->
+
+  <!-- ── PAGE: Payroll ─────────────────────── -->
+  <div class="page" id="page-payroll">
+    <div class="page-header">
+      <div><div class="page-title">Payroll</div><div class="page-sub">VSG 9-person leadership team + staff — Placeholder</div></div>
+      <button class="btn primary">Run Payroll</button>
+    </div>
+    <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Connect HR / Zoho Payroll to populate live staff records.</div>
+    <div class="kpi-grid">
+      <div class="kpi-card blue"><div class="kpi-label">Total Headcount</div><div class="kpi-value">42</div><div class="kpi-delta neu">9 leadership + 33 staff</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Monthly Payroll</div><div class="kpi-value">₫380M</div><div class="kpi-delta neu">Placeholder figure</div></div>
+      <div class="kpi-card orange"><div class="kpi-label">Pending Approvals</div><div class="kpi-value">0</div><div class="kpi-delta up"><i class="ti ti-check"></i> All approved</div></div>
+      <div class="kpi-card gold"><div class="kpi-label">AI Sprint Bonus Pool</div><div class="kpi-value">₫3.5M</div><div class="kpi-delta neu">VND · Q2 2026</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Leadership Team Payroll (Placeholder)</div></div>
+      <table class="data-table">
+        <thead><tr><th>Name</th><th>Role</th><th>Department</th><th>Base Salary (₫M/mo)</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Bob [PH]</td><td>COO</td><td>Operations</td><td>—</td><td><span class="pill pill-green">Active</span></td></tr>
+          <tr><td>Jane [PH]</td><td>CFO</td><td>Finance</td><td>—</td><td><span class="pill pill-green">Active</span></td></tr>
+          <tr><td>Leo [PH]</td><td>CTO-ENV</td><td>Environment</td><td>—</td><td><span class="pill pill-green">Active</span></td></tr>
+          <tr><td>Joy [PH]</td><td>CDO</td><td>Digital</td><td>—</td><td><span class="pill pill-green">Active</span></td></tr>
+          <tr><td>Lisa [PH]</td><td>CMO</td><td>Marketing</td><td>—</td><td><span class="pill pill-green">Active</span></td></tr>
+          <tr><td>Ken [PH]</td><td>ENV Director</td><td>Environment</td><td>—</td><td><span class="pill pill-green">Active</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /payroll -->
+
+  <!-- ── PAGE: Tax & VAT ───────────────────── -->
+  <div class="page" id="page-tax">
+    <div class="page-header">
+      <div><div class="page-title">Tax &amp; VAT</div><div class="page-sub">Vietnam tax compliance — Placeholder</div></div>
+      <button class="btn primary"><i class="ti ti-file-check"></i> File Return</button>
+    </div>
+    <div class="placeholder-notice"><i class="ti ti-alert-triangle"></i> Q2 VAT filing deadline: 15 July 2026. Connect Fast Accounting VAT data.</div>
+    <div class="kpi-grid">
+      <div class="kpi-card orange"><div class="kpi-label">VAT Output (Jun)</div><div class="kpi-value">₫321M</div><div class="kpi-delta neu">10% on revenue</div></div>
+      <div class="kpi-card blue"><div class="kpi-label">VAT Input (Jun)</div><div class="kpi-value">₫89M</div><div class="kpi-delta neu">Creditable</div></div>
+      <div class="kpi-card red"><div class="kpi-label">VAT Payable</div><div class="kpi-value">₫232M</div><div class="kpi-delta down">Due 15 Jul 2026</div></div>
+      <div class="kpi-card green"><div class="kpi-label">CIT (Estimated)</div><div class="kpi-value">₫280M</div><div class="kpi-delta neu">20% CIT rate</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Tax Calendar</div></div>
+      <table class="data-table">
+        <thead><tr><th>Obligation</th><th>Period</th><th>Due Date</th><th>Amount (Est.)</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>VAT Monthly Return</td><td>Jun 2026</td><td>20 Jul 2026</td><td>₫232M</td><td><span class="pill pill-amber">Upcoming</span></td></tr>
+          <tr><td>VAT Quarterly (Q2)</td><td>Apr–Jun 2026</td><td>15 Jul 2026</td><td>₫680M</td><td><span class="pill pill-red">Due Soon</span></td></tr>
+          <tr><td>CIT Provisional (H1)</td><td>H1 2026</td><td>30 Jul 2026</td><td>₫1,400M</td><td><span class="pill pill-amber">Upcoming</span></td></tr>
+          <tr><td>PIT Withholding</td><td>Jun 2026</td><td>10 Jul 2026</td><td>₫42M</td><td><span class="pill pill-green">Filed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /tax -->
+
+  <!-- ── PAGE: Audit Logs ──────────────────── -->
+  <div class="page" id="page-audit">
+    <div class="page-header">
+      <div><div class="page-title">Audit Logs</div><div class="page-sub">System &amp; financial audit trail — Placeholder</div></div>
+      <button class="btn"><i class="ti ti-download"></i> Export Log</button>
+    </div>
+    <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Placeholder audit trail. Connect n8n workflow logs and system events.</div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Recent Activity Log</div></div>
+      <table class="data-table">
+        <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Module</th><th>Details</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:'DM Mono',monospace;font-size:11px">2026-06-02 14:22</td><td>Chavis C.</td><td><span class="pill pill-blue">View</span></td><td>Dashboard</td><td>Accessed financial overview</td></tr>
+          <tr><td style="font-family:'DM Mono',monospace;font-size:11px">2026-06-02 11:05</td><td>Jane [PH]</td><td><span class="pill pill-green">Update</span></td><td>P&amp;L</td><td>Updated June revenue figures [PH]</td></tr>
+          <tr><td style="font-family:'DM Mono',monospace;font-size:11px">2026-06-01 17:30</td><td>System</td><td><span class="pill pill-purple">Auto</span></td><td>Billing</td><td>98 fee notices dispatched via n8n</td></tr>
+          <tr><td style="font-family:'DM Mono',monospace;font-size:11px">2026-06-01 09:00</td><td>System</td><td><span class="pill pill-amber">Alert</span></td><td>CRM</td><td>WF-01 auto-reply triggered (8 events)</td></tr>
+          <tr><td style="font-family:'DM Mono',monospace;font-size:11px">2026-05-31 16:00</td><td>Ken [PH]</td><td><span class="pill pill-red">Flag</span></td><td>ENV</td><td>WWTP COD reading 78mg/L — above threshold</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /audit -->
+
+  <!-- ── PAGE: Settings ───────────────────── -->
+  <div class="page" id="page-settings">
+    <div class="page-header">
+      <div><div class="page-title">Settings</div><div class="page-sub">Dashboard configuration — Placeholder</div></div>
+      <button class="btn success"><i class="ti ti-check"></i> Save Changes</button>
+    </div>
+    <div class="chart-row two">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Organisation Details</div></div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div><div style="font-size:11px;color:#8a9bb0;margin-bottom:4px">Company Name</div><input type="text" value="Vietson Infrastructure Development SHC" style="width:100%;padding:8px 10px;border:1px solid #e0e4ea;border-radius:6px;font-family:inherit;font-size:12px"/></div>
+          <div><div style="font-size:11px;color:#8a9bb0;margin-bottom:4px">Industrial Park</div><input type="text" value="Thai Hoa Industrial Park, Long An" style="width:100%;padding:8px 10px;border:1px solid #e0e4ea;border-radius:6px;font-family:inherit;font-size:12px"/></div>
+          <div><div style="font-size:11px;color:#8a9bb0;margin-bottom:4px">Base Currency</div><input type="text" value="VND (₫)" style="width:100%;padding:8px 10px;border:1px solid #e0e4ea;border-radius:6px;font-family:inherit;font-size:12px"/></div>
+          <div><div style="font-size:11px;color:#8a9bb0;margin-bottom:4px">Fiscal Year End</div><input type="text" value="31 December" style="width:100%;padding:8px 10px;border:1px solid #e0e4ea;border-radius:6px;font-family:inherit;font-size:12px"/></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Data Connections</div></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#f5f7fb;border-radius:6px"><div><div style="font-size:12px;font-weight:500">Airtable</div><div style="font-size:10px;color:#8a9bb0">PRISM-PCBS base</div></div><span class="pill pill-green">Connected</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#f5f7fb;border-radius:6px"><div><div style="font-size:12px;font-weight:500">Google Sheets</div><div style="font-size:10px;color:#8a9bb0">VSG_CRM_Log_2026</div></div><span class="pill pill-green">Connected</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#f5f7fb;border-radius:6px"><div><div style="font-size:12px;font-weight:500">n8n Workflows</div><div style="font-size:10px;color:#8a9bb0">vsg2026.app.n8n.cloud</div></div><span class="pill pill-green">Connected</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#f5f7fb;border-radius:6px"><div><div style="font-size:12px;font-weight:500">Zoho Books</div><div style="font-size:10px;color:#8a9bb0">ERP / Accounting</div></div><span class="pill pill-amber">Pending setup</span></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /settings -->
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+/* ── Sidebar Navigation ───────────────────────────── */
+const items = document.querySelectorAll('.sb-item[data-page]');
+const pages = document.querySelectorAll('.page');
+const breadcrumb = document.getElementById('breadcrumb-label');
+const labels = {
+  dashboard:'Dashboard', pl:'P&L Statement', balance:'Balance Sheet',
+  cashflow:'Cash Flow', tenant:'Tenant Revenue', billing:'Fee Billing',
+  forecast:'Forecasting', opex:'Opex Tracker', capex:'Capex Projects',
+  payroll:'Payroll', tax:'Tax & VAT', audit:'Audit Logs', settings:'Settings'
+};
+items.forEach(item => {
+  item.addEventListener('click', () => {
+    const target = item.dataset.page;
+    items.forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    pages.forEach(p => p.classList.remove('active'));
+    const pg = document.getElementById('page-' + target);
+    if (pg) { pg.classList.add('active'); pg.scrollIntoView({behavior:'instant',block:'start'}); }
+    breadcrumb.textContent = labels[target] || target;
+    renderChartsForPage(target);
+  });
+});
+
+/* ── Chart Registry (render on demand) ───────────── */
+const rendered = {};
+function renderChartsForPage(page) {
+  if (rendered[page]) return;
+  rendered[page] = true;
+  if (page === 'dashboard') { renderRevenue(); renderDonut(); }
+  if (page === 'pl') renderPLTrend();
+  if (page === 'cashflow') renderCFChart();
+  if (page === 'forecast') renderForecast();
+}
+
+const months6  = ['Jan','Feb','Mar','Apr','May','Jun'];
+const months12 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const revData  = [2.8,3.1,2.9,3.4,3.2,3.0];
+const expData  = [1.6,1.9,1.7,2.0,1.8,1.7];
+
+function renderRevenue() {
+  const ctx = document.getElementById('revenueChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: months6,
+      datasets: [
+        { label:'Revenue', data: revData, backgroundColor:'#4f9cf9', borderRadius:4, borderSkipped:false },
+        { label:'Expenses', data: expData, backgroundColor:'#e05a2b', borderRadius:4, borderSkipped:false }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ font:{ size:11 }, color:'#8a9bb0' } },
+        y:{ grid:{ color:'#f0f2f5' }, ticks:{ font:{ size:11 }, color:'#8a9bb0', callback: v => '₫'+v+'B' } }
+      }
+    }
+  });
+}
+
+function renderDonut() {
+  const ctx = document.getElementById('donutChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type:'doughnut',
+    data:{
+      labels:['Mgmt Fees','Utilities','Land Lease','Other'],
+      datasets:[{ data:[49,27,15,9], backgroundColor:['#4f9cf9','#1d9e75','#e05a2b','#f0c040'], borderWidth:0, hoverOffset:4 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'68%', plugins:{ legend:{ display:false } } }
+  });
+}
+
+function renderPLTrend() {
+  const ctx = document.getElementById('plTrendChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: months6,
+      datasets:[{ label:'Net Profit (₫B)', data:[1.1,1.3,1.2,1.5,1.4,1.4], borderColor:'#4f9cf9', backgroundColor:'rgba(79,156,249,.08)', fill:true, tension:.4, pointRadius:4, pointBackgroundColor:'#4f9cf9' }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ font:{size:11}, color:'#8a9bb0' } },
+        y:{ grid:{ color:'#f0f2f5' }, ticks:{ font:{size:11}, color:'#8a9bb0', callback: v => '₫'+v+'B' } }
+      }
+    }
+  });
+}
+
+function renderCFChart() {
+  const ctx = document.getElementById('cfChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: months6,
+      datasets:[
+        { label:'Operating CF', data:[1.1,1.4,1.2,1.6,1.3,1.4], borderColor:'#1d9e75', tension:.4, fill:false, pointRadius:3 },
+        { label:'Net CF', data:[0.6,0.9,0.7,1.0,0.8,0.72], borderColor:'#4f9cf9', tension:.4, fill:false, pointRadius:3, borderDash:[4,3] }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ font:{size:10}, color:'#8a9bb0', boxWidth:10 } } },
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ font:{size:11}, color:'#8a9bb0' } },
+        y:{ grid:{ color:'#f0f2f5' }, ticks:{ font:{size:11}, color:'#8a9bb0', callback: v => '₫'+v+'B' } }
+      }
+    }
+  });
+}
+
+function renderForecast() {
+  const ctx = document.getElementById('forecastChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: months12,
+      datasets:[
+        { label:'Actual', data:[2.8,3.1,2.9,3.4,3.2,3.0,null,null,null,null,null,null], borderColor:'#4f9cf9', tension:.4, fill:false, pointRadius:3 },
+        { label:'Forecast', data:[null,null,null,null,null,3.0,3.2,3.4,3.5,3.3,3.6,3.8], borderColor:'#e05a2b', tension:.4, fill:false, borderDash:[5,4], pointRadius:3 }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ font:{size:10}, color:'#8a9bb0', boxWidth:10 } } },
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ font:{size:11}, color:'#8a9bb0' } },
+        y:{ grid:{ color:'#f0f2f5' }, ticks:{ font:{size:11}, color:'#8a9bb0', callback: v => '₫'+v+'B' } }
+      }
+    }
+  });
+}
+
+/* Initial render for dashboard */
+renderChartsForPage('dashboard');
+</script>
+</body>
+</html>
