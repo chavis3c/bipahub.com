@@ -1,0 +1,166 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{display:flex;height:580px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary)}
+.sidebar{width:200px;min-width:200px;background:#0f2040;display:flex;flex-direction:column;padding:0}
+.sb-logo{padding:18px 16px 14px;border-bottom:0.5px solid rgba(255,255,255,.08)}
+.sb-logo .co{font-size:13px;font-weight:500;color:#fff;letter-spacing:.3px}
+.sb-logo .sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}
+.sb-section{padding:10px 0 4px;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.8px;padding-left:16px;padding-top:14px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 16px;font-size:12px;color:rgba(255,255,255,.55);cursor:pointer;transition:all .15s}
+.sb-item:hover{color:#fff;background:rgba(255,255,255,.06)}
+.sb-item.active{color:#fff;background:rgba(255,255,255,.12);border-right:2px solid #4f9cf9}
+.sb-item i{font-size:15px}
+.sb-item .badge{margin-left:auto;background:#e05a2b;color:#fff;font-size:9px;padding:1px 5px;border-radius:8px}
+.sb-bottom{margin-top:auto;padding:12px 16px;border-top:0.5px solid rgba(255,255,255,.08)}
+.sb-user{display:flex;align-items:center;gap:8px}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:#4f9cf9;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#fff}
+.sb-uname{font-size:11px;color:rgba(255,255,255,.7)}
+.sb-urole{font-size:10px;color:rgba(255,255,255,.35)}
+.main{flex:1;overflow-y:auto;background:var(--color-background-tertiary);padding:16px}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.page-title{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.page-sub{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+.date-chip{font-size:11px;color:var(--color-text-secondary);background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);padding:4px 10px;border-radius:20px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 14px}
+.kpi-label{font-size:10px;color:var(--color-text-secondary);margin-bottom:6px}
+.kpi-val{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.kpi-delta{font-size:10px;margin-top:3px}
+.up{color:#1d9e75}.dn{color:#e24b4a}
+.charts-row{display:grid;grid-template-columns:1.6fr 1fr;gap:10px;margin-bottom:14px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px}
+.card-title{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px}
+.bar-wrap{display:flex;align-items:flex-end;gap:5px;height:100px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.bar{border-radius:3px 3px 0 0;width:100%;min-height:4px;transition:height .3s}
+.bar-lbl{font-size:9px;color:var(--color-text-secondary)}
+.donut-wrap{display:flex;align-items:center;gap:14px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--color-text-secondary);margin-bottom:5px}
+.leg-dot{width:8px;height:8px;border-radius:2px}
+.bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{text-align:left;font-size:10px;color:var(--color-text-secondary);padding:4px 6px;border-bottom:0.5px solid var(--color-border-tertiary);font-weight:400}
+.tbl td{padding:5px 6px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)}
+.pill{display:inline-block;padding:1px 7px;border-radius:8px;font-size:9px}
+.pill-g{background:#eaf3de;color:#3b6d11}.pill-r{background:#fcebeb;color:#a32d2d}.pill-a{background:#faeeda;color:#854f0b}
+.mini-bar{height:4px;border-radius:2px;background:#4f9cf9;margin-top:3px}
+</style>
+<h2 class="sr-only">Option 1: Executive Financial Dashboard — VSG corporate style with dark navy sidebar</h2>
+<div class="wrap">
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="co">VSG Finance</div>
+    <div class="sub">Fiscal Year 2026</div>
+  </div>
+  <div class="sb-section">OVERVIEW</div>
+  <div class="sb-item active"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</div>
+  <div class="sb-item"><i class="ti ti-chart-line" aria-hidden="true"></i>P&amp;L Statement</div>
+  <div class="sb-item"><i class="ti ti-balance-sheet" aria-hidden="true"></i>Balance Sheet</div>
+  <div class="sb-item"><i class="ti ti-cash" aria-hidden="true"></i>Cash Flow</div>
+  <div class="sb-section">REVENUE</div>
+  <div class="sb-item"><i class="ti ti-building-factory" aria-hidden="true"></i>Tenant Revenue</div>
+  <div class="sb-item"><i class="ti ti-receipt" aria-hidden="true"></i>Fee Billing <span class="badge">3</span></div>
+  <div class="sb-item"><i class="ti ti-chart-bar" aria-hidden="true"></i>Forecasting</div>
+  <div class="sb-section">EXPENSES</div>
+  <div class="sb-item"><i class="ti ti-file-invoice" aria-hidden="true"></i>Opex Tracker</div>
+  <div class="sb-item"><i class="ti ti-tool" aria-hidden="true"></i>Capex Projects</div>
+  <div class="sb-item"><i class="ti ti-users" aria-hidden="true"></i>Payroll</div>
+  <div class="sb-section">COMPLIANCE</div>
+  <div class="sb-item"><i class="ti ti-certificate" aria-hidden="true"></i>Tax &amp; VAT</div>
+  <div class="sb-item"><i class="ti ti-shield-check" aria-hidden="true"></i>Audit Logs</div>
+  <div class="sb-item"><i class="ti ti-settings" aria-hidden="true"></i>Settings</div>
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="sb-avatar">CC</div>
+      <div><div class="sb-uname">Chavis C.</div><div class="sb-urole">CEO & Founder</div></div>
+    </div>
+  </div>
+</div>
+<div class="main">
+  <div class="top-bar">
+    <div><div class="page-title">Financial Overview</div><div class="page-sub">Thai Hoa Industrial Park · Long An Province</div></div>
+    <div class="date-chip">June 2026</div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Total Revenue (YTD)</div><div class="kpi-val">₫18.4B</div><div class="kpi-delta up">↑ 12.3% vs 2025</div></div>
+    <div class="kpi"><div class="kpi-label">Net Profit Margin</div><div class="kpi-val">34.7%</div><div class="kpi-delta up">↑ 2.1 pts</div></div>
+    <div class="kpi"><div class="kpi-label">Outstanding Receivables</div><div class="kpi-val">₫2.1B</div><div class="kpi-delta dn">↑ 8 tenants overdue</div></div>
+    <div class="kpi"><div class="kpi-label">Cash Reserve</div><div class="kpi-val">₫6.8B</div><div class="kpi-delta up">↑ healthy buffer</div></div>
+  </div>
+  <div class="charts-row">
+    <div class="card">
+      <div class="card-title">Monthly Revenue vs Expenses (₫ Billion)</div>
+      <div class="bar-wrap" id="barChart"></div>
+      <div style="display:flex;gap:14px;margin-top:8px">
+        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary)"><span style="width:8px;height:8px;border-radius:1px;background:#4f9cf9;display:inline-block"></span>Revenue</span>
+        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary)"><span style="width:8px;height:8px;border-radius:1px;background:#e05a2b;display:inline-block"></span>Expenses</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Revenue Breakdown</div>
+      <div class="donut-wrap">
+        <svg width="90" height="90" viewBox="0 0 90 90" role="img" aria-label="Donut chart showing revenue breakdown">
+          <circle cx="45" cy="45" r="32" fill="none" stroke="#e6f1fb" stroke-width="14"/>
+          <circle cx="45" cy="45" r="32" fill="none" stroke="#4f9cf9" stroke-width="14" stroke-dasharray="100 101" stroke-dashoffset="-25" transform="rotate(-90 45 45)"/>
+          <circle cx="45" cy="45" r="32" fill="none" stroke="#1d9e75" stroke-width="14" stroke-dasharray="55 146" stroke-dashoffset="-125" transform="rotate(-90 45 45)"/>
+          <circle cx="45" cy="45" r="32" fill="none" stroke="#e05a2b" stroke-width="14" stroke-dasharray="30 171" stroke-dashoffset="-180" transform="rotate(-90 45 45)"/>
+          <circle cx="45" cy="45" r="32" fill="none" stroke="#f0c040" stroke-width="14" stroke-dasharray="16 185" stroke-dashoffset="-210" transform="rotate(-90 45 45)"/>
+          <text x="45" y="48" text-anchor="middle" font-size="12" font-weight="500" fill="var(--color-text-primary)">₫18.4B</text>
+        </svg>
+        <div>
+          <div class="legend-item"><div class="leg-dot" style="background:#4f9cf9"></div>Mgmt Fees 49%</div>
+          <div class="legend-item"><div class="leg-dot" style="background:#1d9e75"></div>Utilities 27%</div>
+          <div class="legend-item"><div class="leg-dot" style="background:#e05a2b"></div>Land Lease 15%</div>
+          <div class="legend-item"><div class="leg-dot" style="background:#f0c040"></div>Other 9%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-row">
+    <div class="card">
+      <div class="card-title">Top Tenant Receivables</div>
+      <table class="tbl">
+        <thead><tr><th>Tenant</th><th>Amount</th><th>Days</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Tenant A-12</td><td>₫245M</td><td>42</td><td><span class="pill pill-r">Overdue</span></td></tr>
+          <tr><td>Tenant B-07</td><td>₫180M</td><td>28</td><td><span class="pill pill-a">Due Soon</span></td></tr>
+          <tr><td>Tenant A-31</td><td>₫122M</td><td>15</td><td><span class="pill pill-g">On Track</span></td></tr>
+          <tr><td>Tenant B-22</td><td>₫98M</td><td>7</td><td><span class="pill pill-g">On Track</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Expense Categories (% of Budget)</div>
+      <div style="margin-top:4px">
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;display:flex;justify-content:space-between">Operations<span style="color:var(--color-text-primary);font-weight:500">68%</span></div>
+        <div style="height:5px;background:var(--color-border-tertiary);border-radius:3px;margin-bottom:10px"><div style="height:100%;width:68%;background:#4f9cf9;border-radius:3px"></div></div>
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;display:flex;justify-content:space-between">Payroll<span style="color:var(--color-text-primary);font-weight:500">45%</span></div>
+        <div style="height:5px;background:var(--color-border-tertiary);border-radius:3px;margin-bottom:10px"><div style="height:100%;width:45%;background:#1d9e75;border-radius:3px"></div></div>
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;display:flex;justify-content:space-between">Maintenance<span style="color:var(--color-text-primary);font-weight:500">81%</span></div>
+        <div style="height:5px;background:var(--color-border-tertiary);border-radius:3px;margin-bottom:10px"><div style="height:100%;width:81%;background:#e05a2b;border-radius:3px"></div></div>
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;display:flex;justify-content:space-between">Utilities Capex<span style="color:var(--color-text-primary);font-weight:500">33%</span></div>
+        <div style="height:5px;background:var(--color-border-tertiary);border-radius:3px"><div style="height:100%;width:33%;background:#f0c040;border-radius:3px"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+const months=['Jan','Feb','Mar','Apr','May','Jun'];
+const rev=[2.8,3.1,2.9,3.4,3.2,3.0];
+const exp=[1.6,1.9,1.7,2.0,1.8,1.7];
+const maxV=Math.max(...rev,...exp);
+const bc=document.getElementById('barChart');
+months.forEach((m,i)=>{
+  const col=document.createElement('div');
+  col.className='bar-col';
+  col.innerHTML=`
+    <div style="display:flex;gap:2px;align-items:flex-end;height:90px">
+      <div class="bar" style="height:${(rev[i]/maxV)*90}px;background:#4f9cf9;width:12px"></div>
+      <div class="bar" style="height:${(exp[i]/maxV)*90}px;background:#e05a2b;width:12px"></div>
+    </div>
+    <div class="bar-lbl">${m}</div>`;
+  bc.appendChild(col);
+});
+</script>
