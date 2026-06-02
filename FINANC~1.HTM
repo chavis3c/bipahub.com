@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Health Report | Việt Sơn Group</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:       #08142a;
+  --bg2:      #0d1f3c;
+  --bg3:      #112248;
+  --sidebar:  #061020;
+  --accent:   #f0a500;
+  --accent2:  #e8c84a;
+  --blue:     #2e86c1;
+  --blue2:    #5dade2;
+  --teal:     #1abc9c;
+  --red:      #e74c3c;
+  --text:     #e8edf5;
+  --muted:    #7a9bbf;
+  --border:   rgba(255,255,255,0.08);
+  --card:     rgba(255,255,255,0.04);
+  --ipsv:     #c0392b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:13px;}
+
+/* TOP HEADER */
+.top-bar{
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  padding:8px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+  gap:12px;
+}
+.top-logo{display:flex;align-items:center;gap:10px;}
+.logo-diamond{width:28px;height:28px;background:linear-gradient(135deg,var(--accent),var(--blue));transform:rotate(45deg);border-radius:4px;flex-shrink:0;}
+.top-title{font-size:15px;font-weight:700;color:var(--text);letter-spacing:0.3px;}
+.top-subtitle{font-size:10px;color:var(--muted);margin-top:1px;}
+.top-filters{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.filter-group{display:flex;align-items:center;gap:6px;}
+.filter-label{font-size:10px;color:var(--muted);white-space:nowrap;}
+.filter-select{
+  background:var(--bg3);border:1px solid var(--border);color:var(--text);
+  padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;
+  appearance:none;padding-right:22px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a9bbf'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 7px center;
+}
+.top-meta{font-size:10px;color:var(--muted);text-align:right;line-height:1.6;}
+.top-meta b{color:var(--accent);font-weight:600;}
+
+/* BODY LAYOUT */
+.body-wrap{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{
+  width:160px;flex-shrink:0;
+  background:var(--sidebar);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  padding:14px 0 10px;
+  overflow-y:auto;
+}
+.sidebar-title{
+  font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;
+  padding:0 14px 10px;border-bottom:1px solid var(--border);margin-bottom:10px;
+}
+.kpi-block{
+  padding:14px 14px 12px;border-bottom:1px solid var(--border);cursor:pointer;
+  transition:background 0.15s;
+}
+.kpi-block:hover,.kpi-block.active{background:rgba(240,165,0,0.08);}
+.kpi-block.active .kpi-val{color:var(--accent);}
+.kpi-en{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;line-height:1.3;}
+.kpi-vi{font-size:10px;color:var(--text);margin-top:2px;line-height:1.3;}
+.kpi-val{font-size:22px;font-weight:700;color:var(--text);margin:6px 0 2px;line-height:1;}
+.kpi-val input{
+  width:100%;background:transparent;border:none;
+  font-size:20px;font-weight:700;color:inherit;
+  border-bottom:1px dashed rgba(255,255,255,0.15);
+  outline:none;padding:0;
+}
+.kpi-val input:focus{border-bottom-color:var(--accent);}
+.kpi-delta{font-size:10px;display:flex;align-items:center;gap:3px;}
+.kpi-delta.up{color:var(--teal);}
+.kpi-delta.down{color:var(--red);}
+.kpi-delta.neutral{color:var(--muted);}
+.kpi-unit{font-size:9px;color:var(--muted);margin-top:2px;}
+.sidebar-section{padding:8px 14px;font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-top:6px;}
+
+/* MAIN AREA */
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* PAGE HEADER */
+.page-header{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:10px 18px;display:flex;align-items:flex-start;gap:12px;flex-shrink:0;
+}
+.page-header-title{font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;}
+.page-header-desc{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5;max-width:700px;}
+.company-pills{display:flex;gap:6px;margin-left:auto;align-items:center;}
+.pill{padding:4px 14px;border-radius:12px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all 0.15s;}
+.pill.vs{border-color:#2e86c1;color:#5dade2;}
+.pill.vs.active{background:#2e86c1;color:white;}
+.pill.ipsv{border-color:var(--ipsv);color:#e57368;}
+.pill.ipsv.active{background:var(--ipsv);color:white;}
+.pill.both{border-color:var(--accent);color:var(--accent);}
+.pill.both.active{background:var(--accent);color:#1a1000;}
+
+/* CHART GRID */
+.charts-area{flex:1;padding:12px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.row-full{display:grid;grid-template-columns:1fr;gap:12px;}
+
+.chart-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:6px;
+  padding:12px 14px;display:flex;flex-direction:column;
+}
+.chart-card.span2{grid-column:span 2;}
+.cc-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.cc-sub{font-size:9px;color:var(--muted);margin-bottom:10px;font-style:italic;line-height:1.4;}
+.cc-wrap{position:relative;flex:1;}
+
+/* DATA TABLE (compact) */
+.dt{width:100%;border-collapse:collapse;}
+.dt th{font-size:9px;text-transform:uppercase;color:var(--muted);padding:5px 8px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
+.dt td{font-size:11px;padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+.dt tr:hover td{background:rgba(255,255,255,0.03);}
+.dt .num{text-align:right;font-variant-numeric:tabular-nums;}
+.dt .pos{color:var(--teal);font-weight:600;}
+.dt .neg{color:var(--red);font-weight:600;}
+.dt .hi{background:rgba(240,165,0,0.12);color:var(--accent);font-weight:700;}
+.dt .bar-cell{display:flex;align-items:center;gap:6px;}
+.dt .mini-bar{height:6px;border-radius:2px;background:var(--accent);}
+.dt .group-row td{background:rgba(255,255,255,0.04);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;padding:4px 8px;}
+
+/* INPUT CELLS */
+.dt td input{
+  background:transparent;border:none;color:var(--text);font-size:11px;
+  width:80px;text-align:right;outline:none;
+  border-bottom:1px dashed rgba(255,255,255,0.1);
+}
+.dt td input:focus{border-bottom-color:var(--accent);}
+
+/* TRAFFIC LIGHTS */
+.tl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.tl-item{background:var(--card);border-radius:4px;padding:8px 10px;display:flex;align-items:center;gap:8px;}
+.tl-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.tl-g{background:#1abc9c;box-shadow:0 0 6px #1abc9c88;}
+.tl-y{background:#f0a500;box-shadow:0 0 6px #f0a50088;}
+.tl-r{background:#e74c3c;box-shadow:0 0 6px #e74c3c88;}
+.tl-text{font-size:10px;line-height:1.4;}
+.tl-text b{display:block;font-size:11px;color:var(--text);}
+
+/* REQUIREMENT SECTION */
+.req-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.req-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;}
+.req-title{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.req-row{display:flex;align-items:flex-start;gap:7px;margin-bottom:8px;font-size:10.5px;color:var(--muted);}
+.req-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:4px;}
+.req-deadline{margin-left:auto;font-size:9px;color:var(--red);font-weight:600;white-space:nowrap;}
+
+/* SIGNATURE */
+.sig-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.sig-box{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center;}
+.sig-role{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;}
+.sig-name{font-size:11px;color:var(--text);font-weight:600;margin-top:4px;}
+.sig-line{border-top:1px dashed rgba(255,255,255,0.12);margin:36px 16px 8px;}
+.sig-date{font-size:9px;color:var(--muted);margin-top:4px;}
+
+/* BOTTOM TAB BAR */
+.tab-bar{
+  background:var(--sidebar);border-top:1px solid var(--border);
+  display:flex;flex-shrink:0;overflow-x:auto;
+}
+.tab-btn{
+  padding:0 20px;height:38px;border:none;background:transparent;
+  color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;
+  text-transform:uppercase;letter-spacing:0.8px;white-space:nowrap;
+  border-top:2px solid transparent;transition:all 0.15s;flex-shrink:0;
+}
+.tab-btn:hover{color:var(--text);background:var(--card);}
+.tab-btn.active{color:var(--accent);border-top-color:var(--accent);background:rgba(240,165,0,0.06);}
+
+/* SECTIONS */
+.tab-section{display:none;}
+.tab-section.active{display:flex;flex-direction:column;gap:12px;}
+.company-view{display:none;}
+.company-view.active{display:contents;}
+
+/* BADGE */
+.badge{display:inline-block;padding:1px 7px;border-radius:8px;font-size:9px;font-weight:700;}
+.b-blue{background:rgba(46,134,193,0.25);color:#5dade2;}
+.b-red{background:rgba(192,57,43,0.25);color:#e57368;}
+.b-green{background:rgba(26,188,156,0.2);color:#1abc9c;}
+.b-orange{background:rgba(240,165,0,0.2);color:var(--accent);}
+
+/* NOTE */
+.note{background:rgba(240,165,0,0.07);border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:8px 12px;font-size:10px;color:var(--muted);}
+.note b{color:var(--accent);}
+
+/* COMPARE TABLE */
+.cmp-wrap{overflow-x:auto;}
+table.cmp{width:100%;border-collapse:collapse;}
+.cmp th{font-size:9px;color:var(--muted);text-transform:uppercase;padding:6px 10px;border-bottom:1px solid var(--border);text-align:left;}
+.cmp th.vs-h{color:#5dade2;}
+.cmp th.ipsv-h{color:#e57368;}
+.cmp td{font-size:11px;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.cmp tr:hover td{background:rgba(255,255,255,0.03);}
+.cmp .gr td{background:rgba(255,255,255,0.03);font-size:9px;color:var(--muted);text-transform:uppercase;}
+.cmp td input{background:transparent;border:none;border-bottom:1px dashed rgba(255,255,255,0.1);color:var(--text);font-size:11px;width:90px;text-align:right;outline:none;}
+.cmp td input:focus{border-bottom-color:var(--accent);}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:3px;}
+
+@media print{
+  body{height:auto;overflow:visible;}
+  .tab-bar,.top-filters,.company-pills,.sidebar{display:none!important;}
+  .body-wrap,.charts-area,.main-area{display:block!important;overflow:visible!important;}
+  .tab-section{display:block!important;}
+  .company-view{display:block!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-logo">
+    <div class="logo-diamond"></div>
+    <div>
+      <div class="top-title">FINANCIAL HEALTH REPORT &nbsp;|&nbsp; BÁO CÁO SỨC KHỎE TÀI CHÍNH</div>
+      <div class="top-subtitle">Công ty CP PTHT Việt Sơn &nbsp;&amp;&nbsp; Công ty TNHH IPSV — Trình BOD</div>
+    </div>
+  </div>
+  <div class="top-filters">
+    <div class="filter-group">
+      <span class="filter-label">Company | Công ty</span>
+      <select class="filter-select" onchange="switchCompany(this.value)">
+        <option value="vs">Việt Sơn (PTHT)</option>
+        <option value="ipsv">IPSV (Tiện ích)</option>
+        <option value="both">So sánh / Compare</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Period | Kỳ</span>
+      <select class="filter-select" id="period-sel" onchange="switchPeriod(this.value)">
+        <option value="monthly">Tháng / Monthly</option>
+        <option value="quarterly">Quý / Quarterly</option>
+        <option value="annual">Năm / Annual</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Year | Năm</span>
+      <select class="filter-select">
+        <option>2025</option><option>2024</option><option>2023</option>
+      </select>
+    </div>
+  </div>
+  <div class="top-meta">
+    <div>Prepared: <b>Phòng Phân Tích Dữ Liệu</b></div>
+    <div>Date: <b id="rdate"></b> &nbsp;|&nbsp; Currency: <b>VND (Tỷ / Bn)</b></div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="body-wrap">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-title">Key Metrics | Chỉ Số</div>
+
+  <div id="vs-sidebar">
+    <div class="sidebar-section">🏗️ Việt Sơn</div>
+    <div class="kpi-block active" onclick="highlightKpi(this)">
+      <div class="kpi-en">Total Revenue</div>
+      <div class="kpi-vi">Doanh Thu</div>
+      <div class="kpi-val"><input type="number" placeholder="0" id="vs_rev"> </div>
+      <div class="kpi-unit">Tỷ VND</div>
+      <div class="kpi-delta up" id="vs_rev_d">▲ vs kỳ trước</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Revenue Variance</div>
+      <div class="kpi-vi">Chênh Lệch DT</div>
+      <div class="kpi-val"><input type="number" placeholder="0.0"> </div>
+      <div class="kpi-unit">% vs KPI</div>
+      <div class="kpi-delta neutral">~ so với KPI</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Gross Margin</div>
+      <div class="kpi-vi">Biên Lợi Nhuận Gộp</div>
+      <div class="kpi-val"><input type="number" placeholder="0.0"> </div>
+      <div class="kpi-unit">%</div>
+      <div class="kpi-delta up">▲ cải thiện</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">EBITDA</div>
+      <div class="kpi-vi">EBITDA</div>
+      <div class="kpi-val"><input type="number" placeholder="0"> </div>
+      <div class="kpi-unit">Tỷ VND</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">KCN Occupancy</div>
+      <div class="kpi-vi">Tỷ Lệ Lấp Đầy</div>
+      <div class="kpi-val"><input type="number" placeholder="0.0"> </div>
+      <div class="kpi-unit">%</div>
+      <div class="kpi-delta up">▲ mở rộng</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Active Tenants</div>
+      <div class="kpi-vi">Số Khách Thuê</div>
+      <div class="kpi-val"><input type="number" placeholder="0"> </div>
+      <div class="kpi-unit">Doanh nghiệp</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Total Debt</div>
+      <div class="kpi-vi">Tổng Dư Nợ</div>
+      <div class="kpi-val"><input type="number" placeholder="0"> </div>
+      <div class="kpi-unit">Tỷ VND</div>
+      <div class="kpi-delta down">↔ kiểm soát</div>
+    </div>
+  </div>
+
+  <div id="ipsv-sidebar" style="display:none">
+    <div class="sidebar-section" style="color:var(--ipsv)">⚡ IPSV</div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Total Revenue</div>
+      <div class="kpi-vi">Doanh Thu</div>
+      <div class="kpi-val"><input type="number" placeholder="0"> </div>
+      <div class="kpi-unit">Tỷ VND</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Revenue Variance</div>
+      <div class="kpi-vi">Chênh Lệch DT</div>
+      <div class="kpi-val"><input type="number" placeholder="0.0"> </div>
+      <div class="kpi-unit">% vs KPI</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Gross Margin</div>
+      <div class="kpi-vi">Biên Lợi Nhuận Gộp</div>
+      <div class="kpi-val"><input type="number" placeholder="0.0"> </div>
+      <div class="kpi-unit">%</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Electricity Revenue</div>
+      <div class="kpi-vi">DT Điện</div>
+      <div class="kpi-val"><input type="number" placeholder="0"> </div>
+      <div class="kpi-unit">Tỷ VND</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Water Revenue</div>
+      <div class="kpi-vi">DT Nước</div>
+      <div class="kpi-val"><input type="number" placeholder="0"> </div>
+      <div class="kpi-unit">Tỷ VND</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Active Customers</div>
+      <div class="kpi-vi">Số Khách Hàng</div>
+      <div class="kpi-val"><input type="number" placeholder="0"> </div>
+      <div class="kpi-unit">Khách hàng</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Collection Rate</div>
+      <div class="kpi-vi">Tỷ Lệ Thu Hồi</div>
+      <div class="kpi-val"><input type="number" placeholder="0.0"> </div>
+      <div class="kpi-unit">%</div>
+    </div>
+  </div>
+
+  <div id="both-sidebar" style="display:none">
+    <div class="sidebar-section">🔄 Tổng Hợp</div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Group Revenue</div>
+      <div class="kpi-vi">DT Toàn Tập Đoàn</div>
+      <div class="kpi-val"><input type="number" placeholder="0"> </div>
+      <div class="kpi-unit">Tỷ VND</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Việt Sơn Share</div>
+      <div class="kpi-vi">Tỷ Trọng VS</div>
+      <div class="kpi-val"><input type="number" placeholder="0.0"> </div>
+      <div class="kpi-unit">%</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">IPSV Share</div>
+      <div class="kpi-vi">Tỷ Trọng IPSV</div>
+      <div class="kpi-val"><input type="number" placeholder="0.0"> </div>
+      <div class="kpi-unit">%</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Group Net Profit</div>
+      <div class="kpi-vi">LN Ròng Tập Đoàn</div>
+      <div class="kpi-val"><input type="number" placeholder="0"> </div>
+      <div class="kpi-unit">Tỷ VND</div>
+    </div>
+    <div class="kpi-block" onclick="highlightKpi(this)">
+      <div class="kpi-en">Group Total Debt</div>
+      <div class="kpi-vi">Tổng Nợ Tập Đoàn</div>
+      <div class="kpi-val"><input type="number" placeholder="0"> </div>
+      <div class="kpi-unit">Tỷ VND</div>
+    </div>
+  </div>
+</div><!-- /sidebar -->
+
+<!-- MAIN -->
+<div class="main-area">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <div class="page-header-title" id="page-title">📊 REVENUE OVERVIEW | TỔNG QUAN DOANH THU</div>
+      <div class="page-header-desc" id="page-desc">
+        Doanh thu, lợi nhuận gộp và tỷ lệ lấp đầy KCN tăng trưởng qua các kỳ. Kiểm soát đòn bẩy tài chính và dòng tiền là ưu tiên hàng đầu. Số liệu màu vàng = phòng kế toán nhập.
+      </div>
+    </div>
+    <div class="company-pills">
+      <button class="pill vs active" onclick="switchCompany('vs');setSelect(0)">🏗️ Việt Sơn</button>
+      <button class="pill ipsv" onclick="switchCompany('ipsv');setSelect(1)">⚡ IPSV</button>
+      <button class="pill both" onclick="switchCompany('both');setSelect(2)">🔄 Compare</button>
+    </div>
+  </div>
+
+  <!-- CHARTS AREA -->
+  <div class="charts-area" id="charts-area">
+
+    <!-- ==================== TAB: REVENUE ==================== -->
+    <div class="tab-section active" id="tab-revenue">
+
+      <!-- VIỆT SƠN VIEW -->
+      <div class="company-view active" id="rv-vs">
+        <div class="row-2">
+          <div class="chart-card">
+            <div class="cc-title">Gross Profit over Time | Lợi Nhuận Gộp Theo Thời Gian</div>
+            <div class="cc-sub">Lợi nhuận gộp tháng/quý — đỉnh cao ghi nhận khi có HĐ thuê đất mới ký kết</div>
+            <div class="cc-wrap" style="height:180px"><canvas id="vs_gp_time"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="cc-title">Actual Revenue by Tenant Type | DT Theo Loại Khách Thuê</div>
+            <div class="cc-sub">FDI, Nội địa, Logistics, Hạ tầng — Revenue variance vs KPI</div>
+            <div style="overflow-x:auto">
+            <table class="dt" style="margin-top:4px">
+              <thead><tr><th>Loại KH</th><th>Tenant Type</th><th class="num">Revenue (Tỷ)</th><th class="num">vs KPI</th><th style="width:90px">Bar</th></tr></thead>
+              <tbody>
+                <tr><td>FDI</td><td style="color:var(--muted)">Foreign Direct Inv.</td><td class="num hi">192.4</td><td class="num pos">+2.1%</td><td><div class="bar-cell"><div class="mini-bar" style="width:80px"></div></div></td></tr>
+                <tr><td>Nội địa</td><td style="color:var(--muted)">Domestic Enterprise</td><td class="num">88.6</td><td class="num neg">-5.3%</td><td><div class="bar-cell"><div class="mini-bar" style="width:37px;background:#5dade2"></div></div></td></tr>
+                <tr><td>Logistics</td><td style="color:var(--muted)">Logistics/Warehouse</td><td class="num">34.2</td><td class="num pos">+8.7%</td><td><div class="bar-cell"><div class="mini-bar" style="width:14px;background:#1abc9c"></div></div></td></tr>
+                <tr><td>Hạ tầng</td><td style="color:var(--muted)">Infrastructure Svc</td><td class="num">25.0</td><td class="num neutral" style="color:var(--muted)">0.0%</td><td><div class="bar-cell"><div class="mini-bar" style="width:10px;background:#7a9bbf"></div></div></td></tr>
+                <tr style="font-weight:700"><td colspan="2">Tổng / Total</td><td class="num hi">340.2</td><td class="num pos">+0.7%</td><td></td></tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="chart-card span2">
+            <div class="cc-title">Actual Revenue &amp; Revenue Variance to KPI | DT Thực Tế &amp; Chênh Lệch vs KPI</div>
+            <div class="cc-sub">Tháng 3 ghi nhận chênh lệch cao nhất; Tháng 10 là đáy thấp nhất — theo dõi pipeline ký kết mới</div>
+            <div class="cc-wrap" style="height:180px"><canvas id="vs_rev_var"></canvas></div>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="chart-card">
+            <div class="cc-title">Revenue Variance to Budget | Chênh Lệch DT vs Ngân Sách</div>
+            <div class="cc-sub">Sales Revenue (Cho thuê đất) &amp; Infrastructure Fee revenue vs KPI</div>
+            <div class="cc-wrap" style="height:170px"><canvas id="vs_rev_bgt"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="cc-title">KCN Occupancy Progress | Tiến Độ Lấp Đầy KCN</div>
+            <div class="cc-sub">Diện tích đã cho thuê vs còn trống — mục tiêu 90% vào cuối năm</div>
+            <div class="cc-wrap" style="height:170px"><canvas id="vs_occ_prog"></canvas></div>
+          </div>
+        </div>
+      </div><!-- /rv-vs -->
+
+      <!-- IPSV VIEW -->
+      <div class="company-view" id="rv-ipsv">
+        <div class="row-2">
+          <div class="chart-card">
+            <div class="cc-title">Utility Revenue Trend | Xu Hướng DT Dịch Vụ Tiện Ích</div>
+            <div class="cc-sub">Điện, nước, nước thải — tăng trưởng cùng lấp đầy KCN</div>
+            <div class="cc-wrap" style="height:180px"><canvas id="ipsv_rev_trend"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="cc-title">Revenue by Service Type | DT Theo Loại Dịch Vụ</div>
+            <div class="cc-sub">Cơ cấu doanh thu tiện ích — Điện chiếm tỷ trọng lớn nhất</div>
+            <div style="overflow-x:auto">
+            <table class="dt" style="margin-top:4px">
+              <thead><tr><th>Dịch Vụ</th><th>Service</th><th class="num">DT (Tỷ)</th><th class="num">vs KPI</th></tr></thead>
+              <tbody>
+                <tr><td>Điện</td><td style="color:var(--muted)">Electricity</td><td class="num hi">88.9</td><td class="num pos">+1.2%</td></tr>
+                <tr><td>Nước Sạch</td><td style="color:var(--muted)">Clean Water</td><td class="num">36.4</td><td class="num neg">-2.1%</td></tr>
+                <tr><td>Nước Thải</td><td style="color:var(--muted)">Wastewater</td><td class="num">24.8</td><td class="num pos">+0.8%</td></tr>
+                <tr><td>Viễn Thông</td><td style="color:var(--muted)">Telecom/Other</td><td class="num">20.2</td><td class="num pos">+3.5%</td></tr>
+                <tr style="font-weight:700"><td colspan="2">Tổng / Total</td><td class="num hi">170.3</td><td class="num pos">+0.6%</td></tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="chart-card span2">
+            <div class="cc-title">IPSV Revenue &amp; Variance to KPI | DT &amp; Chênh Lệch</div>
+            <div class="cc-sub">Theo dõi thực tế vs kế hoạch từng tháng — liên quan chặt với tỷ lệ lấp đầy KCN Việt Sơn</div>
+            <div class="cc-wrap" style="height:180px"><canvas id="ipsv_rev_var"></canvas></div>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="chart-card">
+            <div class="cc-title">Loss Rate Monitoring | Giám Sát Thất Thoát</div>
+            <div class="cc-sub">Electricity loss rate vs target 5% / Water NRW vs target 15%</div>
+            <div class="cc-wrap" style="height:170px"><canvas id="ipsv_loss"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="cc-title">AR Collection Status | Tình Trạng Thu Công Nợ</div>
+            <div class="cc-sub">Tỷ lệ thu hồi tiền điện &amp; nước hàng tháng</div>
+            <div class="cc-wrap" style="height:170px"><canvas id="ipsv_ar"></canvas></div>
+          </div>
+        </div>
+      </div><!-- /rv-ipsv -->
+
+      <!-- COMPARE VIEW -->
+      <div class="company-view" id="rv-both">
+        <div class="row-2">
+          <div class="chart-card">
+            <div class="cc-title">Revenue Comparison | So Sánh Doanh Thu</div>
+            <div class="cc-sub">Việt Sơn vs IPSV — 4 quý gần nhất (Tỷ VND)</div>
+            <div class="cc-wrap" style="height:190px"><canvas id="cmp_rev"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="cc-title">Revenue Contribution | Đóng Góp Doanh Thu Tập Đoàn</div>
+            <div class="cc-sub">Tỷ trọng từng công ty trong tổng doanh thu nhóm</div>
+            <div class="cc-wrap" style="height:190px"><canvas id="cmp_pie"></canvas></div>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="chart-card">
+            <div class="cc-title">Margin Comparison | So Sánh Biên Lợi Nhuận</div>
+            <div class="cc-sub">Gross / EBITDA / Net margin — 2 công ty</div>
+            <div class="cc-wrap" style="height:185px"><canvas id="cmp_margin"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="cc-title">Debt Profile | Hồ Sơ Đòn Bẩy</div>
+            <div class="cc-sub">D/E Ratio &amp; Debt/EBITDA — ngưỡng an toàn được đánh dấu</div>
+            <div class="cc-wrap" style="height:185px"><canvas id="cmp_debt"></canvas></div>
+          </div>
+        </div>
+      </div><!-- /rv-both -->
+
+    </div><!-- /tab-revenue -->
+
+    <!-- ==================== TAB: PROFIT ==================== -->
+    <div class="tab-section" id="tab-profit">
+      <div class="row-3">
+        <div class="chart-card">
+          <div class="cc-title">P&amp;L Waterfall | Thác Nước P&amp;L (Việt Sơn)</div>
+          <div class="cc-sub">Từ Doanh thu → NPAT</div>
+          <div class="cc-wrap" style="height:200px"><canvas id="vs_waterfall"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-title">EBITDA Trend | Xu Hướng EBITDA</div>
+          <div class="cc-sub">EBITDA &amp; margin theo quý (2 công ty)</div>
+          <div class="cc-wrap" style="height:200px"><canvas id="ebitda_trend"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-title">Profitability Radar | Radar Lợi Nhuận</div>
+          <div class="cc-sub">5 chiều tài chính — VS vs IPSV vs Target</div>
+          <div class="cc-wrap" style="height:200px"><canvas id="radar_profit"></canvas></div>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="chart-card">
+          <div class="cc-title">5-Year Revenue &amp; Profit | 5 Năm DT &amp; LN</div>
+          <div class="cc-sub">Xu hướng dài hạn Việt Sơn 2021-2025</div>
+          <div class="cc-wrap" style="height:185px"><canvas id="vs_5yr"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-title">IPSV 5-Year Utility Revenue | DT Dịch Vụ 5 Năm</div>
+          <div class="cc-sub">Stacked: Điện / Nước / Nước thải / Khác</div>
+          <div class="cc-wrap" style="height:185px"><canvas id="ipsv_5yr"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: COST ==================== -->
+    <div class="tab-section" id="tab-cost">
+      <div class="row-3">
+        <div class="chart-card">
+          <div class="cc-title">Việt Sơn — Cost Structure | Cơ Cấu Chi Phí</div>
+          <div class="cc-sub">COGS, SG&amp;A, Lãi vay, Thuế (Tỷ VND)</div>
+          <div class="cc-wrap" style="height:200px"><canvas id="vs_cost_pie"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-title">IPSV — Operating Cost | Chi Phí Vận Hành</div>
+          <div class="cc-sub">Mua điện, nước, nhân công, bảo trì, khấu hao</div>
+          <div class="cc-wrap" style="height:200px"><canvas id="ipsv_cost_pie"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-title">Cash Flow Analysis | Phân Tích Dòng Tiền</div>
+          <div class="cc-sub">OCF / Investing / Financing — 4 quý (Việt Sơn)</div>
+          <div class="cc-wrap" style="height:200px"><canvas id="vs_cf"></canvas></div>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="chart-card">
+          <div class="cc-title">Debt Structure | Cơ Cấu Nợ — Việt Sơn</div>
+          <div class="cc-sub">Ngắn hạn vs dài hạn; lịch trả nợ theo năm</div>
+          <div class="cc-wrap" style="height:185px"><canvas id="vs_debt_str"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-title">Key Financial Ratios | Tỷ Số Tài Chính</div>
+          <div class="cc-sub">Liquidity / Leverage / Profitability — mục tiêu vs thực tế</div>
+          <div style="overflow-x:auto;margin-top:4px">
+            <table class="dt">
+              <thead><tr><th>Ratio | Chỉ Số</th><th class="num">VS</th><th class="num">IPSV</th><th class="num">Target</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr class="group-row"><td colspan="5">Profitability | Sinh Lời</td></tr>
+                <tr><td>Gross Margin</td><td class="num pos">42.1%</td><td class="num">32.5%</td><td class="num">40%+</td><td><span class="badge b-green">✓ OK</span></td></tr>
+                <tr><td>EBITDA Margin</td><td class="num pos">36.2%</td><td class="num">25.1%</td><td class="num">35%+</td><td><span class="badge b-green">✓ OK</span></td></tr>
+                <tr><td>ROE</td><td class="num">15.2%</td><td class="num">12.8%</td><td class="num">12%+</td><td><span class="badge b-green">✓ OK</span></td></tr>
+                <tr class="group-row"><td colspan="5">Leverage | Đòn Bẩy</td></tr>
+                <tr><td>D/E Ratio</td><td class="num neg">1.8x</td><td class="num pos">0.9x</td><td class="num">&lt;2.0x</td><td><span class="badge b-orange">⚠ Watch</span></td></tr>
+                <tr><td>Debt/EBITDA</td><td class="num neg">3.8x</td><td class="num pos">2.1x</td><td class="num">&lt;4.0x</td><td><span class="badge b-orange">⚠ Watch</span></td></tr>
+                <tr><td>Interest Coverage</td><td class="num pos">4.5x</td><td class="num pos">7.2x</td><td class="num">&gt;3.0x</td><td><span class="badge b-green">✓ OK</span></td></tr>
+                <tr class="group-row"><td colspan="5">Liquidity | Thanh Khoản</td></tr>
+                <tr><td>Current Ratio</td><td class="num">1.15x</td><td class="num pos">1.45x</td><td class="num">&gt;1.2x</td><td><span class="badge b-orange">⚠ Watch</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: DATA ENTRY ==================== -->
+    <div class="tab-section" id="tab-data">
+      <div class="note"><b>📝 Hướng dẫn:</b> Phòng Kế Toán nhập số liệu vào các ô có gạch dưới. Chọn công ty và kỳ bằng bộ lọc phía trên. Đơn vị: Tỷ VND trừ khi có ghi chú khác.</div>
+      <div class="row-2">
+        <!-- VS Data Entry -->
+        <div class="chart-card">
+          <div class="cc-title">🏗️ Việt Sơn — Income Statement | Kết Quả Kinh Doanh</div>
+          <div style="overflow-y:auto;max-height:380px">
+          <table class="dt">
+            <thead><tr><th>#</th><th>Item (EN)</th><th>Khoản Mục (VN)</th><th class="num">Giá Trị</th><th class="num">Kỳ Trước</th></tr></thead>
+            <tbody>
+              <tr class="group-row"><td colspan="5">I. INCOME STATEMENT</td></tr>
+              <tr><td>1</td><td>Net Revenue</td><td>Doanh Thu Thuần</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>1.1</td><td>Land Lease</td><td>Cho Thuê Đất KCN</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>1.2</td><td>Infra Fee</td><td>Phí Hạ Tầng</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>1.3</td><td>Mgmt Fee</td><td>Phí Quản Lý KCN</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>2</td><td>COGS</td><td>Giá Vốn Hàng Bán</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>3</td><td>Gross Profit</td><td>Lợi Nhuận Gộp</td><td class="num hi"><input type="number" placeholder="= 1-2"></td><td class="num"><input type="number" placeholder=""></td></tr>
+              <tr><td>4</td><td>SG&amp;A</td><td>Chi Phí Bán Hàng+QLDN</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>5</td><td>D&amp;A</td><td>Khấu Hao &amp; Phân Bổ</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>6</td><td>EBIT</td><td>EBIT (= 3-4-5)</td><td class="num hi"><input type="number" placeholder="= 3-4-5"></td><td class="num"><input type="number" placeholder=""></td></tr>
+              <tr><td>7</td><td>EBITDA</td><td>EBITDA (= 6+5)</td><td class="num hi"><input type="number" placeholder="= 6+5"></td><td class="num"><input type="number" placeholder=""></td></tr>
+              <tr><td>8</td><td>Interest Expense</td><td>Chi Phí Lãi Vay</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>9</td><td>Income Tax</td><td>Thuế TNDN</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>10</td><td>NPAT</td><td>Lợi Nhuận Sau Thuế</td><td class="num hi"><input type="number" placeholder="= 6-8-9"></td><td class="num"><input type="number" placeholder=""></td></tr>
+              <tr class="group-row"><td colspan="5">II. BALANCE SHEET HIGHLIGHTS</td></tr>
+              <tr><td>11</td><td>Cash &amp; Equiv.</td><td>Tiền &amp; Tương Đương</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>12</td><td>Accounts Rec.</td><td>Phải Thu Khách Hàng</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>13</td><td>Total Assets</td><td>Tổng Tài Sản</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>14</td><td>Short-term Debt</td><td>Vay Ngắn Hạn</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>15</td><td>Long-term Debt</td><td>Vay Dài Hạn</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>16</td><td>Total Equity</td><td>Vốn Chủ Sở Hữu</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr class="group-row"><td colspan="5">III. KCN OPERATING KPIs</td></tr>
+              <tr><td>17</td><td>Total Area (ha)</td><td>Tổng DT KCN (ha)</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>18</td><td>Leased Area (ha)</td><td>DT Đã Cho Thuê (ha)</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>19</td><td>Occupancy Rate</td><td>Tỷ Lệ Lấp Đầy</td><td class="num hi"><input type="number" placeholder="= 18/17"></td><td class="num"><input type="number" placeholder=""></td></tr>
+              <tr><td>20</td><td>Active Tenants</td><td>Số Khách Thuê</td><td class="num"><input type="number" placeholder="0"></td><td class="num"><input type="number" placeholder="0"></td></tr>
+              <tr><td>21</td><td>New Contracts</td><td>HĐ Mới Ký Kỳ Này</td><td class="num"><input type="number" placeholder="0"></td><td class="num"><input type="number" placeholder="0"></td></tr>
+              <tr><td>22</td><td>Land Price (USD/m²)</td><td>Đơn Giá Thuê ĐBQ</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <!-- IPSV Data Entry -->
+        <div class="chart-card">
+          <div class="cc-title">⚡ IPSV — Utility Data Entry | Nhập Liệu Tiện Ích</div>
+          <div style="overflow-y:auto;max-height:380px">
+          <table class="dt">
+            <thead><tr><th>#</th><th>Item (EN)</th><th>Khoản Mục (VN)</th><th class="num">Giá Trị</th><th class="num">Kỳ Trước</th></tr></thead>
+            <tbody>
+              <tr class="group-row"><td colspan="5">I. REVENUE BY SERVICE</td></tr>
+              <tr><td>1</td><td>Electricity Revenue</td><td>DT Cung Cấp Điện</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>2</td><td>Clean Water Revenue</td><td>DT Cấp Nước Sạch</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>3</td><td>Wastewater Treatment</td><td>DT Xử Lý Nước Thải</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>4</td><td>Telecom/Other</td><td>Viễn Thông &amp; Khác</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>5</td><td>Total Revenue</td><td>Tổng Doanh Thu</td><td class="num hi"><input type="number" placeholder="= Σ1-4"></td><td class="num"><input type="number" placeholder=""></td></tr>
+              <tr class="group-row"><td colspan="5">II. OPERATING COSTS</td></tr>
+              <tr><td>6</td><td>Electricity Purchase (EVN)</td><td>Mua Điện EVN</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>7</td><td>Water Source Cost</td><td>Chi Phí Nước Nguồn</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>8</td><td>Labor — Operations</td><td>Nhân Sự Vận Hành</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>9</td><td>Maintenance &amp; Repair</td><td>Bảo Trì &amp; Sửa Chữa</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>10</td><td>Chemicals &amp; Consumables</td><td>Hóa Chất &amp; Vật Tư</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>11</td><td>D&amp;A</td><td>Khấu Hao</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>12</td><td>Gross Profit</td><td>Lợi Nhuận Gộp</td><td class="num hi"><input type="number" placeholder="= 5-Σ6-11"></td><td class="num"><input type="number" placeholder=""></td></tr>
+              <tr class="group-row"><td colspan="5">III. UTILITY VOLUME KPIs</td></tr>
+              <tr><td>13</td><td>Electricity Distributed</td><td>Sản Lượng Điện (kWh)</td><td class="num"><input type="number" placeholder="0"></td><td class="num"><input type="number" placeholder="0"></td></tr>
+              <tr><td>14</td><td>Water Supplied</td><td>Sản Lượng Nước Cấp (m³)</td><td class="num"><input type="number" placeholder="0"></td><td class="num"><input type="number" placeholder="0"></td></tr>
+              <tr><td>15</td><td>Wastewater Treated</td><td>Nước Thải Xử Lý (m³)</td><td class="num"><input type="number" placeholder="0"></td><td class="num"><input type="number" placeholder="0"></td></tr>
+              <tr><td>16</td><td>Electricity Loss Rate</td><td>Thất Thoát Điện</td><td class="num"><input type="number" placeholder="0.0">%</td><td class="num"><input type="number" placeholder="0.0">%</td></tr>
+              <tr><td>17</td><td>Water Loss Rate (NRW)</td><td>Thất Thoát Nước</td><td class="num"><input type="number" placeholder="0.0">%</td><td class="num"><input type="number" placeholder="0.0">%</td></tr>
+              <tr><td>18</td><td>Active Customers</td><td>Khách Hàng Đang SD</td><td class="num"><input type="number" placeholder="0"></td><td class="num"><input type="number" placeholder="0"></td></tr>
+              <tr class="group-row"><td colspan="5">IV. AR / COLLECTION</td></tr>
+              <tr><td>19</td><td>Total AR Balance</td><td>Tổng Phải Thu KH</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>20</td><td>AR — Electricity</td><td>PT Tiền Điện</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>21</td><td>AR — Water</td><td>PT Tiền Nước</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>22</td><td>AR Overdue &gt;30d</td><td>PT Quá Hạn &gt;30 Ngày</td><td class="num"><input type="number" placeholder="0.00"></td><td class="num"><input type="number" placeholder="0.00"></td></tr>
+              <tr><td>23</td><td>Collection Rate</td><td>Tỷ Lệ Thu Hồi</td><td class="num hi"><input type="number" placeholder="0.0">%</td><td class="num"><input type="number" placeholder="0.0">%</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /tab-data -->
+
+    <!-- ==================== TAB: HEALTH SCORE ==================== -->
+    <div class="tab-section" id="tab-health">
+      <div class="cc-title" style="padding:4px 0 12px;font-size:13px">🏆 Financial Health Score | Điểm Sức Khỏe Tài Chính — Tổng Hợp 2 Công Ty</div>
+      <div class="tl-grid">
+        <div class="tl-item"><div class="tl-dot tl-g"></div><div class="tl-text"><b>VS — Profitability</b>Gross margin 42% &gt; target 40% ✓</div></div>
+        <div class="tl-item"><div class="tl-dot tl-y"></div><div class="tl-text"><b>VS — Liquidity</b>Current ratio 1.15x — theo dõi sát</div></div>
+        <div class="tl-item"><div class="tl-dot tl-g"></div><div class="tl-text"><b>VS — Occupancy</b>KCN lấp đầy 83% và tăng ✓</div></div>
+        <div class="tl-item"><div class="tl-dot tl-y"></div><div class="tl-text"><b>VS — Leverage</b>D/E 1.8x — gần ngưỡng 2.0x</div></div>
+        <div class="tl-item"><div class="tl-dot tl-g"></div><div class="tl-text"><b>VS — Cash Flow</b>OCF dương, FCF ổn định ✓</div></div>
+        <div class="tl-item"><div class="tl-dot tl-g"></div><div class="tl-text"><b>VS — Growth</b>DT tăng YoY, pipeline mạnh ✓</div></div>
+        <div class="tl-item"><div class="tl-dot tl-g"></div><div class="tl-text"><b>IPSV — Profitability</b>Gross 32.5%, EBITDA 25.1% ✓</div></div>
+        <div class="tl-item"><div class="tl-dot tl-g"></div><div class="tl-text"><b>IPSV — Liquidity</b>Current ratio 1.45x &gt; 1.2x ✓</div></div>
+        <div class="tl-item"><div class="tl-dot tl-g"></div><div class="tl-text"><b>IPSV — Collection</b>Thu hồi 95%+ đạt mục tiêu ✓</div></div>
+        <div class="tl-item"><div class="tl-dot tl-g"></div><div class="tl-text"><b>IPSV — Leverage</b>D/E 0.9x — an toàn tốt ✓</div></div>
+        <div class="tl-item"><div class="tl-dot tl-y"></div><div class="tl-text"><b>IPSV — Loss Rate</b>Điện 4.2%, Nước 12.8% — cần cải thiện</div></div>
+        <div class="tl-item"><div class="tl-dot tl-g"></div><div class="tl-text"><b>IPSV — Growth</b>DT tiện ích tăng theo lấp đầy ✓</div></div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: DATA REQUIREMENTS ==================== -->
+    <div class="tab-section" id="tab-req">
+      <div class="req-grid">
+        <div class="req-card">
+          <div class="req-title">📅 Monthly | Dữ Liệu Tháng <span class="badge b-blue">2 công ty</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Trial Balance — Bảng Cân Đối Số Phát Sinh</span><span class="req-deadline">Ngày 5</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>AR Aging Report — Báo Cáo Tuổi Nợ Phải Thu</span><span class="req-deadline">Ngày 5</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Bank Reconciliation — Đối Chiếu Ngân Hàng</span><span class="req-deadline">Ngày 5</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Revenue Breakdown — Chi Tiết Doanh Thu</span><span class="req-deadline">Ngày 5</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Loan Balance Summary — Tóm Tắt Dư Nợ Vay</span><span class="req-deadline">Ngày 5</span></div>
+          <div class="req-row"><div class="req-dot" style="background:#5dade2"></div><span>[IPSV] Utility Volume: kWh &amp; m³ hàng tháng</span><span class="req-deadline">Ngày 3</span></div>
+          <div class="req-row"><div class="req-dot" style="background:#5dade2"></div><span>[VS] KCN Leasing Status Update — Cập Nhật Cho Thuê</span><span class="req-deadline">Ngày 5</span></div>
+        </div>
+        <div class="req-card">
+          <div class="req-title">📊 Quarterly | Dữ Liệu Quý <span class="badge b-green">2 công ty</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Full Income Statement — BCKQKD Quý Đầy Đủ</span><span class="req-deadline">Ngày 15</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Balance Sheet — Bảng Cân Đối Kế Toán</span><span class="req-deadline">Ngày 15</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Cash Flow Statement — Lưu Chuyển Tiền Tệ</span><span class="req-deadline">Ngày 15</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Key Ratio Calculation Sheet — Bảng Tính Tỷ Số</span><span class="req-deadline">Ngày 20</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>CapEx Summary by Project — Đầu Tư TSCĐ</span><span class="req-deadline">Ngày 15</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Loan Repayment Schedule — Lịch Trả Nợ</span><span class="req-deadline">Ngày 15</span></div>
+        </div>
+        <div class="req-card">
+          <div class="req-title">📈 Annual | Dữ Liệu Năm <span class="badge b-orange">2 công ty</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Audited Financial Statements — BCTC Kiểm Toán</span><span class="req-deadline">31/3 năm sau</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>5-Year Historical Data — Số Liệu 5 Năm Lịch Sử</span><span class="req-deadline">Tháng 1</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Budget vs Actual Variance — NS vs Thực Tế</span><span class="req-deadline">Tháng 1</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Fixed Asset Register — Sổ Tài Sản Cố Định</span><span class="req-deadline">Tháng 1</span></div>
+          <div class="req-row"><div class="req-dot"></div><span>Tax Return Summary — Quyết Toán Thuế</span><span class="req-deadline">Tháng 4</span></div>
+        </div>
+        <div class="req-card">
+          <div class="req-title">📋 Format Requirements | Yêu Cầu Định Dạng</div>
+          <div class="req-row"><div class="req-dot" style="background:var(--muted)"></div><span>File format: Excel (.xlsx) hoặc CSV — KHÔNG gửi PDF scan</span></div>
+          <div class="req-row"><div class="req-dot" style="background:var(--muted)"></div><span>Đơn vị: VND nguyên (giữ số thực từ phần mềm kế toán)</span></div>
+          <div class="req-row"><div class="req-dot" style="background:var(--muted)"></div><span>Gắn nhãn: Tên công ty + Kỳ báo cáo + Phiên bản (v1/Final)</span></div>
+          <div class="req-row"><div class="req-dot" style="background:var(--muted)"></div><span>Nộp qua SharePoint: /Accounting/Data-for-Analytics/</span></div>
+          <div class="req-row"><div class="req-dot" style="background:var(--muted)"></div><span>Chữ ký Kế Toán Trưởng xác nhận trước khi gửi</span></div>
+          <div class="req-row"><div class="req-dot" style="background:var(--muted)"></div><span>Điều chỉnh số liệu: gửi kèm file Restatement + giải thích</span></div>
+        </div>
+      </div>
+      <!-- Signature -->
+      <div style="margin-top:12px">
+        <div class="sig-row">
+          <div class="sig-box">
+            <div class="sig-role">Prepared by | Người Lập</div>
+            <div class="sig-line"></div>
+            <div class="sig-name">Phòng Phân Tích Dữ Liệu</div>
+            <div class="sig-date">Date | Ngày: ___/___/20___</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-role">Reviewed by | Người Kiểm Tra</div>
+            <div class="sig-line"></div>
+            <div class="sig-name">Kế Toán Trưởng / CFO</div>
+            <div class="sig-date">Date | Ngày: ___/___/20___</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-role">Approved by | Người Phê Duyệt</div>
+            <div class="sig-line"></div>
+            <div class="sig-name">Tổng Giám Đốc / CEO</div>
+            <div class="sig-date">Date | Ngày: ___/___/20___</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /charts-area -->
+
+  <!-- BOTTOM TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('revenue',this)">📊 Revenue | Doanh Thu</button>
+    <button class="tab-btn" onclick="switchTab('profit',this)">📈 Profit | Lợi Nhuận</button>
+    <button class="tab-btn" onclick="switchTab('cost',this)">💰 Cost | Chi Phí</button>
+    <button class="tab-btn" onclick="switchTab('data',this)">📋 Data Entry | Nhập Liệu</button>
+    <button class="tab-btn" onclick="switchTab('health',this)">🏆 Health Score</button>
+    <button class="tab-btn" onclick="switchTab('req',this)">📁 Data Requirements</button>
+  </div>
+
+</div><!-- /main-area -->
+</div><!-- /body-wrap -->
+
+<script>
+// Date
+document.getElementById('rdate').textContent = new Date().toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});
+
+// TAB SWITCHING
+let currentTab = 'revenue';
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+  currentTab = tab;
+  updatePageHeader(tab);
+  setTimeout(renderCharts, 80);
+}
+
+const tabTitles = {
+  revenue: ['📊 REVENUE OVERVIEW | TỔNG QUAN DOANH THU', 'Doanh thu, chênh lệch vs KPI, và tỷ lệ lấp đầy KCN. Nhập số thực tế vào các ô gạch chân để cập nhật.'],
+  profit:  ['📈 PROFIT ANALYSIS | PHÂN TÍCH LỢI NHUẬN', 'Waterfall P&L, EBITDA trend, và so sánh biên lợi nhuận 5 năm của 2 công ty.'],
+  cost:    ['💰 COST & LEVERAGE | CHI PHÍ & ĐÒN BẨY', 'Cơ cấu chi phí, dòng tiền, cấu trúc nợ và các tỷ số tài chính chính.'],
+  data:    ['📋 DATA ENTRY | BẢNG NHẬP LIỆU KẾ TOÁN', 'Phòng kế toán nhập số liệu thực tế vào đây. Ô màu vàng/highlight = chỉ số tổng hợp tự tính.'],
+  health:  ['🏆 HEALTH SCORE | ĐIỂM SỨC KHỎE TÀI CHÍNH', 'Bảng đèn tín hiệu đánh giá toàn diện tình hình tài chính 2 công ty theo 6 chiều quan trọng.'],
+  req:     ['📁 DATA REQUIREMENTS | YÊU CẦU DỮ LIỆU KẾ TOÁN', 'Danh sách dữ liệu phòng kế toán cần cung cấp cho phòng phân tích dữ liệu, kèm deadline cụ thể.'],
+};
+function updatePageHeader(tab) {
+  const t = tabTitles[tab] || tabTitles.revenue;
+  document.getElementById('page-title').textContent = t[0];
+  document.getElementById('page-desc').textContent = t[1];
+}
+
+// COMPANY SWITCHING
+let currentCo = 'vs';
+function switchCompany(co) {
+  currentCo = co;
+  // Sidebar
+  document.getElementById('vs-sidebar').style.display   = (co==='vs'||co==='both') ? 'block' : 'none';
+  document.getElementById('ipsv-sidebar').style.display = (co==='ipsv'||co==='both') ? 'block' : 'none';
+  document.getElementById('both-sidebar').style.display = co==='both' ? 'block' : 'none';
+  // Pills
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  const pillMap = {vs:'.pill.vs', ipsv:'.pill.ipsv', both:'.pill.both'};
+  document.querySelector(pillMap[co])?.classList.add('active');
+  // Revenue tab views
+  ['vs','ipsv','both'].forEach(v => {
+    const el = document.getElementById('rv-'+v);
+    if(el) el.classList.toggle('active', v===co);
+  });
+  setTimeout(renderCharts, 80);
+}
+function setSelect(idx) {
+  document.querySelector('#top-co-sel') && (document.querySelector('#top-co-sel').selectedIndex = idx);
+}
+
+function highlightKpi(el) {
+  el.closest('.sidebar').querySelectorAll('.kpi-block').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// CHART DATA
+const MONTHS6 = ['T7/25','T8/25','T9/25','T10/25','T11/25','T12/25','T1/26'];
+const QUARTERS = ['Q1/25','Q2/25','Q3/25','Q4/25'];
+const YEARS5   = ['2021','2022','2023','2024','2025'];
+const C = {
+  vs:'rgba(46,134,193,', gold:'rgba(240,165,0,', teal:'rgba(26,188,156,',
+  red:'rgba(231,76,60,', ipsv:'rgba(192,57,43,', purple:'rgba(155,89,182,'
+};
+const mk=(a,op)=>a+op+')';
+
+let ch={};
+function dc(id){if(ch[id]){ch[id].destroy();delete ch[id];}}
+function mc(id,cfg){
+  const el=document.getElementById(id);
+  if(!el)return;
+  dc(id);
+  try{ch[id]=new Chart(el,cfg);}catch(e){}
+}
+
+const baseOpts = (unit='Tỷ VND') => ({
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{position:'bottom',labels:{color:'#7a9bbf',font:{size:9},boxWidth:10,padding:8}}},
+  scales:{
+    x:{ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},
+    y:{ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'},title:{display:!!unit,text:unit,color:'#7a9bbf',font:{size:9}}}
+  }
+});
+const pieOpts = {responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#7a9bbf',font:{size:9},boxWidth:10,padding:6}}}};
+const dualOpts = (u1,u2) => ({
+  ...baseOpts(u1),
+  scales:{
+    x:{ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},
+    y:{ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'},title:{display:true,text:u1,color:'#7a9bbf',font:{size:9}}},
+    y1:{position:'right',ticks:{color:mk(C.gold,'1')},grid:{drawOnChartArea:false},title:{display:true,text:u2,color:mk(C.gold,'0.8'),font:{size:9}}}
+  }
+});
+
+function renderCharts() {
+  // ===== REVENUE TAB =====
+  // VS charts
+  mc('vs_gp_time',{type:'line',data:{labels:MONTHS6,datasets:[{label:'Gross Profit (Tỷ)',data:[118,125,110,132,128,145,138],borderColor:mk(C.vs,'1'),backgroundColor:mk(C.vs,'0.15'),fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:mk(C.vs,'1')}]},options:baseOpts('Tỷ VND')});
+  mc('vs_rev_var',{type:'bar',data:{labels:MONTHS6,datasets:[{label:'Actual Revenue',data:[285,305,290,310,295,340,330],backgroundColor:mk(C.vs,'0.75'),yAxisID:'y'},{label:'Var to KPI %',data:[1.2,3.5,-1.8,5.2,-0.5,8.1,6.3],type:'line',borderColor:mk(C.gold,'1'),backgroundColor:'transparent',yAxisID:'y1',tension:0.4,pointRadius:4,pointBackgroundColor:mk(C.gold,'1')}]},options:{...dualOpts('Tỷ VND','Var %'),plugins:{legend:{position:'bottom',labels:{color:'#7a9bbf',font:{size:9},boxWidth:10}}}}});
+  mc('vs_rev_bgt',{type:'bar',data:{labels:QUARTERS,datasets:[{label:'Land Lease Revenue',data:[210,235,218,256],backgroundColor:mk(C.vs,'0.8'),stack:'a'},{label:'KPI (Land Lease)',data:[200,220,210,240],backgroundColor:mk(C.vs,'0.25'),stack:'b'},{label:'Infra Fee Revenue',data:[75,75,77,84],backgroundColor:mk(C.gold,'0.8'),stack:'a'},{label:'KPI (Infra Fee)',data:[80,80,80,85],backgroundColor:mk(C.gold,'0.25'),stack:'b'}]},options:{...baseOpts('Tỷ VND'),scales:{x:{stacked:false,ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},y:{stacked:false,ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'},title:{display:true,text:'Tỷ VND',color:'#7a9bbf',font:{size:9}}}}}});
+  mc('vs_occ_prog',{type:'bar',data:{labels:YEARS5,datasets:[{label:'Leased (ha)',data:[620,680,730,780,830],backgroundColor:mk(C.teal,'0.8')},{label:'Available (ha)',data:[380,320,270,220,170],backgroundColor:'rgba(255,255,255,0.1)'}]},options:{...baseOpts('ha'),scales:{x:{stacked:true,ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},y:{stacked:true,ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'},title:{display:true,text:'ha',color:'#7a9bbf',font:{size:9}}}}}});
+
+  // IPSV charts
+  mc('ipsv_rev_trend',{type:'line',data:{labels:MONTHS6,datasets:[{label:'Điện',data:[85,88,90,86,94,96,90],borderColor:mk(C.ipsv,'1'),backgroundColor:mk(C.ipsv,'0.1'),fill:true,tension:0.4,pointRadius:3},{label:'Nước',data:[33,34,36,35,37,38,36],borderColor:mk(C.vs,'1'),backgroundColor:mk(C.vs,'0.1'),fill:true,tension:0.4,pointRadius:3},{label:'Nước Thải',data:[22,23,24,23,25,26,24],borderColor:mk(C.teal,'1'),backgroundColor:mk(C.teal,'0.08'),fill:true,tension:0.4,pointRadius:3}]},options:baseOpts('Tỷ VND')});
+  mc('ipsv_rev_var',{type:'bar',data:{labels:MONTHS6,datasets:[{label:'Actual Revenue',data:[145,150,155,149,162,165,155],backgroundColor:mk(C.ipsv,'0.75'),yAxisID:'y'},{label:'Var to KPI %',data:[0.8,2.1,-0.5,1.2,3.5,4.2,2.8],type:'line',borderColor:mk(C.gold,'1'),backgroundColor:'transparent',yAxisID:'y1',tension:0.4,pointRadius:4,pointBackgroundColor:mk(C.gold,'1')}]},options:{...dualOpts('Tỷ VND','Var %'),plugins:{legend:{position:'bottom',labels:{color:'#7a9bbf',font:{size:9},boxWidth:10}}}}});
+  mc('ipsv_loss',{type:'bar',data:{labels:['Electricity Loss','Water Loss (NRW)'],datasets:[{label:'Actual %',data:[4.2,12.8],backgroundColor:[mk(C.ipsv,'0.8'),mk(C.vs,'0.8')]},{label:'Target %',data:[5,15],backgroundColor:['rgba(255,255,255,0.1)','rgba(255,255,255,0.1)'],borderColor:['rgba(255,255,255,0.3)','rgba(255,255,255,0.3)'],borderWidth:1}]},options:{...baseOpts('%'),scales:{x:{ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},y:{max:20,ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'},title:{display:true,text:'%',color:'#7a9bbf',font:{size:9}}}}}});
+  mc('ipsv_ar',{type:'doughnut',data:{labels:['Đã Thu','Trong Hạn','Quá Hạn'],datasets:[{data:[78,15,7],backgroundColor:[mk(C.teal,'0.85'),mk(C.gold,'0.75'),mk(C.red,'0.8')],borderColor:'rgba(0,0,0,0.3)',borderWidth:1}]},options:pieOpts});
+
+  // COMPARE charts
+  mc('cmp_rev',{type:'bar',data:{labels:QUARTERS,datasets:[{label:'Việt Sơn',data:[285,310,295,340],backgroundColor:mk(C.vs,'0.8')},{label:'IPSV',data:[149,154,151,171],backgroundColor:mk(C.ipsv,'0.8')}]},options:baseOpts('Tỷ VND')});
+  mc('cmp_pie',{type:'doughnut',data:{labels:['Việt Sơn (PTHT)','IPSV (Tiện Ích)'],datasets:[{data:[67,33],backgroundColor:[mk(C.vs,'0.85'),mk(C.ipsv,'0.85')],borderColor:'rgba(0,0,0,0.3)',borderWidth:2}]},options:{...pieOpts,plugins:{legend:{position:'bottom',labels:{color:'#7a9bbf',font:{size:9},boxWidth:10}}},cutout:'58%'}});
+  mc('cmp_margin',{type:'bar',data:{labels:['Gross Margin','EBITDA Margin','Net Margin'],datasets:[{label:'Việt Sơn',data:[42.1,36.2,21.1],backgroundColor:mk(C.vs,'0.8')},{label:'IPSV',data:[32.5,25.1,15.2],backgroundColor:mk(C.ipsv,'0.8')}]},options:baseOpts('%')});
+  mc('cmp_debt',{type:'bar',data:{labels:['D/E Ratio','Debt/EBITDA','Interest Coverage'],datasets:[{label:'Việt Sơn',data:[1.8,3.8,4.5],backgroundColor:mk(C.vs,'0.8')},{label:'IPSV',data:[0.9,2.1,7.2],backgroundColor:mk(C.ipsv,'0.8')},{label:'Target (D/E≤2,D/E≤4,ICR≥3)',data:[2,4,3],backgroundColor:'rgba(255,255,255,0.08)',borderColor:'rgba(255,255,255,0.25)',borderWidth:1}]},options:baseOpts('x')});
+
+  // ===== PROFIT TAB =====
+  mc('vs_waterfall',{type:'bar',data:{labels:['Revenue','COGS','Gross Profit','SG&A','D&A','EBIT','Interest','Tax','NPAT'],datasets:[{data:[340,-196,144,-41,-23,80,-18,-17,45],backgroundColor:d=>d.raw>=0?mk(C.teal,'0.8'):mk(C.red,'0.8'),label:'Tỷ VND'}]},options:{...baseOpts('Tỷ VND'),plugins:{legend:{display:false}}}});
+  mc('ebitda_trend',{type:'bar',data:{labels:QUARTERS,datasets:[{label:'VS EBITDA',data:[98,112,105,125],backgroundColor:mk(C.vs,'0.8'),yAxisID:'y'},{label:'IPSV EBITDA',data:[38,42,39,46],backgroundColor:mk(C.ipsv,'0.8'),yAxisID:'y'},{label:'VS EBITDA%',data:[34.4,36.1,35.6,36.8],type:'line',borderColor:mk(C.gold,'1'),backgroundColor:'transparent',yAxisID:'y1',tension:0.4,pointRadius:4}]},options:{...dualOpts('Tỷ VND','%'),plugins:{legend:{position:'bottom',labels:{color:'#7a9bbf',font:{size:9},boxWidth:10}}}}});
+  mc('radar_profit',{type:'radar',data:{labels:['Profitability','Liquidity','Leverage','Efficiency','Growth'],datasets:[{label:'Việt Sơn',data:[78,58,55,72,82],backgroundColor:mk(C.vs,'0.2'),borderColor:mk(C.vs,'1'),pointBackgroundColor:mk(C.vs,'1')},{label:'IPSV',data:[62,72,78,68,70],backgroundColor:mk(C.ipsv,'0.2'),borderColor:mk(C.ipsv,'1'),pointBackgroundColor:mk(C.ipsv,'1')},{label:'Target',data:[80,80,80,80,80],backgroundColor:'rgba(255,255,255,0.03)',borderColor:'rgba(255,255,255,0.2)',borderDash:[4,4],pointBackgroundColor:'rgba(255,255,255,0.3)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a9bbf',font:{size:9},boxWidth:10}}},scales:{r:{min:0,max:100,ticks:{color:'#7a9bbf',font:{size:8},backdropColor:'transparent'},grid:{color:'rgba(255,255,255,0.08)'},pointLabels:{color:'#7a9bbf',font:{size:9}}}}}});
+  mc('vs_5yr',{type:'bar',data:{labels:YEARS5,datasets:[{label:'Revenue',data:[820,980,1050,1150,1230],backgroundColor:mk(C.vs,'0.7'),yAxisID:'y'},{label:'NPAT',data:[155,198,210,235,260],type:'line',borderColor:mk(C.gold,'1'),backgroundColor:'transparent',yAxisID:'y',tension:0.4,pointRadius:4}]},options:{...baseOpts('Tỷ VND'),plugins:{legend:{position:'bottom',labels:{color:'#7a9bbf',font:{size:9},boxWidth:10}}}}});
+  mc('ipsv_5yr',{type:'bar',data:{labels:YEARS5,datasets:[{label:'Điện',data:[250,295,330,368,390],backgroundColor:mk(C.ipsv,'0.85'),stack:'a'},{label:'Nước',data:[85,98,108,120,130],backgroundColor:mk(C.vs,'0.75'),stack:'a'},{label:'Nước Thải',data:[55,65,72,80,88],backgroundColor:mk(C.teal,'0.75'),stack:'a'},{label:'Khác',data:[20,28,32,36,42],backgroundColor:mk(C.gold,'0.7'),stack:'a'}]},options:{...baseOpts('Tỷ VND'),scales:{x:{stacked:true,ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},y:{stacked:true,ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'},title:{display:true,text:'Tỷ VND',color:'#7a9bbf',font:{size:9}}}},plugins:{legend:{position:'bottom',labels:{color:'#7a9bbf',font:{size:9},boxWidth:10}}}}});
+
+  // ===== COST TAB =====
+  mc('vs_cost_pie',{type:'doughnut',data:{labels:['COGS','SG&A','Lãi Vay','D&A','Thuế TNDN'],datasets:[{data:[196,41,18,23,17],backgroundColor:[mk(C.vs,'0.85'),mk(C.gold,'0.8'),mk(C.red,'0.8'),mk(C.teal,'0.7'),mk(C.purple,'0.7')],borderColor:'rgba(0,0,0,0.3)',borderWidth:1}]},options:{...pieOpts,cutout:'50%'}});
+  mc('ipsv_cost_pie',{type:'doughnut',data:{labels:['Mua Điện EVN','Nước Nguồn','Nhân Công','Bảo Trì','Hóa Chất','Khấu Hao','QLDN'],datasets:[{data:[38,17,16,13,8,6,2],backgroundColor:[mk(C.ipsv,'0.85'),mk(C.vs,'0.75'),mk(C.teal,'0.75'),mk(C.gold,'0.75'),mk(C.purple,'0.7'),'rgba(255,255,255,0.2)','rgba(255,255,255,0.12)'],borderColor:'rgba(0,0,0,0.3)',borderWidth:1}]},options:{...pieOpts,cutout:'50%'}});
+  mc('vs_cf',{type:'bar',data:{labels:QUARTERS,datasets:[{label:'Operating CF',data:[110,125,118,138],backgroundColor:mk(C.teal,'0.8')},{label:'Investing CF',data:[-65,-80,-55,-70],backgroundColor:mk(C.red,'0.7')},{label:'Financing CF',data:[-30,-25,-40,-35],backgroundColor:mk(C.gold,'0.7')}]},options:baseOpts('Tỷ VND')});
+  mc('vs_debt_str',{type:'bar',data:{labels:YEARS5,datasets:[{label:'Short-term Debt',data:[320,350,360,370,380],backgroundColor:mk(C.red,'0.8'),stack:'d'},{label:'Long-term Debt',data:[660,700,720,730,740],backgroundColor:mk(C.vs,'0.8'),stack:'d'}]},options:{...baseOpts('Tỷ VND'),scales:{x:{stacked:true,ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},y:{stacked:true,ticks:{color:'#7a9bbf',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'},title:{display:true,text:'Tỷ VND',color:'#7a9bbf',font:{size:9}}}},plugins:{legend:{position:'bottom',labels:{color:'#7a9bbf',font:{size:9},boxWidth:10}}}}});
+}
+
+window.addEventListener('load', () => {
+  renderCharts();
+  // Set initial sidebar display
+  document.getElementById('ipsv-sidebar').style.display = 'none';
+  document.getElementById('both-sidebar').style.display = 'none';
+});
+</script>
+</body>
+</html>
