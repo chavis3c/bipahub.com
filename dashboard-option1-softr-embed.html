@@ -344,17 +344,17 @@
       <div class="page-header"><div><div class="page-title">Profit &amp; Loss Statement</div><div class="page-sub">June 2026 — Placeholder</div></div><button class="btn"><i class="ti ti-download"></i> Export PDF</button></div>
       <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Placeholder P&amp;L — connect accounting source to populate.</div>
       <div class="kpi-grid">
-        <div class="kpi-card green"><div class="kpi-label">Gross Revenue</div><div class="kpi-value">₫3.21B</div><div class="kpi-delta up"><i class="ti ti-arrow-up-right"></i> +8% MoM</div></div>
-        <div class="kpi-card blue"><div class="kpi-label">Gross Profit</div><div class="kpi-value">₫2.32B</div><div class="kpi-delta up">Margin 72%</div></div>
-        <div class="kpi-card orange"><div class="kpi-label">Total Expenses</div><div class="kpi-value">₫1.51B</div><div class="kpi-delta down">+3.2% MoM</div></div>
-        <div class="kpi-card gold"><div class="kpi-label">Net Profit</div><div class="kpi-value">₫1.40B</div><div class="kpi-delta up">Margin 43.6%</div></div>
+        <div id="vsg-kpi-pl-rev"  class="kpi-card green"><div class="kpi-label">Gross Revenue</div><div class="kpi-value">₫3.21B</div><div class="kpi-delta up">↑ +8% MoM</div></div>
+        <div id="vsg-kpi-pl-gp"   class="kpi-card blue"><div class="kpi-label">Gross Profit</div><div class="kpi-value">₫2.32B</div><div class="kpi-delta up">↑ Margin 72%</div></div>
+        <div id="vsg-kpi-pl-exp"  class="kpi-card orange"><div class="kpi-label">Total Expenses</div><div class="kpi-value">₫1.51B</div><div class="kpi-delta down">↓ +3.2% MoM</div></div>
+        <div id="vsg-kpi-pl-net"  class="kpi-card gold"><div class="kpi-label">Net Profit</div><div class="kpi-value">₫1.40B</div><div class="kpi-delta up">↑ Margin 43.6%</div></div>
       </div>
       <div class="chart-row two">
         <div class="card">
           <div class="card-header"><div class="card-title">P&amp;L Line Items</div></div>
           <table class="data-table">
             <thead><tr><th>Line Item</th><th>Current Month</th><th>YTD</th><th>Budget</th><th>Variance</th></tr></thead>
-            <tbody>
+            <tbody id="vsg-pl-tbody">
               <tr><td><strong>Gross Revenue</strong></td><td>₫3,210M</td><td>₫18,400M</td><td>₫18,000M</td><td><span class="pill pill-green">+₫400M</span></td></tr>
               <tr><td style="padding-left:16px;color:#8a9bb0">Management Fees</td><td>₫1,573M</td><td>₫9,016M</td><td>₫8,800M</td><td><span class="pill pill-green">+₫216M</span></td></tr>
               <tr><td style="padding-left:16px;color:#8a9bb0">Utility Charges</td><td>₫867M</td><td>₫4,968M</td><td>₫4,800M</td><td><span class="pill pill-green">+₫168M</span></td></tr>
@@ -378,10 +378,10 @@
       <div class="page-header"><div><div class="page-title">Balance Sheet</div><div class="page-sub">As at 30 June 2026 — Placeholder</div></div><button class="btn primary">Export</button></div>
       <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Placeholder balance sheet — replace with live accounting data.</div>
       <div class="kpi-grid">
-        <div class="kpi-card blue"><div class="kpi-label">Total Assets</div><div class="kpi-value">₫142.3B</div><div class="kpi-delta neu">As at Jun 30</div></div>
-        <div class="kpi-card green"><div class="kpi-label">Total Equity</div><div class="kpi-value">₫88.7B</div><div class="kpi-delta up">+5.4% YTD</div></div>
-        <div class="kpi-card orange"><div class="kpi-label">Total Liabilities</div><div class="kpi-value">₫53.6B</div><div class="kpi-delta neu">Debt ratio 37.7%</div></div>
-        <div class="kpi-card gold"><div class="kpi-label">Working Capital</div><div class="kpi-value">₫12.4B</div><div class="kpi-delta up">Current ratio 2.3x</div></div>
+        <div id="vsg-kpi-bs-assets" class="kpi-card blue"><div class="kpi-label">Total Assets</div><div class="kpi-value">₫142.3B</div><div class="kpi-delta neu">→ As at Jun 30</div></div>
+        <div id="vsg-kpi-bs-equity" class="kpi-card green"><div class="kpi-label">Total Equity</div><div class="kpi-value">₫88.7B</div><div class="kpi-delta up">↑ +5.4% YTD</div></div>
+        <div id="vsg-kpi-bs-liab"   class="kpi-card orange"><div class="kpi-label">Total Liabilities</div><div class="kpi-value">₫53.6B</div><div class="kpi-delta neu">→ Debt ratio 37.7%</div></div>
+        <div id="vsg-kpi-bs-wc"     class="kpi-card gold"><div class="kpi-label">Working Capital</div><div class="kpi-value">₫12.4B</div><div class="kpi-delta up">↑ Current ratio 2.3x</div></div>
       </div>
       <div class="chart-row two">
         <div class="card">
@@ -421,14 +421,15 @@
       <div class="page-header"><div><div class="page-title">Cash Flow Statement</div><div class="page-sub">June 2026 — Placeholder</div></div><button class="btn primary">Export</button></div>
       <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Placeholder cash flow data.</div>
       <div class="kpi-grid">
-        <div class="kpi-card green"><div class="kpi-label">Operating Cash Flow</div><div class="kpi-value">+₫1.4B</div><div class="kpi-delta up"><i class="ti ti-check"></i> Positive</div></div>
-        <div class="kpi-card orange"><div class="kpi-label">Investing Activities</div><div class="kpi-value">−₫520M</div><div class="kpi-delta neu">Capex spend</div></div>
-        <div class="kpi-card blue"><div class="kpi-label">Financing Activities</div><div class="kpi-value">−₫180M</div><div class="kpi-delta neu">Loan repayment</div></div>
-        <div class="kpi-card gold"><div class="kpi-label">Net Change in Cash</div><div class="kpi-value">+₫700M</div><div class="kpi-delta up">Surplus</div></div>
+        <div id="vsg-kpi-cf-op"  class="kpi-card green"><div class="kpi-label">Operating Cash Flow</div><div class="kpi-value">+₫1.4B</div><div class="kpi-delta up">↑ Positive</div></div>
+        <div id="vsg-kpi-cf-inv" class="kpi-card orange"><div class="kpi-label">Investing Activities</div><div class="kpi-value">−₫520M</div><div class="kpi-delta neu">→ Capex spend</div></div>
+        <div id="vsg-kpi-cf-fin" class="kpi-card blue"><div class="kpi-label">Financing Activities</div><div class="kpi-value">−₫180M</div><div class="kpi-delta neu">→ Loan repayment</div></div>
+        <div id="vsg-kpi-cf-net" class="kpi-card gold"><div class="kpi-label">Net Change in Cash</div><div class="kpi-value">+₫700M</div><div class="kpi-delta up">↑ Surplus</div></div>
       </div>
       <div class="chart-row two">
         <div class="card">
           <div class="card-header"><div class="card-title">Cash Flow Breakdown</div></div>
+          <div id="vsg-cf-tbody">
           <div class="cf-row"><div class="cf-label">Cash received from tenants</div><div class="cf-value pos">+₫3,200M</div></div>
           <div class="cf-row"><div class="cf-label">Payments to suppliers &amp; staff</div><div class="cf-value neg">−₫1,100M</div></div>
           <div class="cf-row"><div class="cf-label">Utility &amp; operating costs</div><div class="cf-value neg">−₫680M</div></div>
@@ -436,6 +437,7 @@
           <div class="cf-row"><div class="cf-label">Infrastructure capex</div><div class="cf-value neg">−₫520M</div></div>
           <div class="cf-row"><div class="cf-label">Loan principal repayment</div><div class="cf-value neg">−₫180M</div></div>
           <div class="cf-row" style="border-top:2px solid #e8ecf0;margin-top:4px;padding-top:8px"><div class="cf-label"><strong>Net Cash Movement</strong></div><div class="cf-value total pos" style="font-size:14px">+₫720M</div></div>
+          </div>
         </div>
         <div class="card">
           <div class="card-header"><div class="card-title">6-Month Cash Flow Trend</div></div>
@@ -449,16 +451,16 @@
       <div class="page-header"><div><div class="page-title">Tenant Revenue</div><div class="page-sub">102 active tenants · Placeholder data</div></div><button class="btn primary"><i class="ti ti-plus"></i> Add Tenant</button></div>
       <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Connect Airtable Tenants table for live tenant data.</div>
       <div class="kpi-grid">
-        <div class="kpi-card blue"><div class="kpi-label">Active Tenants</div><div class="kpi-value">102</div><div class="kpi-delta up">89 lots occupied</div></div>
-        <div class="kpi-card green"><div class="kpi-label">Monthly Mgmt Fee</div><div class="kpi-value">₫1,573M</div><div class="kpi-delta up">1,155 VND/m²</div></div>
-        <div class="kpi-card orange"><div class="kpi-label">Overdue Accounts</div><div class="kpi-value">8</div><div class="kpi-delta down">Action needed</div></div>
-        <div class="kpi-card gold"><div class="kpi-label">Avg Rev / Tenant</div><div class="kpi-value">₫18.2M</div><div class="kpi-delta neu">Per month</div></div>
+        <div id="vsg-kpi-t-active"  class="kpi-card blue"><div class="kpi-label">Active Tenants</div><div class="kpi-value">102</div><div class="kpi-delta up">↑ active tenants</div></div>
+        <div id="vsg-kpi-t-fee"     class="kpi-card green"><div class="kpi-label">Period Mgmt Fee</div><div class="kpi-value">₫1,573M</div><div class="kpi-delta up">↑ period mgmt fee</div></div>
+        <div id="vsg-kpi-t-overdue" class="kpi-card orange"><div class="kpi-label">Overdue Accounts</div><div class="kpi-value">8</div><div class="kpi-delta down">↓ action needed</div></div>
+        <div id="vsg-kpi-t-avg"     class="kpi-card gold"><div class="kpi-label">Avg Rev / Tenant</div><div class="kpi-value">₫18.2M</div><div class="kpi-delta neu">→ per period</div></div>
       </div>
       <div class="card">
         <div class="card-header"><div class="card-title">Tenant Revenue Sample</div><span class="card-action">View all 102 →</span></div>
         <table class="data-table">
           <thead><tr><th>#</th><th>Tenant</th><th>Zone</th><th>Lot m²</th><th>Monthly Fee</th><th>Last Payment</th><th>Status</th></tr></thead>
-          <tbody>
+          <tbody id="vsg-tenant-tbody">
             <tr><td>A-01</td><td>Placeholder Tenant A-01</td><td>Zone A</td><td>5,200</td><td style="font-family:'DM Mono',monospace">₫6,006M</td><td>01 Jun 2026</td><td><span class="pill pill-green">Paid</span></td></tr>
             <tr><td>A-12</td><td>Placeholder Tenant A-12</td><td>Zone A</td><td>6,100</td><td style="font-family:'DM Mono',monospace">₫7,046M</td><td>12 Apr 2026</td><td><span class="pill pill-red">Overdue 42d</span></td></tr>
             <tr><td>B-07</td><td>Placeholder Tenant B-07</td><td>Zone B</td><td>4,400</td><td style="font-family:'DM Mono',monospace">₫5,082M</td><td>05 May 2026</td><td><span class="pill pill-amber">Due Soon</span></td></tr>
@@ -497,10 +499,10 @@
       <div class="page-header"><div><div class="page-title">Revenue Forecasting</div><div class="page-sub">FY 2026 — Placeholder model</div></div><button class="btn primary">Update Model</button></div>
       <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Forecasting uses placeholder assumptions.</div>
       <div class="kpi-grid">
-        <div class="kpi-card blue"><div class="kpi-label">FY 2026 Target</div><div class="kpi-value">₫36.0B</div><div class="kpi-delta up">51.1% achieved</div></div>
-        <div class="kpi-card green"><div class="kpi-label">Q3 Forecast</div><div class="kpi-value">₫9.8B</div><div class="kpi-delta up">+6% vs Q2</div></div>
-        <div class="kpi-card orange"><div class="kpi-label">Occupancy Risk</div><div class="kpi-value">3 lots</div><div class="kpi-delta down">Lease expiring Q3</div></div>
-        <div class="kpi-card gold"><div class="kpi-label">PRISM Pipeline</div><div class="kpi-value">₫2.4B</div><div class="kpi-delta neu">30 Jun deadline</div></div>
+        <div id="vsg-kpi-fc-target" class="kpi-card blue"><div class="kpi-label">FY 2026 Target</div><div class="kpi-value">₫36.0B</div><div class="kpi-delta up">↑ 51.1% achieved</div></div>
+        <div id="vsg-kpi-fc-q3"     class="kpi-card green"><div class="kpi-label">Next Period Forecast</div><div class="kpi-value">₫9.8B</div><div class="kpi-delta up">↑ +6% vs Q2</div></div>
+        <div id="vsg-kpi-fc-risk"   class="kpi-card orange"><div class="kpi-label">Occupancy Risk</div><div class="kpi-value">3 lots</div><div class="kpi-delta down">↓ Lease expiring Q3</div></div>
+        <div id="vsg-kpi-fc-pipe"   class="kpi-card gold"><div class="kpi-label">PRISM Pipeline</div><div class="kpi-value">₫2.4B</div><div class="kpi-delta neu">→ 30 Jun deadline</div></div>
       </div>
       <div class="card">
         <div class="card-header"><div class="card-title">12-Month Revenue: Actual vs Forecast</div></div>
@@ -513,14 +515,14 @@
       <div class="page-header"><div><div class="page-title">Operating Expense Tracker</div><div class="page-sub">FY 2026 — Placeholder</div></div><button class="btn primary"><i class="ti ti-plus"></i> Log Expense</button></div>
       <div class="placeholder-notice"><i class="ti ti-info-circle"></i> Replace with Zoho Books / ERP live data.</div>
       <div class="kpi-grid">
-        <div class="kpi-card orange"><div class="kpi-label">Total Opex YTD</div><div class="kpi-value">₫10.6B</div><div class="kpi-delta neu">vs ₫11.2B budget</div></div>
-        <div class="kpi-card green"><div class="kpi-label">Budget Remaining</div><div class="kpi-value">₫0.6B</div><div class="kpi-delta up">Under budget</div></div>
-        <div class="kpi-card blue"><div class="kpi-label">Largest Category</div><div class="kpi-value">Operations</div><div class="kpi-delta neu">₫3.8B YTD</div></div>
-        <div class="kpi-card red"><div class="kpi-label">Over-budget Items</div><div class="kpi-value">2</div><div class="kpi-delta down">Maintenance, ENV</div></div>
+        <div id="vsg-kpi-opex-total" class="kpi-card orange"><div class="kpi-label">Total Opex Period</div><div class="kpi-value">₫10.6B</div><div class="kpi-delta neu">→ vs ₫11.2B budget</div></div>
+        <div id="vsg-kpi-opex-rem"   class="kpi-card green"><div class="kpi-label">Budget Remaining</div><div class="kpi-value">₫0.6B</div><div class="kpi-delta up">↑ Under budget</div></div>
+        <div class="kpi-card blue"><div class="kpi-label">Largest Category</div><div class="kpi-value">Operations</div><div class="kpi-delta neu">→ Consistent</div></div>
+        <div id="vsg-kpi-opex-over"  class="kpi-card red"><div class="kpi-label">Over-budget Items</div><div class="kpi-value">2</div><div class="kpi-delta down">↓ Maintenance, ENV</div></div>
       </div>
       <div class="card">
         <div class="card-header"><div class="card-title">Expense by Category</div></div>
-        <div class="progress-list">
+        <div id="vsg-opex-bars" class="progress-list">
           <div><div class="progress-meta"><span class="progress-label">Operations (₫3,800M / ₫5,600M)</span><span class="progress-pct">68%</span></div><div class="progress-track"><div class="progress-fill" style="width:68%;background:#4f9cf9"></div></div></div>
           <div><div class="progress-meta"><span class="progress-label">Payroll (₫2,250M / ₫5,000M)</span><span class="progress-pct">45%</span></div><div class="progress-track"><div class="progress-fill" style="width:45%;background:#1d9e75"></div></div></div>
           <div><div class="progress-meta"><span class="progress-label">Maintenance (₫1,620M / ₫2,000M)</span><span class="progress-pct">81%</span></div><div class="progress-track"><div class="progress-fill" style="width:81%;background:#e05a2b"></div></div></div>
@@ -583,10 +585,10 @@
       <div class="page-header"><div><div class="page-title">Tax &amp; VAT</div><div class="page-sub">Vietnam compliance — Placeholder</div></div><button class="btn primary">File Return</button></div>
       <div class="placeholder-notice"><i class="ti ti-alert-triangle"></i> Q2 VAT filing deadline: 15 July 2026. Connect Fast Accounting.</div>
       <div class="kpi-grid">
-        <div class="kpi-card orange"><div class="kpi-label">VAT Output (Jun)</div><div class="kpi-value">₫321M</div><div class="kpi-delta neu">10% on revenue</div></div>
-        <div class="kpi-card blue"><div class="kpi-label">VAT Input (Jun)</div><div class="kpi-value">₫89M</div><div class="kpi-delta neu">Creditable</div></div>
-        <div class="kpi-card red"><div class="kpi-label">VAT Payable</div><div class="kpi-value">₫232M</div><div class="kpi-delta down">Due 15 Jul 2026</div></div>
-        <div class="kpi-card green"><div class="kpi-label">CIT Estimated</div><div class="kpi-value">₫280M</div><div class="kpi-delta neu">20% CIT rate</div></div>
+        <div id="vsg-kpi-tax-vout" class="kpi-card orange"><div class="kpi-label">VAT Output</div><div class="kpi-value">₫321M</div><div class="kpi-delta neu">→ 10% on revenue</div></div>
+        <div id="vsg-kpi-tax-vin"  class="kpi-card blue"><div class="kpi-label">VAT Input</div><div class="kpi-value">₫89M</div><div class="kpi-delta up">↑ Creditable</div></div>
+        <div id="vsg-kpi-tax-vpay" class="kpi-card red"><div class="kpi-label">VAT Payable</div><div class="kpi-value">₫232M</div><div class="kpi-delta down">↓ Due 15 Jul 2026</div></div>
+        <div id="vsg-kpi-tax-cit"  class="kpi-card green"><div class="kpi-label">CIT Estimated</div><div class="kpi-value">₫280M</div><div class="kpi-delta neu">→ 20% CIT rate</div></div>
       </div>
       <div class="card">
         <div class="card-header"><div class="card-title">Tax Calendar</div></div>
@@ -663,65 +665,110 @@
   };
   var rendered = {};
 
-  /* ── Active period (monthly default) ── */
+  /* ── Active period ── */
   var currentPeriod = 'monthly';
 
-  /* ══════════════════════════════════════════════
-     PERIOD DATA SETS
-     All values in ₫ Billion unless noted
-  ══════════════════════════════════════════════ */
+  /* ══════════════════════════════════════════════════════
+     ALL-PAGE PERIOD DATA  (₫ Billion unless noted)
+  ══════════════════════════════════════════════════════ */
   var PERIODS = {
     monthly: {
-      label: 'June 2026',
-      barLabels: ['Jan','Feb','Mar','Apr','May','Jun'],
-      revenue:   [2.8, 3.1, 2.9, 3.4, 3.2, 3.0],
-      expenses:  [1.6, 1.9, 1.7, 2.0, 1.8, 1.7],
-      netProfit: [1.1, 1.3, 1.2, 1.5, 1.4, 1.4],
-      cfOp:      [1.1, 1.4, 1.2, 1.6, 1.3, 1.4],
-      cfNet:     [0.6, 0.9, 0.7, 1.0, 0.8, 0.72],
-      donut:     [49, 27, 15, 9],
-      kpi: {
-        revYTD:   '₫18.4B', revDelta: '+12.3% vs 2025', revDir: 'up',
-        margin:   '34.7%',  marginDelta: '+2.1 pts',     marginDir: 'up',
-        ar:       '₫2.1B',  arDelta: '8 tenants overdue',arDir: 'down',
-        cash:     '₫6.8B',  cashDelta: 'Healthy buffer', cashDir: 'up'
-      }
+      label:'June 2026', periodSub:'June 2026',
+      barLabels:['Jan','Feb','Mar','Apr','May','Jun'],
+      revenue:  [2.8,3.1,2.9,3.4,3.2,3.0],
+      expenses: [1.6,1.9,1.7,2.0,1.8,1.7],
+      netProfit:[1.1,1.3,1.2,1.5,1.4,1.4],
+      cfOp:     [1.1,1.4,1.2,1.6,1.3,1.4],
+      cfNet:    [0.6,0.9,0.7,1.0,0.8,0.72],
+      donut:    [49,27,15,9],
+      /* Dashboard KPIs */
+      kpi:{ revYTD:'₫18.4B',revDelta:'+12.3% vs 2025',revDir:'up', margin:'34.7%',marginDelta:'+2.1 pts',marginDir:'up', ar:'₫2.1B',arDelta:'8 tenants overdue',arDir:'down', cash:'₫6.8B',cashDelta:'Healthy buffer',cashDir:'up' },
+      /* P&L */
+      pl:{ rev:'₫3.21B',revD:'+8% MoM',revDir:'up', gp:'₫2.32B',gpD:'Margin 72%',gpDir:'up', exp:'₫1.51B',expD:'+3.2% MoM',expDir:'down', net:'₫1.40B',netD:'Margin 43.6%',netDir:'up',
+        rows:[ ['Gross Revenue','₫3,210M','₫18,400M','₫18,000M','green','+₫400M'],
+               ['Management Fees','₫1,573M','₫9,016M','₫8,800M','green','+₫216M'],
+               ['Utility Charges','₫867M','₫4,968M','₫4,800M','green','+₫168M'],
+               ['Land Lease','₫482M','₫2,760M','₫2,700M','green','+₫60M'],
+               ['Cost of Revenue','₫890M','₫5,040M','₫5,200M','green','Saved ₫160M'],
+               ['Gross Profit','₫2,320M','₫13,360M','₫12,800M','green','+₫560M'],
+               ['Operating Expenses','₫620M','₫3,540M','₫3,600M','green','Under budget'],
+               ['Net Profit','₫1,400M','₫8,060M','₫7,600M','green','+₫460M'] ] },
+      /* Balance Sheet */
+      bs:{ assets:'₫142.3B',assD:'As at Jun 30',assDir:'neu', equity:'₫88.7B',eqD:'+5.4% YTD',eqDir:'up', liab:'₫53.6B',liabD:'Debt ratio 37.7%',liabDir:'neu', wc:'₫12.4B',wcD:'Current ratio 2.3x',wcDir:'up' },
+      /* Cash Flow */
+      cf:{ op:'+₫1.4B',opD:'Positive',opDir:'up', inv:'−₫520M',invD:'Capex spend',invDir:'neu', fin:'−₫180M',finD:'Loan repayment',finDir:'neu', net:'+₫700M',netD:'Surplus',netDir:'up',
+        rows:[['Cash received from tenants','+₫3,200M','pos'],['Payments to suppliers & staff','−₫1,100M','neg'],['Utility & operating costs','−₫680M','neg'],['Operating Cash Flow','+₫1,420M','total pos'],['Infrastructure capex','−₫520M','neg'],['Loan principal repayment','−₫180M','neg'],['Net Cash Movement','+₫720M','total pos']] },
+      /* Tenant */
+      tenant:{ active:'102',fee:'₫1,573M',overdue:'8',avg:'₫18.2M',
+        rows:[['A-01','Placeholder Tenant A-01','Zone A','5,200','₫6,006M','01 Jun 2026','green','Paid'],['A-12','Placeholder Tenant A-12','Zone A','6,100','₫7,046M','12 Apr 2026','red','Overdue 42d'],['B-07','Placeholder Tenant B-07','Zone B','4,400','₫5,082M','05 May 2026','amber','Due Soon'],['B-15','Placeholder Tenant B-15','Zone B','2,900','₫3,350M','01 Jun 2026','green','Paid']] },
+      /* Opex */
+      opex:{ total:'₫10.6B',totalD:'vs ₫11.2B budget',totalDir:'neu', rem:'₫0.6B',remD:'Under budget',remDir:'up', over:'2',overD:'Maintenance, ENV',overDir:'down',
+        bars:[[68,'#4f9cf9','Operations (₫3,800M / ₫5,600M)'],[45,'#1d9e75','Payroll (₫2,250M / ₫5,000M)'],[81,'#e05a2b','Maintenance (₫1,620M / ₫2,000M)'],[52,'#7f77dd','Environmental (₫780M / ₫1,500M)'],[35,'#f0c040','Admin & Legal (₫420M / ₫1,200M)']] },
+      /* Forecast */
+      fcast:{ target:'₫36.0B',tD:'51.1% achieved',tDir:'up', q3:'₫9.8B',q3D:'+6% vs Q2',q3Dir:'up', risk:'3 lots',rD:'Lease expiring Q3',rDir:'down', pipe:'₫2.4B',pD:'30 Jun deadline',pDir:'neu' },
+      /* Tax */
+      tax:{ vout:'₫321M',vouD:'10% on revenue',vouDir:'neu', vin:'₫89M',vinD:'Creditable',vinDir:'up', vpay:'₫232M',vpayD:'Due 15 Jul 2026',vpayDir:'down', cit:'₫280M',citD:'20% CIT rate',citDir:'neu' }
     },
     quarterly: {
-      label: 'Q2 2026',
-      barLabels: ['Q1 2025','Q2 2025','Q3 2025','Q4 2025','Q1 2026','Q2 2026'],
-      revenue:   [7.8, 8.4, 8.1, 9.0, 8.6, 9.8],
-      expenses:  [4.6, 5.2, 4.9, 5.6, 5.1, 5.3],
-      netProfit: [3.2, 3.1, 3.4, 3.7, 3.5, 4.0],
-      cfOp:      [3.0, 3.5, 3.2, 4.0, 3.8, 4.2],
-      cfNet:     [1.8, 2.0, 2.1, 2.5, 2.3, 2.8],
-      donut:     [51, 25, 16, 8],
-      kpi: {
-        revYTD:   '₫9.8B',  revDelta: '+14.0% vs Q2 2025', revDir: 'up',
-        margin:   '35.8%',  marginDelta: '+2.8 pts',        marginDir: 'up',
-        ar:       '₫3.4B',  arDelta: '12 tenants overdue',  arDir: 'down',
-        cash:     '₫7.2B',  cashDelta: 'Healthy buffer',    cashDir: 'up'
-      }
+      label:'Q2 2026', periodSub:'Q2 2026 (Apr–Jun)',
+      barLabels:['Q1 2025','Q2 2025','Q3 2025','Q4 2025','Q1 2026','Q2 2026'],
+      revenue:  [7.8,8.4,8.1,9.0,8.6,9.8],
+      expenses: [4.6,5.2,4.9,5.6,5.1,5.3],
+      netProfit:[3.2,3.1,3.4,3.7,3.5,4.0],
+      cfOp:     [3.0,3.5,3.2,4.0,3.8,4.2],
+      cfNet:    [1.8,2.0,2.1,2.5,2.3,2.8],
+      donut:    [51,25,16,8],
+      kpi:{ revYTD:'₫9.8B',revDelta:'+14.0% vs Q2 2025',revDir:'up', margin:'35.8%',marginDelta:'+2.8 pts',marginDir:'up', ar:'₫3.4B',arDelta:'12 tenants overdue',arDir:'down', cash:'₫7.2B',cashDelta:'Healthy buffer',cashDir:'up' },
+      pl:{ rev:'₫9.8B',revD:'+14% vs Q2 2025',revDir:'up', gp:'₫7.1B',gpD:'Margin 72.4%',gpDir:'up', exp:'₫4.6B',expD:'+4.5% vs Q1',expDir:'down', net:'₫4.2B',netD:'Margin 42.9%',netDir:'up',
+        rows:[ ['Gross Revenue','₫9,800M','₫18,400M','₫18,000M','green','+₫400M'],
+               ['Management Fees','₫4,802M','₫9,016M','₫8,800M','green','+₫216M'],
+               ['Utility Charges','₫2,646M','₫4,968M','₫4,800M','green','+₫168M'],
+               ['Land Lease','₫1,470M','₫2,760M','₫2,700M','green','+₫60M'],
+               ['Cost of Revenue','₫2,700M','₫5,040M','₫5,200M','green','Saved ₫160M'],
+               ['Gross Profit','₫7,100M','₫13,360M','₫12,800M','green','+₫560M'],
+               ['Operating Expenses','₫1,900M','₫3,540M','₫3,600M','green','Under budget'],
+               ['Net Profit','₫4,200M','₫8,060M','₫7,600M','green','+₫460M'] ] },
+      bs:{ assets:'₫144.1B',assD:'As at Q2 end',assDir:'neu', equity:'₫89.9B',eqD:'+6.1% YTD',eqDir:'up', liab:'₫54.2B',liabD:'Debt ratio 37.6%',liabDir:'neu', wc:'₫13.1B',wcD:'Current ratio 2.4x',wcDir:'up' },
+      cf:{ op:'+₫4.2B',opD:'Strong quarter',opDir:'up', inv:'−₫1.6B',invD:'Capex spend',invDir:'neu', fin:'−₫540M',finD:'Loan repayment',finDir:'neu', net:'+₫2.1B',netD:'Quarterly surplus',netDir:'up',
+        rows:[['Cash received from tenants','+₫9,800M','pos'],['Payments to suppliers & staff','−₫3,300M','neg'],['Utility & operating costs','−₫2,100M','neg'],['Operating Cash Flow','+₫4,200M','total pos'],['Infrastructure capex','−₫1,600M','neg'],['Loan principal repayment','−₫540M','neg'],['Net Cash Movement','+₫2,060M','total pos']] },
+      tenant:{ active:'102',fee:'₫4,719M',overdue:'12',avg:'₫46.3M',
+        rows:[['A-01','Placeholder Tenant A-01','Zone A','5,200','₫18,018M','01 Jun 2026','green','Paid'],['A-12','Placeholder Tenant A-12','Zone A','6,100','₫21,138M','12 Apr 2026','red','Overdue 42d'],['B-07','Placeholder Tenant B-07','Zone B','4,400','₫15,246M','05 May 2026','amber','Due Soon'],['B-15','Placeholder Tenant B-15','Zone B','2,900','₫10,050M','01 Jun 2026','green','Paid']] },
+      opex:{ total:'₫4.6B',totalD:'vs ₫5.1B budget',totalDir:'neu', rem:'₫0.5B',remD:'Under budget',remDir:'up', over:'1',overD:'Maintenance only',overDir:'down',
+        bars:[[72,'#4f9cf9','Operations (₫11,520M / ₫16,000M)'],[48,'#1d9e75','Payroll (₫7,200M / ₫15,000M)'],[85,'#e05a2b','Maintenance (₫5,100M / ₫6,000M)'],[55,'#7f77dd','Environmental (₫2,475M / ₫4,500M)'],[38,'#f0c040','Admin & Legal (₫1,368M / ₫3,600M)']] },
+      fcast:{ target:'₫36.0B',tD:'51.1% achieved',tDir:'up', q3:'₫9.8B',q3D:'+6% vs Q2',q3Dir:'up', risk:'3 lots',rD:'Lease expiring Q3',rDir:'down', pipe:'₫2.4B',pD:'30 Jun deadline',pDir:'neu' },
+      tax:{ vout:'₫980M',vouD:'10% on Q2 revenue',vouDir:'neu', vin:'₫267M',vinD:'Creditable',vinDir:'up', vpay:'₫713M',vpayD:'Due 15 Jul 2026',vpayDir:'down', cit:'₫840M',citD:'20% CIT rate',citDir:'neu' }
     },
     annual: {
-      label: 'FY 2025',
-      barLabels: ['FY 2021','FY 2022','FY 2023','FY 2024','FY 2025','FY 2026F'],
-      revenue:   [18.0, 21.5, 24.8, 29.2, 32.6, 36.0],
-      expenses:  [12.0, 13.8, 15.2, 17.8, 19.4, 21.0],
-      netProfit: [6.0,  7.2,  9.2, 10.8, 12.4, 14.8],
-      cfOp:      [5.8,  7.0,  9.0, 10.5, 12.0, 14.2],
-      cfNet:     [3.2,  4.1,  5.5,  6.8,  8.0, 10.0],
-      donut:     [52, 24, 15, 9],
-      kpi: {
-        revYTD:   '₫32.6B', revDelta: '+11.8% vs FY 2024', revDir: 'up',
-        margin:   '33.1%',  marginDelta: '+1.6 pts',        marginDir: 'up',
-        ar:       '₫4.8B',  arDelta: 'Annual avg',          arDir: 'neu',
-        cash:     '₫8.1B',  cashDelta: 'Year-end balance',  cashDir: 'up'
-      }
+      label:'FY 2025', periodSub:'FY 2025 (Jan–Dec)',
+      barLabels:['FY 2021','FY 2022','FY 2023','FY 2024','FY 2025','FY 2026F'],
+      revenue:  [18.0,21.5,24.8,29.2,32.6,36.0],
+      expenses: [12.0,13.8,15.2,17.8,19.4,21.0],
+      netProfit:[6.0,7.2,9.2,10.8,12.4,14.8],
+      cfOp:     [5.8,7.0,9.0,10.5,12.0,14.2],
+      cfNet:    [3.2,4.1,5.5,6.8,8.0,10.0],
+      donut:    [52,24,15,9],
+      kpi:{ revYTD:'₫32.6B',revDelta:'+11.8% vs FY 2024',revDir:'up', margin:'33.1%',marginDelta:'+1.6 pts',marginDir:'up', ar:'₫4.8B',arDelta:'Annual avg',arDir:'neu', cash:'₫8.1B',cashDelta:'Year-end balance',cashDir:'up' },
+      pl:{ rev:'₫32.6B',revD:'+11.8% vs FY 2024',revDir:'up', gp:'₫23.5B',gpD:'Margin 72.1%',gpDir:'up', exp:'₫7.8B',expD:'+2.1% vs FY 2024',expDir:'down', net:'₫10.8B',netD:'Margin 33.1%',netDir:'up',
+        rows:[ ['Gross Revenue','₫32,600M','₫32,600M','₫30,000M','green','+₫2,600M'],
+               ['Management Fees','₫15,974M','₫15,974M','₫14,700M','green','+₫1,274M'],
+               ['Utility Charges','₫8,802M','₫8,802M','₫8,100M','green','+₫702M'],
+               ['Land Lease','₫4,890M','₫4,890M','₫4,500M','green','+₫390M'],
+               ['Cost of Revenue','₫9,100M','₫9,100M','₫9,500M','green','Saved ₫400M'],
+               ['Gross Profit','₫23,500M','₫23,500M','₫20,500M','green','+₫3,000M'],
+               ['Operating Expenses','₫7,800M','₫7,800M','₫8,200M','green','Under budget'],
+               ['Net Profit','₫10,800M','₫10,800M','₫9,200M','green','+₫1,600M'] ] },
+      bs:{ assets:'₫148.6B',assD:'As at Dec 31 2025',assDir:'neu', equity:'₫92.4B',eqD:'+8.2% YoY',eqDir:'up', liab:'₫56.2B',liabD:'Debt ratio 37.8%',liabDir:'neu', wc:'₫14.8B',wcD:'Current ratio 2.5x',wcDir:'up' },
+      cf:{ op:'+₫12.0B',opD:'Strong annual CF',opDir:'up', inv:'−₫6.2B',invD:'Capex spend',invDir:'neu', fin:'−₫2.1B',finD:'Loan repayment',finDir:'neu', net:'+₫8.0B',netD:'Annual surplus',netDir:'up',
+        rows:[['Cash received from tenants','+₫32,600M','pos'],['Payments to suppliers & staff','−₫13,200M','neg'],['Utility & operating costs','−₫7,400M','neg'],['Operating Cash Flow','+₫12,000M','total pos'],['Infrastructure capex','−₫6,200M','neg'],['Loan principal repayment','−₫2,100M','neg'],['Net Cash Movement','+₫3,700M','total pos']] },
+      tenant:{ active:'102',fee:'₫18,876M',overdue:'5',avg:'₫185M',
+        rows:[['A-01','Placeholder Tenant A-01','Zone A','5,200','₫72,072M','Dec 2025','green','Paid'],['A-12','Placeholder Tenant A-12','Zone A','6,100','₫84,552M','Oct 2025','red','Outstanding'],['B-07','Placeholder Tenant B-07','Zone B','4,400','₫60,984M','Dec 2025','green','Paid'],['B-15','Placeholder Tenant B-15','Zone B','2,900','₫40,200M','Dec 2025','green','Paid']] },
+      opex:{ total:'₫7.8B',totalD:'vs ₫8.2B budget',totalDir:'neu', rem:'₫0.4B',remD:'Under budget',remDir:'up', over:'0',overD:'All within budget',overDir:'up',
+        bars:[[65,'#4f9cf9','Operations (₫38,000M / ₫58,400M)'],[44,'#1d9e75','Payroll (₫22,000M / ₫50,000M)'],[78,'#e05a2b','Maintenance (₫15,600M / ₫20,000M)'],[50,'#7f77dd','Environmental (₫7,500M / ₫15,000M)'],[34,'#f0c040','Admin & Legal (₫4,080M / ₫12,000M)']] },
+      fcast:{ target:'₫36.0B',tD:'FY 2026 target',tDir:'up', q3:'₫10.2B',q3D:'+4% vs FY 2025 H2',q3Dir:'up', risk:'2 lots',rD:'Lease renewal FY 2026',rDir:'down', pipe:'₫3.1B',pD:'Q1 2026 pipeline',pDir:'neu' },
+      tax:{ vout:'₫3,260M',vouD:'10% on annual revenue',vouDir:'neu', vin:'₫910M',vinD:'Creditable',vinDir:'up', vpay:'₫2,350M',vpayD:'Annual settlement',vpayDir:'down', cit:'₫2,160M',citD:'20% CIT rate',citDir:'neu' }
     }
   };
 
-  /* ── Shared chart instances ── */
   var charts = {};
 
   /* ── Sidebar navigation ── */
@@ -733,8 +780,9 @@
       pages.forEach(function(p){ p.classList.remove('active'); });
       var pg = document.getElementById('vsg-page-'+t);
       if(pg) pg.classList.add('active');
-      if(bc)  bc.textContent = labels[t]||t;
+      if(bc) bc.textContent = labels[t]||t;
       renderPage(t);
+      applyPeriodToPage(t);
     });
   });
 
@@ -752,26 +800,82 @@
     });
   });
 
+  /* ── Apply period to ALL pages ── */
   function applyPeriod(){
-    var d = PERIODS[currentPeriod];
-    /* Update KPI cards on the dashboard page */
-    updateKPI('vsg-kpi-rev',    d.kpi.revYTD,   d.kpi.revDelta,   d.kpi.revDir);
-    updateKPI('vsg-kpi-margin', d.kpi.margin,   d.kpi.marginDelta, d.kpi.marginDir);
-    updateKPI('vsg-kpi-ar',     d.kpi.ar,       d.kpi.arDelta,    d.kpi.arDir);
-    updateKPI('vsg-kpi-cash',   d.kpi.cash,     d.kpi.cashDelta,  d.kpi.cashDir);
-    /* Update subtitle */
-    var sub = document.querySelector('#vsg-page-dashboard .page-sub');
-    if(sub) sub.textContent = 'Thai Hoa Industrial Park · Long An Province · ' + d.label;
-    /* Rebuild or update charts */
-    refreshBar();
-    refreshDonut();
-    if(charts['pl'])       refreshPL();
-    if(charts['cashflow']) refreshCF();
+    ['dashboard','pl','balance','cashflow','tenant','opex','forecast','tax'].forEach(function(p){
+      applyPeriodToPage(p);
+    });
   }
 
+  function applyPeriodToPage(p){
+    var d = PERIODS[currentPeriod];
+    /* update every page-sub across the whole dashboard */
+    dash.querySelectorAll('.page-sub').forEach(function(el){
+      if(el.dataset.dynamic) el.textContent = el.dataset.dynamic.replace('{period}', d.periodSub);
+    });
+
+    if(p==='dashboard'){
+      updateKPI('vsg-kpi-rev',    d.kpi.revYTD,   d.kpi.revDelta,   d.kpi.revDir);
+      updateKPI('vsg-kpi-margin', d.kpi.margin,   d.kpi.marginDelta, d.kpi.marginDir);
+      updateKPI('vsg-kpi-ar',     d.kpi.ar,       d.kpi.arDelta,    d.kpi.arDir);
+      updateKPI('vsg-kpi-cash',   d.kpi.cash,     d.kpi.cashDelta,  d.kpi.cashDir);
+      var sub = document.querySelector('#vsg-page-dashboard .page-sub');
+      if(sub) sub.textContent = 'Thai Hoa Industrial Park · Long An Province · ' + d.label;
+      refreshBar(); refreshDonut();
+    }
+    if(p==='pl'){
+      updateKPI('vsg-kpi-pl-rev',  d.pl.rev,  d.pl.revD,  d.pl.revDir);
+      updateKPI('vsg-kpi-pl-gp',   d.pl.gp,   d.pl.gpD,   d.pl.gpDir);
+      updateKPI('vsg-kpi-pl-exp',  d.pl.exp,  d.pl.expD,  d.pl.expDir);
+      updateKPI('vsg-kpi-pl-net',  d.pl.net,  d.pl.netD,  d.pl.netDir);
+      updatePLTable(d.pl.rows);
+      if(charts['pl']) refreshPL();
+    }
+    if(p==='balance'){
+      updateKPI('vsg-kpi-bs-assets', d.bs.assets, d.bs.assD,  d.bs.assDir);
+      updateKPI('vsg-kpi-bs-equity', d.bs.equity, d.bs.eqD,   d.bs.eqDir);
+      updateKPI('vsg-kpi-bs-liab',   d.bs.liab,   d.bs.liabD, d.bs.liabDir);
+      updateKPI('vsg-kpi-bs-wc',     d.bs.wc,     d.bs.wcD,   d.bs.wcDir);
+    }
+    if(p==='cashflow'){
+      updateKPI('vsg-kpi-cf-op',  d.cf.op,  d.cf.opD,  d.cf.opDir);
+      updateKPI('vsg-kpi-cf-inv', d.cf.inv, d.cf.invD, d.cf.invDir);
+      updateKPI('vsg-kpi-cf-fin', d.cf.fin, d.cf.finD, d.cf.finDir);
+      updateKPI('vsg-kpi-cf-net', d.cf.net, d.cf.netD, d.cf.netDir);
+      updateCFRows(d.cf.rows);
+      if(charts['cashflow']) refreshCF();
+    }
+    if(p==='tenant'){
+      updateKPI('vsg-kpi-t-active',  d.tenant.active,  'active tenants',   'neu');
+      updateKPI('vsg-kpi-t-fee',     d.tenant.fee,     'period mgmt fee',  'up');
+      updateKPI('vsg-kpi-t-overdue', d.tenant.overdue, 'action needed',    'down');
+      updateKPI('vsg-kpi-t-avg',     d.tenant.avg,     'per period',       'neu');
+      updateTenantTable(d.tenant.rows);
+    }
+    if(p==='opex'){
+      updateKPI('vsg-kpi-opex-total', d.opex.total, d.opex.totalD, d.opex.totalDir);
+      updateKPI('vsg-kpi-opex-rem',   d.opex.rem,   d.opex.remD,   d.opex.remDir);
+      updateKPI('vsg-kpi-opex-over',  d.opex.over,  d.opex.overD,  d.opex.overDir);
+      updateOpexBars(d.opex.bars);
+    }
+    if(p==='forecast'){
+      updateKPI('vsg-kpi-fc-target', d.fcast.target, d.fcast.tD,  d.fcast.tDir);
+      updateKPI('vsg-kpi-fc-q3',     d.fcast.q3,     d.fcast.q3D, d.fcast.q3Dir);
+      updateKPI('vsg-kpi-fc-risk',   d.fcast.risk,   d.fcast.rD,  d.fcast.rDir);
+      updateKPI('vsg-kpi-fc-pipe',   d.fcast.pipe,   d.fcast.pD,  d.fcast.pDir);
+    }
+    if(p==='tax'){
+      updateKPI('vsg-kpi-tax-vout', d.tax.vout, d.tax.vouD,  d.tax.vouDir);
+      updateKPI('vsg-kpi-tax-vin',  d.tax.vin,  d.tax.vinD,  d.tax.vinDir);
+      updateKPI('vsg-kpi-tax-vpay', d.tax.vpay, d.tax.vpayD, d.tax.vpayDir);
+      updateKPI('vsg-kpi-tax-cit',  d.tax.cit,  d.tax.citD,  d.tax.citDir);
+    }
+  }
+
+  /* ── KPI card updater ── */
   function updateKPI(id, value, delta, dir){
     var el = document.getElementById(id); if(!el) return;
-    var v = el.querySelector('.kpi-value');
+    var v  = el.querySelector('.kpi-value');
     var dd = el.querySelector('.kpi-delta');
     if(v)  v.textContent = value;
     if(dd){
@@ -781,7 +885,42 @@
     }
   }
 
-  /* ── Page render (once-only init) ── */
+  /* ── Table updaters ── */
+  function updatePLTable(rows){
+    var tb = document.getElementById('vsg-pl-tbody'); if(!tb) return;
+    tb.innerHTML = rows.map(function(r){
+      var bold = (r[0].indexOf(' ')===r[0].indexOf('Gross')||r[0].startsWith('Net')||r[0].startsWith('Cost')||r[0].startsWith('Gross P')||r[0].startsWith('Operating')) ? '<strong>':'';
+      var indent = (!bold) ? ' style="padding-left:16px;color:#8a9bb0"' : '';
+      return '<tr><td'+indent+'>'+bold+r[0]+(bold?'</strong>':'')+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td><span class="pill pill-'+r[4]+'">'+r[5]+'</span></td></tr>';
+    }).join('');
+  }
+
+  function updateCFRows(rows){
+    var tb = document.getElementById('vsg-cf-tbody'); if(!tb) return;
+    tb.innerHTML = rows.map(function(r, i){
+      var isTotal = r[2].indexOf('total')>-1;
+      var cls = r[2].replace('total ','');
+      var style = isTotal ? ' style="border-top:2px solid #e8ecf0;margin-top:4px;padding-top:8px"' : '';
+      var valStyle = isTotal ? ' style="font-size:'+(i===rows.length-1?'14':'13')+'px"' : '';
+      return '<div class="cf-row"'+style+'><div class="cf-label">'+(isTotal?'<strong>':'')+r[0]+(isTotal?'</strong>':'')+'</div><div class="cf-value '+cls+'"'+valStyle+'>'+r[1]+'</div></div>';
+    }).join('');
+  }
+
+  function updateTenantTable(rows){
+    var tb = document.getElementById('vsg-tenant-tbody'); if(!tb) return;
+    tb.innerHTML = rows.map(function(r){
+      return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td style="font-family:\'DM Mono\',monospace">'+r[4]+'</td><td>'+r[5]+'</td><td><span class="pill pill-'+r[6]+'">'+r[7]+'</span></td></tr>';
+    }).join('');
+  }
+
+  function updateOpexBars(bars){
+    var wrap = document.getElementById('vsg-opex-bars'); if(!wrap) return;
+    wrap.innerHTML = bars.map(function(b){
+      return '<div><div class="progress-meta"><span class="progress-label">'+b[2]+'</span><span class="progress-pct">'+b[0]+'%</span></div><div class="progress-track"><div class="progress-fill" style="width:'+b[0]+'%;background:'+b[1]+'"></div></div></div>';
+    }).join('');
+  }
+
+  /* ── Page render (once-only chart init) ── */
   function renderPage(p){
     if(rendered[p]) return; rendered[p]=true;
     if(p==='dashboard'){ buildBar(); buildDonut(); }
@@ -791,14 +930,13 @@
   }
 
   var m12=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var yScale = {grid:{color:'#f0f2f5'},ticks:{font:{size:10},color:'#8a9bb0',callback:function(v){return'₫'+v+'B';}}};
-  var xScale = {grid:{display:false},ticks:{font:{size:10},color:'#8a9bb0'}};
+  var yScale={grid:{color:'#f0f2f5'},ticks:{font:{size:10},color:'#8a9bb0',callback:function(v){return'₫'+v+'B';}}};
+  var xScale={grid:{display:false},ticks:{font:{size:10},color:'#8a9bb0'}};
 
-  /* ── Bar chart (Revenue vs Expenses) ── */
   function buildBar(){
     var c=document.getElementById('vsg-revenueChart'); if(!c)return;
     var d=PERIODS[currentPeriod];
-    charts['bar'] = new Chart(c,{type:'bar',data:{labels:d.barLabels,datasets:[
+    charts['bar']=new Chart(c,{type:'bar',data:{labels:d.barLabels,datasets:[
       {label:'Revenue', data:[...d.revenue], backgroundColor:'#4f9cf9',borderRadius:4,borderSkipped:false},
       {label:'Expenses',data:[...d.expenses],backgroundColor:'#e05a2b',borderRadius:4,borderSkipped:false}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:xScale,y:yScale}}});
@@ -806,31 +944,25 @@
   function refreshBar(){
     var ch=charts['bar']; if(!ch)return;
     var d=PERIODS[currentPeriod];
-    ch.data.labels = d.barLabels;
-    ch.data.datasets[0].data = [...d.revenue];
-    ch.data.datasets[1].data = [...d.expenses];
-    ch.update();
+    ch.data.labels=d.barLabels; ch.data.datasets[0].data=[...d.revenue]; ch.data.datasets[1].data=[...d.expenses]; ch.update();
   }
 
-  /* ── Donut chart ── */
   function buildDonut(){
     var c=document.getElementById('vsg-donutChart'); if(!c)return;
     var d=PERIODS[currentPeriod];
-    charts['donut'] = new Chart(c,{type:'doughnut',data:{labels:['Mgmt Fees','Utilities','Land Lease','Other'],datasets:[{
+    charts['donut']=new Chart(c,{type:'doughnut',data:{labels:['Mgmt Fees','Utilities','Land Lease','Other'],datasets:[{
       data:[...d.donut],backgroundColor:['#4f9cf9','#1d9e75','#e05a2b','#f0c040'],borderWidth:0,hoverOffset:4
     }]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}});
   }
   function refreshDonut(){
     var ch=charts['donut']; if(!ch)return;
-    ch.data.datasets[0].data = [...PERIODS[currentPeriod].donut];
-    ch.update();
+    ch.data.datasets[0].data=[...PERIODS[currentPeriod].donut]; ch.update();
   }
 
-  /* ── P&L line chart ── */
   function buildPL(){
     var c=document.getElementById('vsg-plChart'); if(!c)return;
     var d=PERIODS[currentPeriod];
-    charts['pl'] = new Chart(c,{type:'line',data:{labels:d.barLabels,datasets:[{
+    charts['pl']=new Chart(c,{type:'line',data:{labels:d.barLabels,datasets:[{
       label:'Net Profit',data:[...d.netProfit],borderColor:'#4f9cf9',
       backgroundColor:'rgba(79,156,249,.08)',fill:true,tension:.4,pointRadius:4,pointBackgroundColor:'#4f9cf9'
     }]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:xScale,y:yScale}}});
@@ -838,16 +970,13 @@
   function refreshPL(){
     var ch=charts['pl']; if(!ch)return;
     var d=PERIODS[currentPeriod];
-    ch.data.labels = d.barLabels;
-    ch.data.datasets[0].data = [...d.netProfit];
-    ch.update();
+    ch.data.labels=d.barLabels; ch.data.datasets[0].data=[...d.netProfit]; ch.update();
   }
 
-  /* ── Cash Flow line chart ── */
   function buildCF(){
     var c=document.getElementById('vsg-cfChart'); if(!c)return;
     var d=PERIODS[currentPeriod];
-    charts['cashflow'] = new Chart(c,{type:'line',data:{labels:d.barLabels,datasets:[
+    charts['cashflow']=new Chart(c,{type:'line',data:{labels:d.barLabels,datasets:[
       {label:'Operating CF',data:[...d.cfOp], borderColor:'#1d9e75',tension:.4,fill:false,pointRadius:3},
       {label:'Net CF',      data:[...d.cfNet],borderColor:'#4f9cf9', tension:.4,fill:false,pointRadius:3,borderDash:[4,3]}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#8a9bb0',boxWidth:10}}},scales:{x:xScale,y:yScale}}});
@@ -855,21 +984,18 @@
   function refreshCF(){
     var ch=charts['cashflow']; if(!ch)return;
     var d=PERIODS[currentPeriod];
-    ch.data.labels = d.barLabels;
-    ch.data.datasets[0].data = [...d.cfOp];
-    ch.data.datasets[1].data = [...d.cfNet];
-    ch.update();
+    ch.data.labels=d.barLabels; ch.data.datasets[0].data=[...d.cfOp]; ch.data.datasets[1].data=[...d.cfNet]; ch.update();
   }
 
-  /* ── Forecast chart (fixed — always 12-month view) ── */
   function buildForecast(){
     var c=document.getElementById('vsg-forecastChart'); if(!c)return;
-    charts['forecast'] = new Chart(c,{type:'line',data:{labels:m12,datasets:[
+    charts['forecast']=new Chart(c,{type:'line',data:{labels:m12,datasets:[
       {label:'Actual',  data:[2.8,3.1,2.9,3.4,3.2,3.0,null,null,null,null,null,null],borderColor:'#4f9cf9',tension:.4,fill:false,pointRadius:3},
       {label:'Forecast',data:[null,null,null,null,null,3.0,3.2,3.4,3.5,3.3,3.6,3.8],borderColor:'#e05a2b',tension:.4,fill:false,borderDash:[5,4],pointRadius:3}
     ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#8a9bb0',boxWidth:10}}},scales:{x:xScale,y:yScale}}});
   }
 
   renderPage('dashboard');
+  applyPeriodToPage('dashboard');
 })();
 </script>
