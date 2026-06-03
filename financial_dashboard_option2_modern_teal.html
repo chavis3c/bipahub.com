@@ -1,24 +1,40 @@
+<meta charset="UTF-8"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-.w2{display:flex;height:580px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
-.s2{width:210px;min-width:210px;background:#0a2e2a;display:flex;flex-direction:column}
-.s2-head{padding:16px;border-bottom:0.5px solid rgba(255,255,255,.08)}
-.s2-brand{font-size:14px;font-weight:500;color:#5dcaa5;letter-spacing:.2px}
-.s2-period{font-size:10px;color:rgba(255,255,255,.35);margin-top:2px}
+.w2{display:flex;height:870px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.s2{width:210px;min-width:210px;background:#1DCCCA;display:flex;flex-direction:column}
+.s2-head{padding:16px;border-bottom:0.5px solid rgba(0,0,0,.12)}
+.s2-brand{font-size:14px;font-weight:700;color:#0a2e2a;letter-spacing:.2px}
+.s2-period{font-size:10px;color:rgba(0,0,0,.45);margin-top:2px}
 .s2-nav{padding:8px 0;flex:1;overflow-y:auto}
-.s2-group{font-size:9px;color:rgba(255,255,255,.28);letter-spacing:1px;padding:12px 16px 4px}
-.s2-link{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:11.5px;color:rgba(255,255,255,.5);cursor:pointer}
-.s2-link:hover{color:#fff;background:rgba(255,255,255,.05)}
-.s2-link.on{color:#5dcaa5;background:rgba(93,202,165,.1);border-left:2px solid #5dcaa5}
+.s2-group{font-size:9px;color:rgba(0,0,0,.4);letter-spacing:1px;padding:12px 16px 4px;font-weight:700}
+.s2-link{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:11.5px;color:rgba(0,0,0,.6);cursor:pointer}
+.s2-link:hover{color:#0a2e2a;background:rgba(0,0,0,.08)}
+.s2-link.on{color:#0a2e2a;background:rgba(255,255,255,.35);border-left:3px solid #0a2e2a;font-weight:600}
 .s2-link i{font-size:14px}
-.s2-link .dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:#5dcaa5}
-.s2-foot{padding:12px 16px;border-top:0.5px solid rgba(255,255,255,.08)}
+.s2-link .dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:#0a2e2a}
+.s2-foot{padding:12px 16px;border-top:0.5px solid rgba(0,0,0,.12)}
 .s2-prof{display:flex;align-items:center;gap:9px}
-.s2-av{width:30px;height:30px;border-radius:50%;background:rgba(93,202,165,.2);border:1px solid #5dcaa5;display:flex;align-items:center;justify-content:center;font-size:11px;color:#5dcaa5;font-weight:500}
-.s2-nm{font-size:11px;color:rgba(255,255,255,.75)}
-.s2-rl{font-size:9px;color:rgba(255,255,255,.35)}
-.m2{flex:1;overflow-y:auto;background:#f4f7f6;padding:16px}
+.s2-av{width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.15);border:1px solid rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:11px;color:#0a2e2a;font-weight:700}
+.s2-nm{font-size:11px;color:#0a2e2a;font-weight:600}
+.s2-rl{font-size:9px;color:rgba(0,0,0,.45)}
+.m2{flex:1;overflow-y:auto;background:#8FEFCC;padding:16px}
 .m2-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+/* FY + period + action bar */
+.m2-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fy-chip{font-size:11px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.5);color:#0a2e2a;cursor:pointer;border:1px solid rgba(10,46,42,.2);font-weight:600;transition:.15s}
+.fy-chip.on{background:#0a2e2a;color:#1DCCCA;border-color:#0a2e2a}
+.fy-chip:hover:not(.on){background:rgba(255,255,255,.8)}
+.bar-div{width:1px;height:16px;background:rgba(10,46,42,.2);margin:0 2px}
+.tabs{display:flex;gap:0;background:rgba(255,255,255,.4);border-radius:6px;padding:2px;width:fit-content}
+.tab{padding:4px 12px;font-size:11px;border-radius:4px;cursor:pointer;color:#0a2e2a;opacity:.6}
+.tab.on{background:#fff;color:#0a2e2a;font-weight:600;opacity:1}
+.act-btn{font-size:11px;padding:5px 12px;border-radius:6px;cursor:pointer;border:none;font-family:inherit;font-weight:600;transition:.15s}
+.btn-export{background:rgba(255,255,255,.6);color:#0a2e2a;border:1px solid rgba(10,46,42,.2)}
+.btn-new{background:#0a2e2a;color:#1DCCCA}
+.btn-export:hover{background:#fff}
+.btn-new:hover{opacity:.85}
 .m2-title{font-size:15px;font-weight:500;color:#0a2e2a}
 .m2-sub{font-size:11px;color:#5f7f7a;margin-top:2px}
 .tabs{display:flex;gap:0;background:#e0ece9;border-radius:6px;padding:2px;width:fit-content}
@@ -48,7 +64,6 @@
 .hbar-fill{height:100%;border-radius:3px}
 .hbar-val{width:50px;text-align:right;color:#0a2e2a;font-weight:500;font-size:10px}
 </style>
-<h2 class="sr-only">Option 2: Modern Teal Dashboard — clean contemporary finance interface</h2>
 <div class="w2">
 <div class="s2">
   <div class="s2-head">
@@ -84,8 +99,21 @@
 </div>
 <div class="m2">
   <div class="m2-top">
-    <div><div class="m2-title">Financial Overview</div><div class="m2-sub">Last updated: Today, 14:30 ICT</div></div>
-    <div class="tabs"><div class="tab on">Monthly</div><div class="tab">Quarterly</div><div class="tab">Annual</div></div>
+    <div><div class="m2-title">Financial Overview</div><div class="m2-sub" id="o2-sub">Last updated: Today · FY 2026 · Monthly</div></div>
+    <div class="m2-bar">
+      <div class="fy-chip on" data-fy="2026">FY 2026</div>
+      <div class="fy-chip" data-fy="2025">FY 2025</div>
+      <div class="fy-chip" data-fy="2024">FY 2024</div>
+      <div class="bar-div"></div>
+      <div class="tabs">
+        <div class="tab on" data-pd="monthly">Monthly</div>
+        <div class="tab" data-pd="quarterly">Quarterly</div>
+        <div class="tab" data-pd="annual">Annual</div>
+      </div>
+      <div class="bar-div"></div>
+      <button class="act-btn btn-export"><i class="ti ti-download"></i> Export</button>
+      <button class="act-btn btn-new">+ New Report</button>
+    </div>
   </div>
   <div class="kpi2">
     <div class="k2"><div class="k2-acc" style="background:#5dcaa5"></div><div class="k2-lbl">Total Revenue YTD</div><div class="k2-val">₫18.4B</div><div class="k2-chg k2-up">↑ 12.3% year-on-year</div></div>
@@ -116,6 +144,87 @@
 </div>
 </div>
 <script>
+/* ── Period & FY data ── */
+const O2DATA = {
+  '2026':{ monthly:{ rev:'₫18.4B', revD:'↑ 12.3% year-on-year', noi:'₫6.4B', noiD:'↑ 8.7% vs target', ar:'₫2.1B', arD:'↑ 8 overdue accounts', spark:[2.8,3.1,2.9,3.4,3.2,3.0], cf:['+₫3.2B','−₫1.8B','+₫1.4B','−₫520M','+₫880M'] },
+               quarterly:{ rev:'₫9.8B', revD:'↑ 14.0% vs Q2 2025', noi:'₫3.5B', noiD:'↑ 9.2% vs target', ar:'₫3.4B', arD:'↑ 12 overdue accounts', spark:[7.8,8.4,8.1,9.0,8.6,9.8], cf:['+₫9.8B','−₫5.3B','+₫4.2B','−₫1.6B','+₫2.6B'] },
+               annual:{ rev:'₫32.6B', revD:'↑ 11.8% vs FY 2025', noi:'₫11.2B', noiD:'↑ 7.4% vs target', ar:'₫4.8B', arD:'Annual avg', spark:[18.0,21.5,24.8,29.2,32.6,36.0], cf:['+₫32.6B','−₫19.4B','+₫12.0B','−₫6.2B','+₫5.8B'] } },
+  '2025':{ monthly:{ rev:'₫16.2B', revD:'↑ 9.8% year-on-year', noi:'₫5.8B', noiD:'↑ 7.2% vs target', ar:'₫1.8B', arD:'↑ 6 overdue accounts', spark:[2.4,2.7,2.5,2.9,2.7,2.6], cf:['+₫2.8B','−₫1.6B','+₫1.2B','−₫460M','+₫740M'] },
+               quarterly:{ rev:'₫8.4B', revD:'↑ 16.7% vs Q2 2024', noi:'₫3.1B', noiD:'↑ 8.1% vs target', ar:'₫3.0B', arD:'↑ 10 overdue accounts', spark:[6.8,7.2,7.0,7.8,7.4,8.4], cf:['+₫8.4B','−₫4.8B','+₫3.6B','−₫1.4B','+₫2.2B'] },
+               annual:{ rev:'₫29.2B', revD:'↑ 35.8% vs FY 2023', noi:'₫9.8B', noiD:'↑ 6.8% vs target', ar:'₫4.2B', arD:'Annual avg', spark:[13.2,15.6,18.0,21.5,29.2,32.6], cf:['+₫29.2B','−₫17.8B','+₫9.0B','−₫5.4B','+₫3.6B'] } },
+  '2024':{ monthly:{ rev:'₫14.1B', revD:'↑ 8.5% year-on-year', noi:'₫4.9B', noiD:'↑ 6.1% vs target', ar:'₫1.5B', arD:'↑ 5 overdue accounts', spark:[2.1,2.3,2.2,2.5,2.4,2.3], cf:['+₫2.4B','−₫1.4B','+₫1.0B','−₫400M','+₫600M'] },
+               quarterly:{ rev:'₫7.2B', revD:'↑ 22.0% vs Q2 2023', noi:'₫2.7B', noiD:'↑ 7.0% vs target', ar:'₫2.6B', arD:'↑ 9 overdue accounts', spark:[5.6,5.9,5.8,6.4,6.4,7.2], cf:['+₫7.2B','−₫4.0B','+₫2.9B','−₫1.2B','+₫1.7B'] },
+               annual:{ rev:'₫24.1B', revD:'↑ 12.1% vs FY 2022', noi:'₫8.1B', noiD:'↑ 5.5% vs target', ar:'₫3.8B', arD:'Annual avg', spark:[10.2,13.2,15.6,18.0,21.5,24.1], cf:['+₫24.1B','−₫14.8B','+₫7.4B','−₫4.2B','+₫3.2B'] } }
+};
+
+let curFY='2026', curPD='monthly';
+
+function applyO2(){
+  const d = O2DATA[curFY][curPD];
+  const cfLabels=['Operating Inflow','Operating Outflow','Net Cash Flow','Investing Activities','Free Cash Flow'];
+  const cfCls=['pos','neg','pos','neg','pos'];
+
+  /* KPIs */
+  document.querySelectorAll('.k2').forEach((k,i)=>{
+    const vals=[
+      [d.rev, d.revD, 'k2-up'],
+      [d.noi, d.noiD, 'k2-up'],
+      [d.ar,  d.arD,  'k2-dn']
+    ][i];
+    k.querySelector('.k2-val').textContent = vals[0];
+    const chg = k.querySelector('.k2-chg');
+    chg.textContent = vals[1];
+    chg.className = 'k2-chg ' + vals[2];
+  });
+
+  /* Spark bars */
+  const sl = document.getElementById('sparkLine');
+  sl.innerHTML='';
+  const maxS = Math.max(...d.spark);
+  d.spark.forEach(v=>{
+    const b=document.createElement('div');
+    b.className='sp-b';
+    b.style.cssText=`height:${Math.round((v/maxS)*64)}px;flex:1;background:${v===maxS?'#0a2e2a':'#5dcaa5'}`;
+    sl.appendChild(b);
+  });
+
+  /* Cash flow */
+  const cfContainer = document.querySelector('.p2:last-of-type');
+  if(cfContainer){
+    const rows = cfContainer.querySelectorAll('.cf-row');
+    rows.forEach((row,i)=>{
+      if(i < d.cf.length){
+        row.querySelector('.cf-val').textContent = d.cf[i];
+      }
+    });
+  }
+
+  /* Subtitle */
+  const pdLabel = curPD.charAt(0).toUpperCase()+curPD.slice(1);
+  const sub = document.getElementById('o2-sub');
+  if(sub) sub.textContent = `Last updated: Today · FY ${curFY} · ${pdLabel}`;
+}
+
+/* FY chips */
+document.querySelectorAll('.fy-chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    curFY = c.dataset.fy;
+    document.querySelectorAll('.fy-chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');
+    applyO2();
+  });
+});
+
+/* Period tabs */
+document.querySelectorAll('.tab[data-pd]').forEach(t=>{
+  t.addEventListener('click',()=>{
+    curPD = t.dataset.pd;
+    document.querySelectorAll('.tab[data-pd]').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    applyO2();
+  });
+});
+
 const sparkData=[2.8,3.1,2.9,3.4,3.2,3.0];
 const maxS=Math.max(...sparkData);
 const sl=document.getElementById('sparkLine');
