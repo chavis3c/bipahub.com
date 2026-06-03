@@ -678,6 +678,118 @@
   };
   var rendered = {};
 
+  /* ════════════════════════════════════════════════════
+     AIRTABLE LIVE CONNECTION
+     Fill in your credentials below.
+     Leave apiKey blank to use built-in placeholder data.
+  ════════════════════════════════════════════════════ */
+  var AIRTABLE = {
+    apiKey : 'patgmABJIaExA4DB8.7d335f15980ae39ba5aac94bd57f3e74fa4b4aaf2f7c1c9af977944f1c9b7e49',                       // ← paste your PAT here  e.g. 'patXXXXXXXXXXXXXX'
+    baseId : 'appxICDu1ppHfJrqi',     // ← your base ID (already set from your URL)
+    table  : 'Financial Metrics'         // ← table name (must match exactly)
+  };
+
+  /* ─ Metric → DATA path map ─────────────────────── */
+  var METRIC_MAP = {
+    /* Dashboard */
+    'Total Revenue YTD'      : function(d,v,delta,dir){ d.kpi.revYTD=v; d.kpi.revDelta=delta; d.kpi.revDir=dir; },
+    'Net Profit Margin'      : function(d,v,delta,dir){ d.kpi.margin=v; d.kpi.marginDelta=delta; d.kpi.marginDir=dir; },
+    'Outstanding Receivables': function(d,v,delta,dir){ d.kpi.ar=v; d.kpi.arDelta=delta; d.kpi.arDir=dir; },
+    'Cash Reserve'           : function(d,v,delta,dir){ d.kpi.cash=v; d.kpi.cashDelta=delta; d.kpi.cashDir=dir; },
+    /* P&L */
+    'Gross Revenue'  : function(d,v,delta,dir){ d.pl.rev=v; d.pl.revD=delta; d.pl.revDir=dir; },
+    'Gross Profit'   : function(d,v,delta,dir){ d.pl.gp=v;  d.pl.gpD=delta;  d.pl.gpDir=dir; },
+    'Total Expenses' : function(d,v,delta,dir){ d.pl.exp=v; d.pl.expD=delta; d.pl.expDir=dir; },
+    'Net Profit'     : function(d,v,delta,dir){ d.pl.net=v; d.pl.netD=delta; d.pl.netDir=dir; },
+    /* Balance Sheet */
+    'Total Assets'     : function(d,v,delta,dir){ d.bs.assets=v; d.bs.assD=delta;  d.bs.assDir=dir; },
+    'Total Equity'     : function(d,v,delta,dir){ d.bs.equity=v; d.bs.eqD=delta;   d.bs.eqDir=dir; },
+    'Total Liabilities': function(d,v,delta,dir){ d.bs.liab=v;   d.bs.liabD=delta; d.bs.liabDir=dir; },
+    'Working Capital'  : function(d,v,delta,dir){ d.bs.wc=v;     d.bs.wcD=delta;   d.bs.wcDir=dir; },
+    /* Cash Flow */
+    'Operating CF'    : function(d,v,delta,dir){ d.cf.op=v;  d.cf.opD=delta;  d.cf.opDir=dir; },
+    'Investing CF'    : function(d,v,delta,dir){ d.cf.inv=v; d.cf.invD=delta; d.cf.invDir=dir; },
+    'Financing CF'    : function(d,v,delta,dir){ d.cf.fin=v; d.cf.finD=delta; d.cf.finDir=dir; },
+    'Net Cash Change' : function(d,v,delta,dir){ d.cf.net=v; d.cf.netD=delta; d.cf.netDir=dir; },
+    /* Tenant */
+    'Active Tenants'   : function(d,v){ d.tenant.active=v; },
+    'Period Mgmt Fee'  : function(d,v){ d.tenant.fee=v; },
+    'Overdue Accounts' : function(d,v){ d.tenant.overdue=v; },
+    'Avg Rev / Tenant' : function(d,v){ d.tenant.avg=v; },
+    /* Opex */
+    'Total Opex'        : function(d,v,delta,dir){ d.opex.total=v; d.opex.totalD=delta; d.opex.totalDir=dir; },
+    'Budget Remaining'  : function(d,v,delta,dir){ d.opex.rem=v;   d.opex.remD=delta;   d.opex.remDir=dir; },
+    'Over-budget Items' : function(d,v,delta,dir){ d.opex.over=v;  d.opex.overD=delta;  d.opex.overDir=dir; },
+    /* Forecast */
+    'FY Target'           : function(d,v,delta,dir){ d.fcast.target=v; d.fcast.tD=delta;  d.fcast.tDir=dir; },
+    'Next Period Forecast': function(d,v,delta,dir){ d.fcast.q3=v;     d.fcast.q3D=delta; d.fcast.q3Dir=dir; },
+    'Occupancy Risk'      : function(d,v,delta,dir){ d.fcast.risk=v;   d.fcast.rD=delta;  d.fcast.rDir=dir; },
+    'PRISM Pipeline'      : function(d,v,delta,dir){ d.fcast.pipe=v;   d.fcast.pD=delta;  d.fcast.pDir=dir; },
+    /* Tax */
+    'VAT Output'    : function(d,v,delta,dir){ d.tax.vout=v; d.tax.vouD=delta;  d.tax.vouDir=dir; },
+    'VAT Input'     : function(d,v,delta,dir){ d.tax.vin=v;  d.tax.vinD=delta;  d.tax.vinDir=dir; },
+    'VAT Payable'   : function(d,v,delta,dir){ d.tax.vpay=v; d.tax.vpayD=delta; d.tax.vpayDir=dir; },
+    'CIT Estimated' : function(d,v,delta,dir){ d.tax.cit=v;  d.tax.citD=delta;  d.tax.citDir=dir; }
+  };
+
+  var PERIOD_KEY = { 'Monthly':'monthly', 'Quarterly':'quarterly', 'Annual':'annual' };
+
+  /* ─ Fetch all records from Airtable (handles pagination) ─ */
+  function fetchAirtable(callback){
+    if(!AIRTABLE.apiKey){ callback(false); return; }
+
+    var base    = 'https://api.airtable.com/v0/' + AIRTABLE.baseId + '/' + encodeURIComponent(AIRTABLE.table);
+    var headers = { 'Authorization': 'Bearer ' + AIRTABLE.apiKey };
+    var records = [];
+
+    function fetchPage(offset){
+      var url = base + '?pageSize=100' + (offset ? '&offset='+offset : '');
+      fetch(url, { headers: headers })
+        .then(function(r){ return r.json(); })
+        .then(function(json){
+          if(json.error){ console.warn('Airtable error:', json.error); callback(false); return; }
+          records = records.concat(json.records || []);
+          if(json.offset){ fetchPage(json.offset); }
+          else { applyAirtableRecords(records); callback(true); }
+        })
+        .catch(function(e){ console.warn('Airtable fetch failed:', e); callback(false); });
+    }
+    fetchPage(null);
+  }
+
+  /* ─ Patch DATA with Airtable records ─ */
+  function applyAirtableRecords(records){
+    records.forEach(function(rec){
+      var f      = rec.fields;
+      var yr     = String(f['Year']   || '').trim();
+      var pdKey  = PERIOD_KEY[String(f['Period'] || '').trim()];
+      var metric = String(f['Metric'] || '').trim();
+      var val    = String(f['Value']  || '').trim();
+      var delta  = String(f['Delta']  || '').trim();
+      var dir    = String(f['Direction'] || 'neu').trim();
+
+      if(!yr || !pdKey || !DATA[yr] || !DATA[yr][pdKey]) return;
+      var d = DATA[yr][pdKey];
+      var fn = METRIC_MAP[metric];
+      if(fn) fn(d, val, delta, dir);
+    });
+  }
+
+  /* ─ Status indicator in placeholder notice ─ */
+  function setConnectionStatus(ok){
+    var notice = dash.querySelector('.placeholder-notice');
+    if(!notice) return;
+    if(ok){
+      notice.style.background  = '#f0fdf4';
+      notice.style.borderColor = '#1d9e75';
+      notice.innerHTML = '<i class="ti ti-circle-check" style="color:#1d9e75"></i>'
+        + '<span style="color:#14532d"><strong>Live data</strong> — values loaded from Airtable Financial KPIs base.</span>';
+    } else if(AIRTABLE.apiKey) {
+      notice.innerHTML = '<i class="ti ti-alert-triangle"></i>'
+        + '<span><strong>Airtable connection failed.</strong> Check your API key and base ID. Showing placeholder data.</span>';
+    }
+  }
+
   /* ── Active filters ── */
   var currentYear   = '2026';
   var currentPeriod = 'monthly';
@@ -1252,7 +1364,20 @@
     }
   });
 
+  /* ── Boot sequence ── */
   renderPage('dashboard');
   applyPeriodToPage('dashboard');
+
+  /* Load from Airtable (patches DATA, then re-applies to all visible pages) */
+  fetchAirtable(function(ok){
+    setConnectionStatus(ok);
+    if(ok){
+      /* destroy & re-init charts with live data */
+      rendered = {};
+      Object.keys(charts).forEach(function(k){ if(charts[k] && charts[k].destroy) charts[k].destroy(); delete charts[k]; });
+      renderPage('dashboard');
+      applyPeriod();
+    }
+  });
 })();
 </script>
