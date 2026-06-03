@@ -1,42 +1,62 @@
+<meta charset="UTF-8"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-.w3{display:flex;height:580px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
-.s3{width:215px;min-width:215px;background:#1a1830;display:flex;flex-direction:column}
-.s3h{padding:16px;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid rgba(255,255,255,.07)}
-.s3-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#7f77dd,#534ab7);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:700}
-.s3-bname{font-size:13px;font-weight:500;color:#fff}
-.s3-bsub{font-size:9px;color:rgba(255,255,255,.35)}
+.w3{display:flex;height:839px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.s3{width:209px;min-width:209px;background:#8a12ab;display:flex;flex-direction:column}
+.s3h{padding:16px;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid rgba(255,255,255,.08)}
+.s3-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#dcadf5,#7f77dd);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:700}
+.s3-bname{font-size:13px;font-weight:700;color:#ffffff}
+.s3-bsub{font-size:9px;color:rgba(255,255,255,.4)}
 .s3-nav{flex:1;padding:8px 0;overflow-y:auto}
-.s3-sect{font-size:9px;letter-spacing:1px;color:rgba(255,255,255,.25);padding:10px 16px 3px}
-.s3-item{display:flex;align-items:center;gap:8px;padding:7px 14px;font-size:11.5px;color:rgba(255,255,255,.45);cursor:pointer;border-radius:0;margin:0 6px;border-radius:6px}
-.s3-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8)}
-.s3-item.act{background:rgba(127,119,221,.15);color:#afa9ec}
+.s3-sect{font-size:9px;letter-spacing:1px;color:rgba(255,255,255,.3);padding:10px 16px 3px;font-weight:700}
+.s3-item{display:flex;align-items:center;gap:8px;padding:7px 14px;font-size:11.5px;color:rgba(255,255,255,.6);cursor:pointer;margin:0 6px;border-radius:6px}
+.s3-item:hover{background:rgba(255,255,255,.07);color:#ffffff}
+.s3-item.act{background:rgba(175,169,236,.15);color:#dcadf5;border-left:3px solid #dcadf5;font-weight:600}
 .s3-item i{font-size:14px}
-.s3-item .tag{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:8px;background:rgba(127,119,221,.25);color:#afa9ec}
-.s3-item .warn{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:8px;background:rgba(220,90,50,.2);color:#f09575}
-.s3-foot{padding:10px 14px;border-top:0.5px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:8px}
-.s3-av{width:28px;height:28px;border-radius:50%;background:rgba(127,119,221,.2);border:1px solid rgba(127,119,221,.5);display:flex;align-items:center;justify-content:center;font-size:10px;color:#afa9ec;font-weight:500}
-.s3-un{font-size:11px;color:rgba(255,255,255,.65)}
-.s3-ur{font-size:9px;color:rgba(255,255,255,.3)}
-.m3{flex:1;background:var(--color-background-tertiary);overflow-y:auto;padding:16px}
-.m3-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.m3-title{font-size:16px;font-weight:500;color:var(--color-text-primary)}
-.m3-actions{display:flex;gap:6px}
-.btn3{font-size:10px;padding:4px 10px;border-radius:6px;cursor:pointer;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);color:var(--color-text-secondary)}
-.btn3.pri{background:#7f77dd;border-color:#7f77dd;color:#fff}
+.s3-item .tag{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:8px;background:rgba(175,169,236,.25);color:#dcadf5}
+.s3-item .warn{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:8px;background:rgba(220,90,50,.25);color:#f09575}
+.s3-foot{padding:10px 14px;border-top:0.5px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px}
+.s3-av{width:28px;height:28px;border-radius:50%;background:rgba(175,169,236,.2);border:1px solid #dcadf5;display:flex;align-items:center;justify-content:center;font-size:10px;color:#dcadf5;font-weight:700}
+.s3-un{font-size:11px;color:#ffffff;font-weight:600}
+.s3-ur{font-size:9px;color:rgba(255,255,255,.4)}
+/* ── Main content ── */
+.m3{flex:1;background:#f4ddf9;overflow-y:auto;padding:16px}
+/* ── Top bar ── */
+.m3-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.m3-title{font-size:16px;font-weight:700;color:#8a12ab}
+.m3-sub{font-size:10px;color:#7f77dd;margin-top:2px}
+.m3-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* FY chips */
+.fy3{font-size:11px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.6);color:#8a12ab;cursor:pointer;border:1px solid rgba(127,119,221,.3);font-weight:600;transition:.15s}
+.fy3.on{background:#8a12ab;color:#dcadf5;border-color:#8a12ab;box-shadow:0 1px 4px rgba(26,24,48,.3)}
+.fy3:hover:not(.on){background:rgba(255,255,255,.9)}
+/* Period tabs */
+.tabs3{display:flex;gap:0;background:rgba(255,255,255,.4);border-radius:6px;padding:2px}
+.tab3{padding:4px 10px;font-size:11px;border-radius:4px;cursor:pointer;color:#8a12ab;opacity:.6}
+.tab3.on{background:#fff;color:#8a12ab;font-weight:600;opacity:1}
+/* Divider */
+.bdiv{width:1px;height:16px;background:rgba(127,119,221,.3);margin:0 2px}
+/* Action buttons */
+.btn3{font-size:11px;padding:5px 12px;border-radius:6px;cursor:pointer;border:1px solid rgba(127,119,221,.3);background:rgba(255,255,255,.6);color:#8a12ab;font-family:inherit;font-weight:600;transition:.15s}
+.btn3:hover{background:#fff}
+.btn3.pri{background:#8a12ab;border-color:#8a12ab;color:#dcadf5}
+.btn3.pri:hover{opacity:.85}
+/* KPI cards */
 .metrics3{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-.m3k{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:11px 13px}
+.m3k{background:#ffffff;border:0.5px solid rgba(127,119,221,.2);border-radius:8px;padding:11px 13px}
 .m3k-ico{font-size:18px;margin-bottom:6px}
-.m3k-lbl{font-size:10px;color:var(--color-text-secondary);margin-bottom:4px}
-.m3k-val{font-size:17px;font-weight:500;color:var(--color-text-primary)}
+.m3k-lbl{font-size:10px;color:#7f77dd;margin-bottom:4px;font-weight:500}
+.m3k-val{font-size:17px;font-weight:600;color:#8a12ab}
 .m3k-chg{font-size:10px;margin-top:2px}
-.up3{color:#1d9e75}.dn3{color:#e24b4a}.neu{color:var(--color-text-secondary)}
+.up3{color:#1d9e75}.dn3{color:#e24b4a}.neu3{color:#7f77dd}
+/* Content panels */
 .row3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;margin-bottom:10px}
-.c3{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:13px}
-.c3-title{font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px}
-.pl-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:11px}
-.pl-item{color:var(--color-text-secondary)}
-.pl-num{font-weight:500;color:var(--color-text-primary)}
+.c3{background:#ffffff;border:0.5px solid rgba(127,119,221,.2);border-radius:8px;padding:13px}
+.c3-title{font-size:11px;font-weight:600;color:#8a12ab;margin-bottom:10px}
+.pl-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid #ede8ff;font-size:11px}
+.pl-item{color:#534ab7}
+.pl-num{font-weight:500;color:#8a12ab}
 .pl-num.g{color:#1d9e75}.pl-num.r{color:#e24b4a}
 .gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
 .metric-ring{position:relative;width:80px;height:80px}
@@ -51,7 +71,6 @@
 .a-title{font-weight:500;color:var(--color-text-primary)}
 .a-body{color:var(--color-text-secondary);margin-top:1px}
 </style>
-<h2 class="sr-only">Option 3: Slate Purple Dashboard — data-dense analytical finance layout</h2>
 <div class="w3">
 <div class="s3">
   <div class="s3h">
@@ -86,18 +105,30 @@
 </div>
 <div class="m3">
   <div class="m3-header">
-    <div class="m3-title">Financial Command Center</div>
-    <div class="m3-actions">
-      <button class="btn3">Export PDF</button>
-      <button class="btn3">Share</button>
+    <div>
+      <div class="m3-title">Financial Command Center</div>
+      <div class="m3-sub" id="o3-sub">FY 2026 · Monthly · Thai Hoa IP</div>
+    </div>
+    <div class="m3-bar">
+      <div class="fy3 on" data-fy="2026">FY 2026</div>
+      <div class="fy3" data-fy="2025">FY 2025</div>
+      <div class="fy3" data-fy="2024">FY 2024</div>
+      <div class="bdiv"></div>
+      <div class="tabs3">
+        <div class="tab3 on" data-pd="monthly">Monthly</div>
+        <div class="tab3" data-pd="quarterly">Quarterly</div>
+        <div class="tab3" data-pd="annual">Annual</div>
+      </div>
+      <div class="bdiv"></div>
+      <button class="btn3"><i class="ti ti-download"></i> Export</button>
       <button class="btn3 pri">+ New Report</button>
     </div>
   </div>
   <div class="metrics3">
-    <div class="m3k"><div class="m3k-ico" aria-hidden="true">📈</div><div class="m3k-lbl">Revenue YTD</div><div class="m3k-val">₫18.4B</div><div class="m3k-chg up3">↑ 12.3%</div></div>
-    <div class="m3k"><div class="m3k-ico" aria-hidden="true">💰</div><div class="m3k-lbl">EBITDA</div><div class="m3k-val">₫7.2B</div><div class="m3k-chg up3">↑ 9.1%</div></div>
-    <div class="m3k"><div class="m3k-ico" aria-hidden="true">⚠️</div><div class="m3k-lbl">Overdue AR</div><div class="m3k-val">₫2.1B</div><div class="m3k-chg dn3">8 tenants</div></div>
-    <div class="m3k"><div class="m3k-ico" aria-hidden="true">🏦</div><div class="m3k-lbl">Cash Position</div><div class="m3k-val">₫6.8B</div><div class="m3k-chg neu">Stable</div></div>
+    <div class="m3k" id="o3k-rev"><div class="m3k-ico">📈</div><div class="m3k-lbl">Revenue YTD</div><div class="m3k-val">₫18.4B</div><div class="m3k-chg up3">↑ 12.3%</div></div>
+    <div class="m3k" id="o3k-ebitda"><div class="m3k-ico">💰</div><div class="m3k-lbl">EBITDA</div><div class="m3k-val">₫7.2B</div><div class="m3k-chg up3">↑ 9.1%</div></div>
+    <div class="m3k" id="o3k-ar"><div class="m3k-ico">⚠️</div><div class="m3k-lbl">Overdue AR</div><div class="m3k-val">₫2.1B</div><div class="m3k-chg dn3">8 tenants</div></div>
+    <div class="m3k" id="o3k-cash"><div class="m3k-ico">🏦</div><div class="m3k-lbl">Cash Position</div><div class="m3k-val">₫6.8B</div><div class="m3k-chg neu3">Stable</div></div>
   </div>
   <div class="row3">
     <div class="c3">
@@ -133,3 +164,95 @@
   </div>
 </div>
 </div>
+
+<!-- ══ TWEAK PANEL ══ -->
+<div id="tw3Btn" onclick="document.getElementById('tw3Panel').style.display='flex'" style="
+  position:fixed;bottom:24px;right:24px;z-index:9999;width:48px;height:48px;border-radius:50%;
+  background:#8a12ab;color:#dcadf5;border:2px solid #dcadf5;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;
+  box-shadow:0 4px 16px rgba(0,0,0,.3);" title="Open Tweak Panel">🎨</div>
+
+<div id="tw3Panel" style="display:none;position:fixed;top:50%;right:24px;transform:translateY(-50%);
+  z-index:10000;width:260px;background:#8a12ab;border-radius:14px;
+  border:1px solid rgba(175,169,236,.3);box-shadow:0 8px 32px rgba(0,0,0,.4);
+  flex-direction:column;overflow:hidden;font-family:'Segoe UI',sans-serif;">
+  <div style="background:rgba(175,169,236,.12);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(175,169,236,.2)">
+    <div style="color:#dcadf5;font-weight:700;font-size:13px">🎨 Tweak Panel</div>
+    <div onclick="document.getElementById('tw3Panel').style.display='none'" style="color:rgba(255,255,255,.4);cursor:pointer;font-size:18px">×</div>
+  </div>
+  <div style="padding:14px 16px;display:flex;flex-direction:column;gap:14px;max-height:70vh;overflow-y:auto">
+    <div><div style="color:rgba(255,255,255,.5);font-size:10px;font-weight:700;letter-spacing:.8px;margin-bottom:6px">SIDEBAR COLOUR</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="color" id="t3-sb" value="#8a12ab" oninput="t3Sidebar(this.value)" style="width:36px;height:36px;border-radius:8px;border:none;cursor:pointer;padding:0"/>
+        <input type="text" id="t3-sb-hex" value="#8a12ab" oninput="t3Sidebar(this.value)" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:'Courier New',monospace"/>
+      </div></div>
+    <div><div style="color:rgba(255,255,255,.5);font-size:10px;font-weight:700;letter-spacing:.8px;margin-bottom:6px">CONTENT BACKGROUND</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="color" id="t3-bg" value="#EDE8FF" oninput="t3Bg(this.value)" style="width:36px;height:36px;border-radius:8px;border:none;cursor:pointer;padding:0"/>
+        <input type="text" id="t3-bg-hex" value="#EDE8FF" oninput="t3Bg(this.value)" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:'Courier New',monospace"/>
+      </div></div>
+    <div><div style="color:rgba(255,255,255,.5);font-size:10px;font-weight:700;letter-spacing:.8px;margin-bottom:6px">ACCENT COLOUR</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="color" id="t3-ac" value="#dcadf5" oninput="t3Accent(this.value)" style="width:36px;height:36px;border-radius:8px;border:none;cursor:pointer;padding:0"/>
+        <input type="text" id="t3-ac-hex" value="#dcadf5" oninput="t3Accent(this.value)" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:'Courier New',monospace"/>
+      </div></div>
+    <div><div style="color:rgba(255,255,255,.5);font-size:10px;font-weight:700;letter-spacing:.8px;margin-bottom:6px">HEIGHT: <span id="t3-h-val">754px</span></div>
+      <input type="range" id="t3-height" min="500" max="1200" value="754" oninput="t3Height(this.value)" style="width:100%;accent-color:#dcadf5"/></div>
+    <div><div style="color:rgba(255,255,255,.5);font-size:10px;font-weight:700;letter-spacing:.8px;margin-bottom:6px">SIDEBAR WIDTH: <span id="t3-w-val">201px</span></div>
+      <input type="range" id="t3-width" min="140" max="300" value="201" oninput="t3Width(this.value)" style="width:100%;accent-color:#dcadf5"/></div>
+    <div style="border-top:1px solid rgba(255,255,255,.1)"></div>
+    <button onclick="t3Copy()" style="background:#dcadf5;color:#8a12ab;border:none;border-radius:8px;padding:10px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">📋 Copy Values for Claude</button>
+    <button onclick="t3Reset()" style="background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px;font-size:11px;cursor:pointer;font-family:inherit">↺ Reset to Default</button>
+  </div>
+</div>
+
+<script>
+/* ── Option 3 — FY & Period data ── */
+const O3DATA = {
+  '2026':{ monthly:{ rev:'₫18.4B',revD:'↑ 12.3%',ebitda:'₫7.2B',ebitdaD:'↑ 9.1%',ar:'₫2.1B',arD:'8 tenants',cash:'₫6.8B',cashD:'Stable' },
+            quarterly:{ rev:'₫9.8B',revD:'↑ 14.0%',ebitda:'₫3.8B',ebitdaD:'↑ 10.2%',ar:'₫3.4B',arD:'12 tenants',cash:'₫7.2B',cashD:'Strong' },
+            annual:{ rev:'₫32.6B',revD:'↑ 11.8%',ebitda:'₫12.4B',ebitdaD:'↑ 8.6%',ar:'₫4.8B',arD:'Annual avg',cash:'₫8.1B',cashD:'Healthy' } },
+  '2025':{ monthly:{ rev:'₫16.2B',revD:'↑ 9.8%',ebitda:'₫6.1B',ebitdaD:'↑ 7.4%',ar:'₫1.8B',arD:'6 tenants',cash:'₫6.1B',cashD:'Stable' },
+            quarterly:{ rev:'₫8.4B',revD:'↑ 16.7%',ebitda:'₫3.2B',ebitdaD:'↑ 8.8%',ar:'₫3.0B',arD:'10 tenants',cash:'₫6.4B',cashD:'Good' },
+            annual:{ rev:'₫29.2B',revD:'↑ 35.8%',ebitda:'₫10.8B',ebitdaD:'↑ 7.2%',ar:'₫4.2B',arD:'Annual avg',cash:'₫7.4B',cashD:'Healthy' } },
+  '2024':{ monthly:{ rev:'₫14.1B',revD:'↑ 8.5%',ebitda:'₫5.2B',ebitdaD:'↑ 6.1%',ar:'₫1.5B',arD:'5 tenants',cash:'₫5.4B',cashD:'Adequate' },
+            quarterly:{ rev:'₫7.2B',revD:'↑ 22.0%',ebitda:'₫2.7B',ebitdaD:'↑ 7.0%',ar:'₫2.6B',arD:'9 tenants',cash:'₫5.7B',cashD:'Stable' },
+            annual:{ rev:'₫24.1B',revD:'↑ 12.1%',ebitda:'₫8.9B',ebitdaD:'↑ 5.8%',ar:'₫3.8B',arD:'Annual avg',cash:'₫6.8B',cashD:'Healthy' } }
+};
+let o3FY='2026', o3PD='monthly';
+
+function applyO3(){
+  const d=O3DATA[o3FY][o3PD];
+  const pd=o3PD.charAt(0).toUpperCase()+o3PD.slice(1);
+  document.getElementById('o3-sub').textContent='FY '+o3FY+' · '+pd+' · Thai Hoa IP';
+  function kpi(id,val,delta,cls){
+    const el=document.getElementById(id); if(!el)return;
+    el.querySelector('.m3k-val').textContent=val;
+    const chg=el.querySelector('.m3k-chg'); chg.textContent=delta; chg.className='m3k-chg '+cls;
+  }
+  kpi('o3k-rev',  d.rev,   d.revD,   'up3');
+  kpi('o3k-ebitda',d.ebitda,d.ebitdaD,'up3');
+  kpi('o3k-ar',   d.ar,    d.arD,    'dn3');
+  kpi('o3k-cash', d.cash,  d.cashD,  'neu3');
+}
+
+document.querySelectorAll('.fy3').forEach(c=>c.addEventListener('click',()=>{
+  o3FY=c.dataset.fy;
+  document.querySelectorAll('.fy3').forEach(x=>x.classList.remove('on')); c.classList.add('on');
+  applyO3();
+}));
+document.querySelectorAll('.tab3').forEach(t=>t.addEventListener('click',()=>{
+  o3PD=t.dataset.pd;
+  document.querySelectorAll('.tab3').forEach(x=>x.classList.remove('on')); t.classList.add('on');
+  applyO3();
+}));
+
+/* ── Tweak functions ── */
+function t3Sidebar(v){ v=v.trim();if(!v.startsWith('#'))return; document.querySelector('.s3').style.background=v; document.querySelectorAll('.fy3.on').forEach(c=>c.style.background=v); document.getElementById('t3-sb').value=v; document.getElementById('t3-sb-hex').value=v; }
+function t3Bg(v){ v=v.trim();if(!v.startsWith('#'))return; document.querySelector('.m3').style.background=v; document.getElementById('t3-bg').value=v; document.getElementById('t3-bg-hex').value=v; }
+function t3Accent(v){ v=v.trim();if(!v.startsWith('#'))return; document.querySelectorAll('.fy3.on').forEach(c=>{c.style.color=v;c.style.borderColor=v;}); document.querySelectorAll('.s3-item.act').forEach(l=>{l.style.color=v;l.style.borderLeftColor=v;}); document.getElementById('t3-ac').value=v; document.getElementById('t3-ac-hex').value=v; }
+function t3Height(v){ document.querySelector('.w3').style.height=v+'px'; document.getElementById('t3-h-val').textContent=v+'px'; }
+function t3Width(v){ const s=document.querySelector('.s3'); s.style.width=v+'px'; s.style.minWidth=v+'px'; document.getElementById('t3-w-val').textContent=v+'px'; }
+function t3Copy(){ const vals=`Sidebar: ${document.getElementById('t3-sb-hex').value}\nContent BG: ${document.getElementById('t3-bg-hex').value}\nAccent: ${document.getElementById('t3-ac-hex').value}\nHeight: ${document.getElementById('t3-h-val').textContent}\nSidebar Width: ${document.getElementById('t3-w-val').textContent}`; navigator.clipboard.writeText(vals).then(()=>alert('✅ Values copied! Paste to Claude.')); }
+function t3Reset(){ t3Sidebar('#8a12ab'); t3Bg('#f4ddf9'); t3Accent('#dcadf5'); t3Height(839); t3Width(209); document.getElementById('t3-height').value=839; document.getElementById('t3-width').value=209; }
+</script>
