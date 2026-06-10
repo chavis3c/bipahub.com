@@ -98,28 +98,125 @@
 
     const WK_CRITERIA = {
       1: [
-        {pts:3,  label:"Kickoff Participation",   desc:"Attended and actively engaged? · Full+questions=3 · Attended only=2 · Late/passive=1 · Absent=0"},
-        {pts:4,  label:"Personal AI Mission",     desc:"Picked a clear VSG-specific AI mission? · Clear+role-specific=4 · Somewhat clear=3 · Generic=2 · Vague=1 · None=0"},
-        {pts:4,  label:"First Claude Task Done",  desc:"Completed a real work task with Claude+proof? · Output+screenshot=4 · Done no proof=3 · Partial=2 · Not done=0"},
-        {pts:4,  label:"Telegram Update Shared",  desc:"Posted progress on IPSV Telegram with evidence? · Photo/result+context=4 · Text only=3 · Brief mention=1 · Not shared=0"},
+        { pts:3, label:"Kickoff Participation",
+          desc:[
+            ["3/3", "Attended fully + asked questions",       "Tham dự đầy đủ + có đặt câu hỏi"],
+            ["2/3", "Attended only, no interaction",          "Tham dự nhưng không tương tác"],
+            ["1/3", "Late arrival or passive",                "Đến trễ hoặc thụ động"],
+            ["0/3", "Absent",                                 "Vắng mặt"],
+          ]},
+        { pts:4, label:"Personal AI Mission",
+          desc:[
+            ["4/4", "Clear mission + role-specific to VSG",   "Sứ mệnh rõ ràng + phù hợp vai trò tại VSG"],
+            ["3/4", "Somewhat clear",                         "Tương đối rõ ràng"],
+            ["2/4", "Generic / not VSG-specific",             "Chung chung / không liên quan VSG"],
+            ["1/4", "Vague idea",                             "Ý tưởng mơ hồ"],
+            ["0/4", "None submitted",                         "Chưa đề xuất"],
+          ]},
+        { pts:4, label:"First Claude Task Done",
+          desc:[
+            ["4/4", "Real task completed + screenshot proof", "Hoàn thành công việc thực + ảnh chụp màn hình"],
+            ["3/4", "Done but no proof provided",             "Đã làm nhưng không có bằng chứng"],
+            ["2/4", "Partially completed",                    "Hoàn thành một phần"],
+            ["0/4", "Not done",                               "Chưa làm"],
+          ]},
+        { pts:4, label:"Telegram Update Shared",
+          desc:[
+            ["4/4", "Photo/result + context posted",          "Đăng ảnh/kết quả + nội dung đầy đủ"],
+            ["3/4", "Text update only",                       "Chỉ gửi chữ, không có hình"],
+            ["1/4", "Brief mention only",                     "Chỉ đề cập ngắn gọn"],
+            ["0/4", "Not shared",                             "Chưa chia sẻ"],
+          ]},
       ],
       2: [
-        {pts:10, label:"AI Task Quality",         desc:"AI output relevant to VSG + measurable? · Excellent+time saved=10 · Good quality=8 · Basic=6 · Low quality=4 · Not done=0"},
-        {pts:10, label:"Devices Set Up",          desc:"Set up Claude on phone AND desktop with proof? · Both+screenshot=10 · One device=6 · App installed only=3 · Not done=0"},
-        {pts:10, label:"Workflow Form Submitted", desc:"n8n form complete with goal+trigger+output? · Complete+detailed=10 · Mostly complete=7 · Vague=4 · Not submitted=0"},
-        {pts:10, label:"Peer Teaching Done",      desc:"Taught a colleague who confirmed? · Taught+confirmed=10 · Taught no confirm=6 · Mentioned only=3 · Not done=0"},
+        { pts:10, label:"AI Task Quality",
+          desc:[
+            ["10/10","Excellent output + time saving proven",  "Kết quả xuất sắc + chứng minh tiết kiệm thời gian"],
+            ["8/10", "Good quality output",                    "Chất lượng kết quả tốt"],
+            ["6/10", "Basic / acceptable output",              "Kết quả cơ bản / chấp nhận được"],
+            ["4/10", "Low quality or barely relevant",         "Chất lượng thấp hoặc ít liên quan"],
+            ["0/10", "Not done",                               "Chưa làm"],
+          ]},
+        { pts:10, label:"Devices Set Up",
+          desc:[
+            ["10/10","Both phone + desktop set up with proof", "Cài đặt cả điện thoại + máy tính + có ảnh chụp"],
+            ["6/10", "One device only",                        "Chỉ một thiết bị"],
+            ["3/10", "App installed but not configured",       "Chỉ cài app, chưa cài đặt đầy đủ"],
+            ["0/10", "Not done",                               "Chưa làm"],
+          ]},
+        { pts:10, label:"Workflow Form Submitted",
+          desc:[
+            ["10/10","Form complete + goal/trigger/output clear","Form đầy đủ + mục tiêu/kích hoạt/kết quả rõ ràng"],
+            ["7/10", "Mostly complete, minor gaps",            "Gần đầy đủ, còn thiếu một số chi tiết"],
+            ["4/10", "Vague or incomplete",                    "Mơ hồ hoặc chưa hoàn chỉnh"],
+            ["0/10", "Not submitted",                          "Chưa nộp"],
+          ]},
+        { pts:10, label:"Peer Teaching Done",
+          desc:[
+            ["10/10","Taught colleague + they confirmed it",   "Đã dạy đồng nghiệp + có xác nhận từ họ"],
+            ["6/10", "Taught but no confirmation received",    "Đã dạy nhưng chưa có xác nhận"],
+            ["3/10", "Only mentioned / briefly introduced",    "Chỉ đề cập / giới thiệu sơ qua"],
+            ["0/10", "Not done",                               "Chưa làm"],
+          ]},
       ],
       3: [
-        {pts:8,  label:"Workflow Built",          desc:"Built/improved a working n8n workflow? · Live+documented=8 · Tested+running=6 · Built not tested=4 · Draft only=2 · Not done=0"},
-        {pts:7,  label:"Presented to Team",       desc:"Presented results at standup clearly? · Confident+Q&A=7 · Presented clearly=5 · Brief mention=3 · Not presented=0"},
-        {pts:8,  label:"2+ Hours Saved",          desc:"Proved saving 2+ hours with data? · Time before/after documented=8 · Estimated+task detail=5 · Claimed no proof=2 · Not done=0"},
-        {pts:7,  label:"Business Win Logged",     desc:"Logged a VSG win with real numbers? · Numbers+impact+data=7 · Described clearly=5 · Vague win=2 · Nothing logged=0"},
+        { pts:8, label:"Workflow Built",
+          desc:[
+            ["8/8", "Live workflow + fully documented",        "Quy trình đang chạy + có tài liệu đầy đủ"],
+            ["6/8", "Built, tested and running",               "Đã xây, đã test và đang hoạt động"],
+            ["4/8", "Built but not tested yet",                "Đã xây nhưng chưa test"],
+            ["2/8", "Draft / concept only",                    "Chỉ ở giai đoạn bản nháp / ý tưởng"],
+            ["0/8", "Not done",                                "Chưa làm"],
+          ]},
+        { pts:7, label:"Presented to Team",
+          desc:[
+            ["7/7", "Presented confidently + answered Q&A",   "Trình bày tự tin + trả lời câu hỏi từ nhóm"],
+            ["5/7", "Presented clearly, no Q&A",              "Trình bày rõ ràng nhưng không có phần hỏi đáp"],
+            ["3/7", "Briefly mentioned only",                  "Chỉ đề cập ngắn gọn, không trình bày đúng nghĩa"],
+            ["0/7", "Did not present",                         "Không trình bày"],
+          ]},
+        { pts:8, label:"2+ Hours Saved",
+          desc:[
+            ["8/8", "Before/after time documented with data",  "Có số liệu thời gian trước/sau rõ ràng"],
+            ["5/8", "Estimated + task detail provided",        "Ước tính + mô tả chi tiết công việc"],
+            ["2/8", "Claimed saving but no proof",             "Tự nhận tiết kiệm nhưng không có bằng chứng"],
+            ["0/8", "Not done",                                "Chưa làm"],
+          ]},
+        { pts:7, label:"Business Win Logged",
+          desc:[
+            ["7/7", "Real numbers + impact + supporting data", "Có số liệu thực + tác động + dữ liệu hỗ trợ"],
+            ["5/7", "Clearly described win",                   "Mô tả chiến thắng rõ ràng"],
+            ["2/7", "Vague win, no specifics",                 "Chiến thắng mơ hồ, không có chi tiết cụ thể"],
+            ["0/7", "Nothing logged",                          "Chưa ghi lại"],
+          ]},
       ],
       4: [
-        {pts:4,  label:"SOP Written",             desc:"SOP clear enough for anyone to follow alone? · Complete+screenshots=4 · Mostly complete=3 · Notes only=2 · Not done=0"},
-        {pts:4,  label:"Colleague Onboarded",     desc:"Onboarded colleague can do 1 AI task independently? · Confirmed independent=4 · Guided successfully=3 · Introduced only=1 · Not done=0"},
-        {pts:4,  label:"30% Target Met",          desc:"Hit 30% gain target with data proof? · Proven with data=4 · Close+partial data=3 · Claimed only=1 · Not met=0"},
-        {pts:3,  label:"Assessment Completed",    desc:"Passed the final assessment? · Pass 80%+=3 · Pass 60%+=2 · Below 60%=1 · Not taken=0"},
+        { pts:9, label:"SOP Written",
+          desc:[
+            ["9/9", "Complete SOP + screenshots + anyone can follow alone","SOP đầy đủ + ảnh minh họa, ai cũng tự làm được"],
+            ["7/9", "Mostly complete + screenshots, minor steps missing",  "Gần đầy đủ + ảnh chụp, còn thiếu một vài bước nhỏ"],
+            ["5/9", "Complete steps but no screenshots",                   "Các bước đầy đủ nhưng thiếu ảnh minh họa"],
+            ["3/9", "Notes only, not a proper SOP",                        "Chỉ có ghi chú, chưa thành SOP đúng nghĩa"],
+            ["0/9", "Not done",                                            "Chưa làm"],
+          ]},
+        { pts:2, label:"Colleague Onboarded",
+          desc:[
+            ["2/2", "Colleague confirmed they can do it independently","Đồng nghiệp xác nhận làm được độc lập"],
+            ["1/2", "Guided successfully through the task",    "Hướng dẫn thành công khi có người đi kèm"],
+            ["0/2", "Not done",                                "Chưa làm"],
+          ]},
+        { pts:2, label:"30% Target Met",
+          desc:[
+            ["2/2", "Target proven with clear data",           "Đạt mục tiêu với số liệu rõ ràng"],
+            ["1/2", "Close to target + partial data",          "Gần đạt mục tiêu + có số liệu một phần"],
+            ["0/2", "Target not met",                          "Chưa đạt mục tiêu"],
+          ]},
+        { pts:2, label:"Assessment Completed",
+          desc:[
+            ["2/2", "Passed with 80% or above",                "Đạt 80% trở lên"],
+            ["1/2", "Passed with 60%–79%",                     "Đạt từ 60% đến 79%"],
+            ["0/2", "Assessment not taken / Below 60%",        "Chưa làm bài kiểm tra / Dưới 60%"],
+          ]},
       ],
     };
 
@@ -885,7 +982,15 @@
                                               ))}
                                             </select>
                                           </div>
-                                          <div style={{fontSize:10,color:"#64748b",lineHeight:1.4}}>{c.desc}</div>
+                                          <div style={{fontSize:9.5,lineHeight:1.5}}>
+                                            {c.desc.map(([score,en,vi],di)=>(
+                                              <div key={di} style={{marginBottom:3,paddingLeft:4,borderLeft:`2px solid #e2e8f0`}}>
+                                                <span style={{fontWeight:700,color:"#1a3a5c",marginRight:5}}>{score}</span>
+                                                <span style={{color:"#374151"}}>{en}</span>
+                                                <div style={{color:"#6b7280",fontStyle:"italic",paddingLeft:30}}>{vi}</div>
+                                              </div>
+                                            ))}
+                                          </div>
                                         </div>
                                       ))}
                                     </div>
