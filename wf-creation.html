@@ -17,7 +17,6 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    /* ── Airtable Sync ── */
     const AT_TOKEN = "pat6L3vnUXTAZ5H8Q.ece3bdb3acf23f28c7bc4b856c14032fddf87e59281ca1354ebd0c5c152f912a";
     const AT_URL   = "https://api.airtable.com/v0/appLS3CcOA8nJ9HSt/tblVbBPV4Tq41GUkl";
     const AT_KEY   = "vsg_sprint_checks";
@@ -42,575 +41,315 @@
       try {
         const body = { fields:{ Key:AT_KEY, Value:JSON.stringify({ checks, timestamps, verifications: verifications||{}, scores: scores||{}, savedAt: new Date().toISOString() }) } };
         if (AT_RID) {
-          await fetch(`${AT_URL}/${AT_RID}`, {
-            method:"PATCH",
-            headers:{ Authorization:`Bearer ${AT_TOKEN}`, "Content-Type":"application/json" },
-            body: JSON.stringify(body)
-          });
+          await fetch(`${AT_URL}/${AT_RID}`, { method:"PATCH", headers:{ Authorization:`Bearer ${AT_TOKEN}`, "Content-Type":"application/json" }, body: JSON.stringify(body) });
         } else {
-          const r = await fetch(AT_URL, {
-            method:"POST",
-            headers:{ Authorization:`Bearer ${AT_TOKEN}`, "Content-Type":"application/json" },
-            body: JSON.stringify(body)
-          });
-          const d = await r.json();
-          AT_RID = d.id;
+          const r = await fetch(AT_URL, { method:"POST", headers:{ Authorization:`Bearer ${AT_TOKEN}`, "Content-Type":"application/json" }, body: JSON.stringify(body) });
+          const d = await r.json(); AT_RID = d.id;
         }
         return true;
       } catch(e) { return false; }
     }
 
-    const NAVY      = "#1a3a5c";
-    const ORANGE    = "#e85d1a";
-    const ORANGE_LT = "#f5a623";
-
-    const WK_MAX  = { 1:15, 2:40, 3:30, 4:15 };
-    const WK_TIERS = {
-      1: [
-        {min:14,max:15,label:"🏆 Outstanding",color:"#166534",bg:"#dcfce7"},
-        {min:11,max:13,label:"🌟 Above Average",color:"#1e40af",bg:"#dbeafe"},
-        {min:8, max:10,label:"✅ Satisfactory",color:"#92400e",bg:"#fef3c7"},
-        {min:5, max:7, label:"⚠️ Needs Improvement",color:"#c2410c",bg:"#ffedd5"},
-        {min:0, max:4, label:"❌ Unsatisfactory",color:"#991b1b",bg:"#fee2e2"},
+    const NAVY="1a3a5c",ORANGE="#e85d1a",ORANGE_LT="#f5a623";
+    const N="#1a3a5c";
+    const WK_MAX={1:15,2:40,3:30,4:15};
+    const WK_TIERS={
+      1:[{min:14,max:15,label:"🏆 Outstanding",color:"#166534",bg:"#dcfce7"},{min:11,max:13,label:"🌟 Above Average",color:"#1e40af",bg:"#dbeafe"},{min:8,max:10,label:"✅ Satisfactory",color:"#92400e",bg:"#fef3c7"},{min:5,max:7,label:"⚠️ Needs Improvement",color:"#c2410c",bg:"#ffedd5"},{min:0,max:4,label:"❌ Unsatisfactory",color:"#991b1b",bg:"#fee2e2"}],
+      2:[{min:36,max:40,label:"🏆 Outstanding",color:"#166534",bg:"#dcfce7"},{min:28,max:35,label:"🌟 Above Average",color:"#1e40af",bg:"#dbeafe"},{min:20,max:27,label:"✅ Satisfactory",color:"#92400e",bg:"#fef3c7"},{min:12,max:19,label:"⚠️ Needs Improvement",color:"#c2410c",bg:"#ffedd5"},{min:0,max:11,label:"❌ Unsatisfactory",color:"#991b1b",bg:"#fee2e2"}],
+      3:[{min:27,max:30,label:"🏆 Outstanding",color:"#166534",bg:"#dcfce7"},{min:21,max:26,label:"🌟 Above Average",color:"#1e40af",bg:"#dbeafe"},{min:15,max:20,label:"✅ Satisfactory",color:"#92400e",bg:"#fef3c7"},{min:9,max:14,label:"⚠️ Needs Improvement",color:"#c2410c",bg:"#ffedd5"},{min:0,max:8,label:"❌ Unsatisfactory",color:"#991b1b",bg:"#fee2e2"}],
+      4:[{min:14,max:15,label:"🏆 Outstanding",color:"#166534",bg:"#dcfce7"},{min:11,max:13,label:"🌟 Above Average",color:"#1e40af",bg:"#dbeafe"},{min:8,max:10,label:"✅ Satisfactory",color:"#92400e",bg:"#fef3c7"},{min:5,max:7,label:"⚠️ Needs Improvement",color:"#c2410c",bg:"#ffedd5"},{min:0,max:4,label:"❌ Unsatisfactory",color:"#991b1b",bg:"#fee2e2"}],
+    };
+    const WK_CRITERIA={
+      1:[
+        {pts:3,label:"Kickoff Participation",desc:[["3/3","Attended fully + asked questions","Tham dự đầy đủ + có đặt câu hỏi"],["2/3","Attended only, no interaction","Tham dự nhưng không tương tác"],["1/3","Late arrival or passive","Đến trễ hoặc thụ động"],["0/3","Absent","Vắng mặt"]]},
+        {pts:4,label:"Personal AI Mission",desc:[["4/4","Clear mission + role-specific to VSG","Sứ mệnh rõ ràng + phù hợp vai trò tại VSG"],["3/4","Somewhat clear","Tương đối rõ ràng"],["2/4","Generic / not VSG-specific","Chung chung / không liên quan VSG"],["1/4","Vague idea","Ý tưởng mơ hồ"],["0/4","None submitted","Chưa đề xuất"]]},
+        {pts:4,label:"First Claude Task Done",desc:[["4/4","Real task completed + screenshot proof","Hoàn thành công việc thực + ảnh chụp màn hình"],["3/4","Done but no proof provided","Đã làm nhưng không có bằng chứng"],["2/4","Partially completed","Hoàn thành một phần"],["0/4","Not done","Chưa làm"]]},
+        {pts:4,label:"Telegram Update Shared",desc:[["4/4","Photo/result + context posted","Đăng ảnh/kết quả + nội dung đầy đủ"],["3/4","Text update only","Chỉ gửi chữ, không có hình"],["1/4","Brief mention only","Chỉ đề cập ngắn gọn"],["0/4","Not shared","Chưa chia sẻ"]]},
       ],
-      2: [
-        {min:36,max:40,label:"🏆 Outstanding",color:"#166534",bg:"#dcfce7"},
-        {min:28,max:35,label:"🌟 Above Average",color:"#1e40af",bg:"#dbeafe"},
-        {min:20,max:27,label:"✅ Satisfactory",color:"#92400e",bg:"#fef3c7"},
-        {min:12,max:19,label:"⚠️ Needs Improvement",color:"#c2410c",bg:"#ffedd5"},
-        {min:0, max:11,label:"❌ Unsatisfactory",color:"#991b1b",bg:"#fee2e2"},
+      2:[
+        {pts:10,label:"AI Task Quality",desc:[["10/10","Excellent output + time saving proven","Kết quả xuất sắc + chứng minh tiết kiệm thời gian"],["8/10","Good quality output","Chất lượng kết quả tốt"],["6/10","Basic / acceptable output","Kết quả cơ bản / chấp nhận được"],["4/10","Low quality or barely relevant","Chất lượng thấp hoặc ít liên quan"],["0/10","Not done","Chưa làm"]]},
+        {pts:10,label:"Devices Set Up",desc:[["10/10","Both phone + desktop set up with proof","Cài đặt cả điện thoại + máy tính + có ảnh chụp"],["6/10","One device only","Chỉ một thiết bị"],["3/10","App installed but not configured","Chỉ cài app, chưa cài đặt đầy đủ"],["0/10","Not done","Chưa làm"]]},
+        {pts:10,label:"Workflow Form Submitted",desc:[["10/10","Form complete + goal/trigger/output clear","Form đầy đủ + mục tiêu/kích hoạt/kết quả rõ ràng"],["7/10","Mostly complete, minor gaps","Gần đầy đủ, còn thiếu một số chi tiết"],["4/10","Vague or incomplete","Mơ hồ hoặc chưa hoàn chỉnh"],["0/10","Not submitted","Chưa nộp"]]},
+        {pts:10,label:"Peer Teaching Done",desc:[["10/10","Taught colleague + they confirmed it","Đã dạy đồng nghiệp + có xác nhận từ họ"],["6/10","Taught but no confirmation received","Đã dạy nhưng chưa có xác nhận"],["3/10","Only mentioned / briefly introduced","Chỉ đề cập / giới thiệu sơ qua"],["0/10","Not done","Chưa làm"]]},
       ],
-      3: [
-        {min:27,max:30,label:"🏆 Outstanding",color:"#166534",bg:"#dcfce7"},
-        {min:21,max:26,label:"🌟 Above Average",color:"#1e40af",bg:"#dbeafe"},
-        {min:15,max:20,label:"✅ Satisfactory",color:"#92400e",bg:"#fef3c7"},
-        {min:9, max:14,label:"⚠️ Needs Improvement",color:"#c2410c",bg:"#ffedd5"},
-        {min:0, max:8, label:"❌ Unsatisfactory",color:"#991b1b",bg:"#fee2e2"},
+      3:[
+        {pts:8,label:"Workflow Built",desc:[["8/8","Live workflow + fully documented","Quy trình đang chạy + có tài liệu đầy đủ"],["6/8","Built, tested and running","Đã xây, đã test và đang hoạt động"],["4/8","Built but not tested yet","Đã xây nhưng chưa test"],["2/8","Draft / concept only","Chỉ ở giai đoạn bản nháp / ý tưởng"],["0/8","Not done","Chưa làm"]]},
+        {pts:7,label:"Presented to Team",desc:[["7/7","Presented confidently + answered Q&A","Trình bày tự tin + trả lời câu hỏi từ nhóm"],["5/7","Presented clearly, no Q&A","Trình bày rõ ràng nhưng không có phần hỏi đáp"],["3/7","Briefly mentioned only","Chỉ đề cập ngắn gọn, không trình bày đúng nghĩa"],["0/7","Did not present","Không trình bày"]]},
+        {pts:8,label:"2+ Hours Saved",desc:[["8/8","Before/after time documented with data","Có số liệu thời gian trước/sau rõ ràng"],["5/8","Estimated + task detail provided","Ước tính + mô tả chi tiết công việc"],["2/8","Claimed saving but no proof","Tự nhận tiết kiệm nhưng không có bằng chứng"],["0/8","Not done","Chưa làm"]]},
+        {pts:7,label:"Business Win Logged",desc:[["7/7","Real numbers + impact + supporting data","Có số liệu thực + tác động + dữ liệu hỗ trợ"],["5/7","Clearly described win","Mô tả chiến thắng rõ ràng"],["2/7","Vague win, no specifics","Chiến thắng mơ hồ, không có chi tiết cụ thể"],["0/7","Nothing logged","Chưa ghi lại"]]},
       ],
-      4: [
-        {min:14,max:15,label:"🏆 Outstanding",color:"#166534",bg:"#dcfce7"},
-        {min:11,max:13,label:"🌟 Above Average",color:"#1e40af",bg:"#dbeafe"},
-        {min:8, max:10,label:"✅ Satisfactory",color:"#92400e",bg:"#fef3c7"},
-        {min:5, max:7, label:"⚠️ Needs Improvement",color:"#c2410c",bg:"#ffedd5"},
-        {min:0, max:4, label:"❌ Unsatisfactory",color:"#991b1b",bg:"#fee2e2"},
+      4:[
+        {pts:9,label:"SOP Written",desc:[["9/9","Complete SOP + screenshots + anyone can follow alone","SOP đầy đủ + ảnh minh họa, ai cũng tự làm được"],["7/9","Mostly complete + screenshots, minor steps missing","Gần đầy đủ + ảnh chụp, còn thiếu một vài bước nhỏ"],["5/9","Complete steps but no screenshots","Các bước đầy đủ nhưng thiếu ảnh minh họa"],["3/9","Notes only, not a proper SOP","Chỉ có ghi chú, chưa thành SOP đúng nghĩa"],["0/9","Not done","Chưa làm"]]},
+        {pts:2,label:"Colleague Onboarded",desc:[["2/2","Colleague confirmed they can do it independently","Đồng nghiệp xác nhận làm được độc lập"],["1/2","Guided successfully through the task","Hướng dẫn thành công khi có người đi kèm"],["0/2","Not done","Chưa làm"]]},
+        {pts:2,label:"30% Target Met",desc:[["2/2","Target proven with clear data","Đạt mục tiêu với số liệu rõ ràng"],["1/2","Close to target + partial data","Gần đạt mục tiêu + có số liệu một phần"],["0/2","Target not met","Chưa đạt mục tiêu"]]},
+        {pts:2,label:"Assessment Completed",desc:[["2/2","Passed with 80% or above","Đạt 80% trở lên"],["1/2","Passed with 60%–79%","Đạt từ 60% đến 79%"],["0/2","Assessment not taken / Below 60%","Chưa làm bài kiểm tra / Dưới 60%"]]},
       ],
     };
-
-    const WK_CRITERIA = {
-      1: [
-        { pts:3, label:"Kickoff Participation",
-          desc:[
-            ["3/3", "Attended fully + asked questions",       "Tham dự đầy đủ + có đặt câu hỏi"],
-            ["2/3", "Attended only, no interaction",          "Tham dự nhưng không tương tác"],
-            ["1/3", "Late arrival or passive",                "Đến trễ hoặc thụ động"],
-            ["0/3", "Absent",                                 "Vắng mặt"],
-          ]},
-        { pts:4, label:"Personal AI Mission",
-          desc:[
-            ["4/4", "Clear mission + role-specific to VSG",   "Sứ mệnh rõ ràng + phù hợp vai trò tại VSG"],
-            ["3/4", "Somewhat clear",                         "Tương đối rõ ràng"],
-            ["2/4", "Generic / not VSG-specific",             "Chung chung / không liên quan VSG"],
-            ["1/4", "Vague idea",                             "Ý tưởng mơ hồ"],
-            ["0/4", "None submitted",                         "Chưa đề xuất"],
-          ]},
-        { pts:4, label:"First Claude Task Done",
-          desc:[
-            ["4/4", "Real task completed + screenshot proof", "Hoàn thành công việc thực + ảnh chụp màn hình"],
-            ["3/4", "Done but no proof provided",             "Đã làm nhưng không có bằng chứng"],
-            ["2/4", "Partially completed",                    "Hoàn thành một phần"],
-            ["0/4", "Not done",                               "Chưa làm"],
-          ]},
-        { pts:4, label:"Telegram Update Shared",
-          desc:[
-            ["4/4", "Photo/result + context posted",          "Đăng ảnh/kết quả + nội dung đầy đủ"],
-            ["3/4", "Text update only",                       "Chỉ gửi chữ, không có hình"],
-            ["1/4", "Brief mention only",                     "Chỉ đề cập ngắn gọn"],
-            ["0/4", "Not shared",                             "Chưa chia sẻ"],
-          ]},
-      ],
-      2: [
-        { pts:10, label:"AI Task Quality",
-          desc:[
-            ["10/10","Excellent output + time saving proven",  "Kết quả xuất sắc + chứng minh tiết kiệm thời gian"],
-            ["8/10", "Good quality output",                    "Chất lượng kết quả tốt"],
-            ["6/10", "Basic / acceptable output",              "Kết quả cơ bản / chấp nhận được"],
-            ["4/10", "Low quality or barely relevant",         "Chất lượng thấp hoặc ít liên quan"],
-            ["0/10", "Not done",                               "Chưa làm"],
-          ]},
-        { pts:10, label:"Devices Set Up",
-          desc:[
-            ["10/10","Both phone + desktop set up with proof", "Cài đặt cả điện thoại + máy tính + có ảnh chụp"],
-            ["6/10", "One device only",                        "Chỉ một thiết bị"],
-            ["3/10", "App installed but not configured",       "Chỉ cài app, chưa cài đặt đầy đủ"],
-            ["0/10", "Not done",                               "Chưa làm"],
-          ]},
-        { pts:10, label:"Workflow Form Submitted",
-          desc:[
-            ["10/10","Form complete + goal/trigger/output clear","Form đầy đủ + mục tiêu/kích hoạt/kết quả rõ ràng"],
-            ["7/10", "Mostly complete, minor gaps",            "Gần đầy đủ, còn thiếu một số chi tiết"],
-            ["4/10", "Vague or incomplete",                    "Mơ hồ hoặc chưa hoàn chỉnh"],
-            ["0/10", "Not submitted",                          "Chưa nộp"],
-          ]},
-        { pts:10, label:"Peer Teaching Done",
-          desc:[
-            ["10/10","Taught colleague + they confirmed it",   "Đã dạy đồng nghiệp + có xác nhận từ họ"],
-            ["6/10", "Taught but no confirmation received",    "Đã dạy nhưng chưa có xác nhận"],
-            ["3/10", "Only mentioned / briefly introduced",    "Chỉ đề cập / giới thiệu sơ qua"],
-            ["0/10", "Not done",                               "Chưa làm"],
-          ]},
-      ],
-      3: [
-        { pts:8, label:"Workflow Built",
-          desc:[
-            ["8/8", "Live workflow + fully documented",        "Quy trình đang chạy + có tài liệu đầy đủ"],
-            ["6/8", "Built, tested and running",               "Đã xây, đã test và đang hoạt động"],
-            ["4/8", "Built but not tested yet",                "Đã xây nhưng chưa test"],
-            ["2/8", "Draft / concept only",                    "Chỉ ở giai đoạn bản nháp / ý tưởng"],
-            ["0/8", "Not done",                                "Chưa làm"],
-          ]},
-        { pts:7, label:"Presented to Team",
-          desc:[
-            ["7/7", "Presented confidently + answered Q&A",   "Trình bày tự tin + trả lời câu hỏi từ nhóm"],
-            ["5/7", "Presented clearly, no Q&A",              "Trình bày rõ ràng nhưng không có phần hỏi đáp"],
-            ["3/7", "Briefly mentioned only",                  "Chỉ đề cập ngắn gọn, không trình bày đúng nghĩa"],
-            ["0/7", "Did not present",                         "Không trình bày"],
-          ]},
-        { pts:8, label:"2+ Hours Saved",
-          desc:[
-            ["8/8", "Before/after time documented with data",  "Có số liệu thời gian trước/sau rõ ràng"],
-            ["5/8", "Estimated + task detail provided",        "Ước tính + mô tả chi tiết công việc"],
-            ["2/8", "Claimed saving but no proof",             "Tự nhận tiết kiệm nhưng không có bằng chứng"],
-            ["0/8", "Not done",                                "Chưa làm"],
-          ]},
-        { pts:7, label:"Business Win Logged",
-          desc:[
-            ["7/7", "Real numbers + impact + supporting data", "Có số liệu thực + tác động + dữ liệu hỗ trợ"],
-            ["5/7", "Clearly described win",                   "Mô tả chiến thắng rõ ràng"],
-            ["2/7", "Vague win, no specifics",                 "Chiến thắng mơ hồ, không có chi tiết cụ thể"],
-            ["0/7", "Nothing logged",                          "Chưa ghi lại"],
-          ]},
-      ],
-      4: [
-        { pts:9, label:"SOP Written",
-          desc:[
-            ["9/9", "Complete SOP + screenshots + anyone can follow alone","SOP đầy đủ + ảnh minh họa, ai cũng tự làm được"],
-            ["7/9", "Mostly complete + screenshots, minor steps missing",  "Gần đầy đủ + ảnh chụp, còn thiếu một vài bước nhỏ"],
-            ["5/9", "Complete steps but no screenshots",                   "Các bước đầy đủ nhưng thiếu ảnh minh họa"],
-            ["3/9", "Notes only, not a proper SOP",                        "Chỉ có ghi chú, chưa thành SOP đúng nghĩa"],
-            ["0/9", "Not done",                                            "Chưa làm"],
-          ]},
-        { pts:2, label:"Colleague Onboarded",
-          desc:[
-            ["2/2", "Colleague confirmed they can do it independently","Đồng nghiệp xác nhận làm được độc lập"],
-            ["1/2", "Guided successfully through the task",    "Hướng dẫn thành công khi có người đi kèm"],
-            ["0/2", "Not done",                                "Chưa làm"],
-          ]},
-        { pts:2, label:"30% Target Met",
-          desc:[
-            ["2/2", "Target proven with clear data",           "Đạt mục tiêu với số liệu rõ ràng"],
-            ["1/2", "Close to target + partial data",          "Gần đạt mục tiêu + có số liệu một phần"],
-            ["0/2", "Target not met",                          "Chưa đạt mục tiêu"],
-          ]},
-        { pts:2, label:"Assessment Completed",
-          desc:[
-            ["2/2", "Passed with 80% or above",                "Đạt 80% trở lên"],
-            ["1/2", "Passed with 60%–79%",                     "Đạt từ 60% đến 79%"],
-            ["0/2", "Assessment not taken / Below 60%",        "Chưa làm bài kiểm tra / Dưới 60%"],
-          ]},
-      ],
-    };
-
-    /* ── Team grouped as per office testing ── */
-    const TEAM = [
-      /* Group 1 */
-      { id:2, name:"Jane", role:"CFO",              dept:"Finance",     mission:"Financial reports & data analysis",           initials:"JA", color:"#0E7490", group:1, seq:"G1.1" },
-      { id:1, name:"Bob",  role:"CDO",              dept:"Biz Dev",     mission:"Digital strategy & business development",     initials:"BO", color:"#E8622A", group:1, seq:"G1.2" },
-      { id:6, name:"Ken",  role:"CEO",              dept:"CEO Office",  mission:"Executive oversight & strategic decisions",   initials:"KE", color:"#9333EA", group:1, seq:"G1.3" },
-      /* Group 2 */
-      { id:4, name:"Joy",  role:"Accounting Mgr.",  dept:"Finance",     mission:"Accounting records & financial tracking",     initials:"JY", color:"#059669", group:2, seq:"G2.1" },
-      { id:8, name:"Joe",  role:"Maintenance Mgr.", dept:"Operations",  mission:"Facility maintenance & technical operations", initials:"JO", color:"#B45309", group:2, seq:"G2.2" },
-      { id:3, name:"Leo",  role:"ENV Manager",      dept:"Environment", mission:"Environmental compliance & site monitoring",  initials:"LE", color:"#7C3AED", group:2, seq:"G2.3" },
-      /* Group 3 */
-      { id:9, name:"Rose", role:"Service Manager",  dept:"Operations",  mission:"Tenant service & CRM management",            initials:"RO", color:"#BE185D", group:3, seq:"G3.1" },
-      { id:5, name:"Lisa", role:"CMO",              dept:"Marketing",   mission:"Marketing copy & tenant communications",      initials:"LI", color:"#DC2626", group:3, seq:"G3.2" },
-      { id:7, name:"Tony", role:"CTO",              dept:"Technology",  mission:"System architecture & tech infrastructure",   initials:"TY", color:"#0284C7", group:3, seq:"G3.3" },
+    const TEAM=[
+      {id:2,name:"Jane",role:"CFO",dept:"Finance",mission:"Financial reports & data analysis",initials:"JA",color:"#0E7490",group:1,seq:"G1.1"},
+      {id:1,name:"Bob",role:"CDO",dept:"Biz Dev",mission:"Digital strategy & business development",initials:"BO",color:"#E8622A",group:1,seq:"G1.2"},
+      {id:6,name:"Ken",role:"CEO",dept:"CEO Office",mission:"Executive oversight & strategic decisions",initials:"KE",color:"#9333EA",group:1,seq:"G1.3"},
+      {id:4,name:"Joy",role:"Accounting Mgr.",dept:"Finance",mission:"Accounting records & financial tracking",initials:"JY",color:"#059669",group:2,seq:"G2.1"},
+      {id:8,name:"Joe",role:"Maintenance Mgr.",dept:"Operations",mission:"Facility maintenance & technical operations",initials:"JO",color:"#B45309",group:2,seq:"G2.2"},
+      {id:3,name:"Leo",role:"ENV Manager",dept:"Environment",mission:"Environmental compliance & site monitoring",initials:"LE",color:"#7C3AED",group:2,seq:"G2.3"},
+      {id:9,name:"Rose",role:"Service Manager",dept:"Operations",mission:"Tenant service & CRM management",initials:"RO",color:"#BE185D",group:3,seq:"G3.1"},
+      {id:5,name:"Lisa",role:"CMO",dept:"Marketing",mission:"Marketing copy & tenant communications",initials:"LI",color:"#DC2626",group:3,seq:"G3.2"},
+      {id:7,name:"Tony",role:"CTO",dept:"Technology",mission:"System architecture & tech infrastructure",initials:"TY",color:"#0284C7",group:3,seq:"G3.3"},
     ];
-
-    const GROUP_LABELS = { 1:"Group 1", 2:"Group 2", 3:"Group 3" };
-    const GROUP_COLORS = { 1:"#0E7490", 2:"#059669", 3:"#BE185D" };
-
-    const WEEKS = [
-      { wk:1, label:"Wk 1: IGNITE",  emoji:"🔥", theme:"Create Desire",
-        milestones:["Attend AI Kickoff session","Pick your personal AI mission","Try Claude at least once","Share progress on Telegram"],
-        tasks:["Attend AI Kickoff session","Pick your AI mission","Try Claude for 1 task","Share update on Telegram"] },
-      { wk:2, label:"Wk 2: INSTALL", emoji:"⚡", theme:"Build the Habit",
-        milestones:["Complete your first AI-assisted task","Set up Claude on all devices","Submit first workflow idea","Teach 1 thing to a colleague"],
-        tasks:["Complete 1 AI-assisted task","Set up Claude on phone & desktop","Submit workflow form","Teach a colleague one AI trick"] },
-      { wk:3, label:"Wk 3: COMPETE", emoji:"🏆", theme:"Show Results",
-        milestones:["Build or improve one workflow","Present result to team","Save 2+ hours using AI","Log a real business win"],
-        tasks:["Build or improve one workflow","Present result at standup","Save 2+ hours with AI","Log a measurable business win"] },
-      { wk:4, label:"Wk 4: LOCK IN", emoji:"🔒", theme:"Make it Permanent",
-        milestones:["Document your AI workflow as SOP","Onboard one colleague","Achieve your target % gain","Complete final assessment"],
-        tasks:["Document workflow as SOP","Onboard one colleague","Achieve target gain","Complete final assessment"] },
+    const GROUP_LABELS={1:"Group 1",2:"Group 2",3:"Group 3"};
+    const GROUP_COLORS={1:"#0E7490",2:"#059669",3:"#BE185D"};
+    const WEEKS=[
+      {wk:1,label:"Wk 1: IGNITE",emoji:"🔥",theme:"Create Desire",milestones:["Attend AI Kickoff session","Pick your personal AI mission","Try Claude at least once","Share progress on Telegram"],tasks:["Attend AI Kickoff session","Pick your AI mission","Try Claude for 1 task","Share update on Telegram"]},
+      {wk:2,label:"Wk 2: INSTALL",emoji:"⚡",theme:"Build the Habit",milestones:["Complete your first AI-assisted task","Set up Claude on all devices","Submit first workflow idea","Teach 1 thing to a colleague"],tasks:["Complete 1 AI-assisted task","Set up Claude on phone & desktop","Submit workflow form","Teach a colleague one AI trick"]},
+      {wk:3,label:"Wk 3: COMPETE",emoji:"🏆",theme:"Show Results",milestones:["Build or improve one workflow","Present result to team","Save 2+ hours using AI","Log a real business win"],tasks:["Build or improve one workflow","Present result at standup","Save 2+ hours with AI","Log a measurable business win"]},
+      {wk:4,label:"Wk 4: LOCK IN",emoji:"🔒",theme:"Make it Permanent",milestones:["Document your AI workflow as SOP","Onboard one colleague","Achieve your target % gain","Complete final assessment"],tasks:["Document workflow as SOP","Onboard one colleague","Achieve target gain","Complete final assessment"]},
     ];
-
-    const getBadge = (score) => {
-      if (score === 0) return { label:"Seedling",  emoji:"🌱", bg:"#ecfdf5", color:"#065f46" };
-      if (score <= 4)  return { label:"Sprouting", emoji:"🌿", bg:"#f0fdf4", color:"#166534" };
-      if (score <= 8)  return { label:"Growing",   emoji:"⚡", bg:"#eff6ff", color:"#1e40af" };
-      if (score <= 12) return { label:"Advancing", emoji:"🚀", bg:"#fef3c7", color:"#92400e" };
-      return                  { label:"Champion",  emoji:"🏆", bg:"#fff7ed", color:"#9a3412" };
+    const getBadge=(score)=>{
+      if(score===0)return{label:"Seedling",emoji:"🌱",bg:"#ecfdf5",color:"#065f46"};
+      if(score<=4) return{label:"Sprouting",emoji:"🌿",bg:"#f0fdf4",color:"#166534"};
+      if(score<=8) return{label:"Growing",emoji:"⚡",bg:"#eff6ff",color:"#1e40af"};
+      if(score<=12)return{label:"Advancing",emoji:"🚀",bg:"#fef3c7",color:"#92400e"};
+      return{label:"Champion",emoji:"🏆",bg:"#fff7ed",color:"#9a3412"};
     };
+    const lsGet=(key)=>{try{const s=localStorage.getItem(key);return s?JSON.parse(s):{};}catch(e){return{};}};
+    const lsSet=(key,val)=>{try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}};
 
-    /* ── helpers to read from localStorage ── */
-    const lsGet = (key) => { try { const s=localStorage.getItem(key); return s?JSON.parse(s):{}; } catch(e){ return {}; } };
-    const lsSet = (key,val) => { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {} };
+    function App(){
+      const[activeWk,setActiveWk]=useState(1);
+      const[view,setView]=useState("leaderboard");
+      const[checks,setChecks]=useState(()=>lsGet("vsg_sprint_checks"));
+      const[timestamps,setTimestamps]=useState(()=>lsGet("vsg_sprint_ts"));
+      const[verifications,setVerifications]=useState(()=>lsGet("vsg_sprint_verif"));
+      const[scores,setScores]=useState(()=>lsGet("vsg_sprint_scores"));
+      const[adminUnlocked,setAdminUnlocked]=useState(false);
+      const[scoreMode,setScoreMode]=useState("total");  // "total" | "weekly"
+      const[scoreSort,setScoreSort]=useState("desc");   // "desc" | "asc"
+      const[selected,setSelected]=useState(null);
+      const[syncMsg,setSyncMsg]=useState("⏳ Loading from cloud...");
+      const stateRef=useRef({checks:{},timestamps:{},verifications:{},scores:{}});
+      useEffect(()=>{stateRef.current={checks,timestamps,verifications,scores};},[checks,timestamps,verifications,scores]);
 
-    function App() {
-      const [activeWk, setActiveWk] = useState(1);
-      const [view, setView]         = useState("leaderboard");
-      const [checks,        setChecks]        = useState(() => lsGet("vsg_sprint_checks"));
-      const [timestamps,    setTimestamps]    = useState(() => lsGet("vsg_sprint_ts"));
-      const [verifications, setVerifications] = useState(() => lsGet("vsg_sprint_verif"));
-      const [scores,        setScores]        = useState(() => lsGet("vsg_sprint_scores"));
-      const [adminUnlocked, setAdminUnlocked] = useState(false);
-      const [chartMode,     setChartMode]     = useState("week"); // "week" | "total"
-      const [selected,      setSelected]      = useState(null);
-      const [syncing,       setSyncing]       = useState(false);
-      const [syncMsg,       setSyncMsg]       = useState("⏳ Loading from cloud...");
-
-      /* keep a ref to latest state for async saves */
-      const stateRef = useRef({ checks:{}, timestamps:{}, verifications:{}, scores:{} });
-      useEffect(() => { stateRef.current = { checks, timestamps, verifications, scores }; }, [checks, timestamps, verifications, scores]);
-
-      const unlockAdmin = () => {
-        const pin = prompt("Enter Admin PIN to verify tasks:");
-        if (pin === "CHAVIS1946") { setAdminUnlocked(true); alert("✅ Admin mode unlocked!"); }
-        else if (pin !== null)   { alert("❌ Wrong PIN. Contact Chavis."); }
+      const unlockAdmin=()=>{
+        const pin=prompt("Enter Admin PIN to verify tasks:");
+        if(pin==="CHAVIS1946"){setAdminUnlocked(true);alert("✅ Admin mode unlocked!");}
+        else if(pin!==null){alert("❌ Wrong PIN. Contact Chavis.");}
       };
-
-      /* ── Global resets ── */
-      const resetTasks = () => {
-        if (!adminUnlocked) { unlockAdmin(); return; }
-        if (!confirm("Reset ALL tasks & timestamps? (Verifications & scores kept)")) return;
-        const { verifications:v, scores:sc } = stateRef.current;
-        setChecks({}); setTimestamps({});
-        lsSet("vsg_sprint_checks", {}); lsSet("vsg_sprint_ts", {});
+      const resetTasks=()=>{
+        if(!adminUnlocked){unlockAdmin();return;}
+        if(!confirm("Reset ALL tasks & timestamps? (Verifications & scores kept)"))return;
+        const{verifications:v,scores:sc}=stateRef.current;
+        setChecks({});setTimestamps({});lsSet("vsg_sprint_checks",{});lsSet("vsg_sprint_ts",{});
         setSyncMsg("💾 Saving reset…");
-        atSave({}, {}, v, sc).then(ok => setSyncMsg(ok ? "☁️ Tasks reset ✓" : "⚠️ Cloud save failed — local OK"));
+        atSave({},{},v,sc).then(ok=>setSyncMsg(ok?"☁️ Tasks reset ✓":"⚠️ Cloud save failed — local OK"));
       };
-      const resetVerifications = () => {
-        if (!adminUnlocked) { unlockAdmin(); return; }
-        if (!confirm("Reset ALL verifications? (Tasks & scores kept)")) return;
-        const { checks:c, timestamps:t, scores:sc } = stateRef.current;
-        setVerifications({});
-        lsSet("vsg_sprint_verif", {});
-        setSyncMsg("💾 Saving reset…");
-        atSave(c, t, {}, sc).then(ok => setSyncMsg(ok ? "☁️ Verifications reset ✓" : "⚠️ Cloud save failed — local OK"));
+      const resetVerifications=()=>{
+        if(!adminUnlocked){unlockAdmin();return;}
+        if(!confirm("Reset ALL verifications? (Tasks & scores kept)"))return;
+        const{checks:c,timestamps:t,scores:sc}=stateRef.current;
+        setVerifications({});lsSet("vsg_sprint_verif",{});setSyncMsg("💾 Saving reset…");
+        atSave(c,t,{},sc).then(ok=>setSyncMsg(ok?"☁️ Verifications reset ✓":"⚠️ Cloud save failed — local OK"));
       };
-
-      /* ── Per-week resets ── */
-      const resetWeekTasks = (wk) => {
-        if (!adminUnlocked) { unlockAdmin(); return; }
-        if (!confirm(`Reset tasks & timestamps for Wk${wk} only? (Scores & verifications kept)`)) return;
-        const { checks:c, timestamps:t, verifications:v, scores:sc } = stateRef.current;
-        const nextC = Object.fromEntries(Object.entries(c).filter(([k]) => !k.startsWith(``) || !k.match(new RegExp(`^\\d+-${wk}-`))));
-        // filter out keys matching any-id - wk - ti
-        const wkPattern = new RegExp(`^\\d+-${wk}-\\d+$`);
-        const filtC = Object.fromEntries(Object.entries(c).filter(([k]) => !wkPattern.test(k)));
-        const filtT = Object.fromEntries(Object.entries(t).filter(([k]) => !wkPattern.test(k)));
-        setChecks(filtC); setTimestamps(filtT);
-        lsSet("vsg_sprint_checks", filtC); lsSet("vsg_sprint_ts", filtT);
+      const resetWeekTasks=(wk)=>{
+        if(!adminUnlocked){unlockAdmin();return;}
+        if(!confirm(`Reset tasks & timestamps for Wk${wk} only? (Scores & verifications kept)`))return;
+        const{checks:c,timestamps:t,verifications:v,scores:sc}=stateRef.current;
+        const pat=new RegExp(`^\\d+-${wk}-\\d+$`);
+        const filtC=Object.fromEntries(Object.entries(c).filter(([k])=>!pat.test(k)));
+        const filtT=Object.fromEntries(Object.entries(t).filter(([k])=>!pat.test(k)));
+        setChecks(filtC);setTimestamps(filtT);lsSet("vsg_sprint_checks",filtC);lsSet("vsg_sprint_ts",filtT);
         setSyncMsg("💾 Saving…");
-        atSave(filtC, filtT, v, sc).then(ok => setSyncMsg(ok ? `☁️ Wk${wk} tasks reset ✓` : "⚠️ Cloud save failed — local OK"));
+        atSave(filtC,filtT,v,sc).then(ok=>setSyncMsg(ok?`☁️ Wk${wk} tasks reset ✓`:"⚠️ Cloud save failed — local OK"));
       };
-      const resetWeekVerifications = (wk) => {
-        if (!adminUnlocked) { unlockAdmin(); return; }
-        if (!confirm(`Reset verifications for Wk${wk} only? (Tasks & scores kept)`)) return;
-        const { checks:c, timestamps:t, verifications:v, scores:sc } = stateRef.current;
-        const wkPattern = new RegExp(`^\\d+-${wk}-\\d+$`);
-        const filtV = Object.fromEntries(Object.entries(v).filter(([k]) => !wkPattern.test(k)));
-        setVerifications(filtV);
-        lsSet("vsg_sprint_verif", filtV);
-        setSyncMsg("💾 Saving…");
-        atSave(c, t, filtV, sc).then(ok => setSyncMsg(ok ? `☁️ Wk${wk} verifications reset ✓` : "⚠️ Cloud save failed — local OK"));
+      const resetWeekVerifications=(wk)=>{
+        if(!adminUnlocked){unlockAdmin();return;}
+        if(!confirm(`Reset verifications for Wk${wk} only? (Tasks & scores kept)`))return;
+        const{checks:c,timestamps:t,verifications:v,scores:sc}=stateRef.current;
+        const pat=new RegExp(`^\\d+-${wk}-\\d+$`);
+        const filtV=Object.fromEntries(Object.entries(v).filter(([k])=>!pat.test(k)));
+        setVerifications(filtV);lsSet("vsg_sprint_verif",filtV);setSyncMsg("💾 Saving…");
+        atSave(c,t,filtV,sc).then(ok=>setSyncMsg(ok?`☁️ Wk${wk} verifications reset ✓`:"⚠️ Cloud save failed — local OK"));
       };
-
-      /* Auto-redirect away from Wk4 if not admin */
-      useEffect(() => {
-        if (activeWk === 4 && !adminUnlocked) setActiveWk(1);
-      }, [adminUnlocked]);
-
-      /* Initial cloud load */
-      useEffect(() => {
-        atLoad().then(result => {
-          const atChecks = result ? result.checks : {};
-          const atTs     = result ? result.timestamps : {};
-          const atCount  = Object.values(atChecks).filter(Boolean).length;
-          const lsChecks = lsGet("vsg_sprint_checks");
-          const lsTs     = lsGet("vsg_sprint_ts");
-          const lsCount  = Object.values(lsChecks).filter(Boolean).length;
-          if (atCount >= lsCount && atCount > 0) {
-            const atVerif  = result.verifications || {};
-            const atScores = result.scores || {};
-            setChecks(atChecks); setTimestamps(atTs); setVerifications(atVerif); setScores(atScores);
-            lsSet("vsg_sprint_checks", atChecks); lsSet("vsg_sprint_ts", atTs);
-            lsSet("vsg_sprint_verif", atVerif);   lsSet("vsg_sprint_scores", atScores);
-            setSyncMsg("☁️ Loaded from cloud (" + atCount + " tasks)");
-          } else if (lsCount > 0) {
-            setSyncMsg("☁️ Using local data (" + lsCount + " tasks) — syncing…");
-            atSave(lsChecks, lsTs, lsGet("vsg_sprint_verif"), lsGet("vsg_sprint_scores"))
-              .then(ok => setSyncMsg(ok ? "☁️ Synced ✓ (" + lsCount + " tasks)" : "⚠️ Cloud unavailable — local OK"));
-          } else {
-            setSyncMsg("☁️ Ready — no data yet");
-          }
+      useEffect(()=>{if(activeWk===4&&!adminUnlocked)setActiveWk(1);},[adminUnlocked]);
+      useEffect(()=>{
+        atLoad().then(result=>{
+          const atChecks=result?result.checks:{};
+          const atTs=result?result.timestamps:{};
+          const atCount=Object.values(atChecks).filter(Boolean).length;
+          const lsChecks=lsGet("vsg_sprint_checks");
+          const lsTs=lsGet("vsg_sprint_ts");
+          const lsCount=Object.values(lsChecks).filter(Boolean).length;
+          if(atCount>=lsCount&&atCount>0){
+            const atVerif=result.verifications||{};const atScores=result.scores||{};
+            setChecks(atChecks);setTimestamps(atTs);setVerifications(atVerif);setScores(atScores);
+            lsSet("vsg_sprint_checks",atChecks);lsSet("vsg_sprint_ts",atTs);lsSet("vsg_sprint_verif",atVerif);lsSet("vsg_sprint_scores",atScores);
+            setSyncMsg("☁️ Loaded from cloud ("+atCount+" tasks)");
+          }else if(lsCount>0){
+            setSyncMsg("☁️ Using local data ("+lsCount+" tasks) — syncing…");
+            atSave(lsChecks,lsTs,lsGet("vsg_sprint_verif"),lsGet("vsg_sprint_scores")).then(ok=>setSyncMsg(ok?"☁️ Synced ✓ ("+lsCount+" tasks)":"⚠️ Cloud unavailable — local OK"));
+          }else{setSyncMsg("☁️ Ready — no data yet");}
         });
-      }, []);
+      },[]);
 
-      /* ── Scoring helpers ── */
-      const getScore = (id) => {
-        let s = 0;
-        WEEKS.forEach(w => w.tasks.forEach((_, ti) => { if (checks[`${id}-${w.wk}-${ti}`]) s++; }));
-        return s;
-      };
-      const getCriterionScore    = (id, wk, ci) => scores[`${id}-${wk}-c${ci}`] || 0;
-      const getWkTotalFromCriteria = (id, wk) =>
-        WK_CRITERIA[wk].reduce((sum, _, ci) => sum + getCriterionScore(id, wk, ci), 0);
-      const getTotalScore = (id) => WEEKS.reduce((sum, w) => sum + getWkTotalFromCriteria(id, w.wk), 0);
+      const getScore=(id)=>{let s=0;WEEKS.forEach(w=>w.tasks.forEach((_,ti)=>{if(checks[`${id}-${w.wk}-${ti}`])s++;}));return s;};
+      const getCriterionScore=(id,wk,ci)=>scores[`${id}-${wk}-c${ci}`]||0;
+      const getWkTotalFromCriteria=(id,wk)=>WK_CRITERIA[wk].reduce((sum,_,ci)=>sum+getCriterionScore(id,wk,ci),0);
+      const getTotalScore=(id)=>WEEKS.reduce((sum,w)=>sum+getWkTotalFromCriteria(id,w.wk),0);
 
-      /* ── Toggle task ── */
-      const toggle = (id, wk, ti) => {
-        const k = `${id}-${wk}-${ti}`;
-        const now = new Date().toISOString();
-        setChecks(prevC => {
-          const nextC = { ...prevC, [k]: !prevC[k] };
-          setTimestamps(prevT => {
-            const nextT = { ...prevT };
-            if (nextC[k]) { nextT[k] = now; } else { delete nextT[k]; }
-            lsSet("vsg_sprint_checks", nextC);
-            lsSet("vsg_sprint_ts", nextT);
-            setSyncMsg("💾 Saving…");
-            const curV  = lsGet("vsg_sprint_verif");
-            const curSc = lsGet("vsg_sprint_scores");
-            atSave(nextC, nextT, curV, curSc)
-              .then(ok => setSyncMsg(ok ? "☁️ Saved ✓ " + new Date().toLocaleTimeString('vi-VN') : "⚠️ Cloud save failed — local OK"));
+      const toggle=(id,wk,ti)=>{
+        const k=`${id}-${wk}-${ti}`;const now=new Date().toISOString();
+        setChecks(prevC=>{
+          const nextC={...prevC,[k]:!prevC[k]};
+          setTimestamps(prevT=>{
+            const nextT={...prevT};
+            if(nextC[k]){nextT[k]=now;}else{delete nextT[k];}
+            lsSet("vsg_sprint_checks",nextC);lsSet("vsg_sprint_ts",nextT);setSyncMsg("💾 Saving…");
+            atSave(nextC,nextT,lsGet("vsg_sprint_verif"),lsGet("vsg_sprint_scores")).then(ok=>setSyncMsg(ok?"☁️ Saved ✓ "+new Date().toLocaleTimeString('vi-VN'):"⚠️ Cloud save failed — local OK"));
             return nextT;
-          });
-          return nextC;
+          });return nextC;
         });
       };
-
-      /* ── Set criterion score ── */
-      const setCriterionScore = (memberId, wk, ci, val) => {
-        const k = `${memberId}-${wk}-c${ci}`;
-        setScores(prev => {
-          const next = { ...prev, [k]: Number(val) };
-          lsSet("vsg_sprint_scores", next);
-          setSyncMsg("💾 Saving score…");
-          atSave(lsGet("vsg_sprint_checks"), lsGet("vsg_sprint_ts"), lsGet("vsg_sprint_verif"), next)
-            .then(ok => setSyncMsg(ok ? "☁️ Score saved ✓" : "⚠️ Cloud save failed — local OK"));
+      const setCriterionScore=(memberId,wk,ci,val)=>{
+        const k=`${memberId}-${wk}-c${ci}`;
+        setScores(prev=>{
+          const next={...prev,[k]:Number(val)};lsSet("vsg_sprint_scores",next);setSyncMsg("💾 Saving score…");
+          atSave(lsGet("vsg_sprint_checks"),lsGet("vsg_sprint_ts"),lsGet("vsg_sprint_verif"),next).then(ok=>setSyncMsg(ok?"☁️ Score saved ✓":"⚠️ Cloud save failed — local OK"));
           return next;
         });
       };
-
-      /* ── Verifications ── */
-      const isTaskVerified       = (id, wk, ti) => !!verifications[`${id}-${wk}-${ti}`];
-      const isMemberFullyVerified = (id, wk) =>
-        WEEKS.find(w => w.wk === wk).tasks.every((_, ti) => isTaskVerified(id, wk, ti));
-      const verifyTask = (id, wk, ti) => {
-        const k = `${id}-${wk}-${ti}`;
-        setVerifications(prev => {
-          const next = { ...prev, [k]: new Date().toISOString() };
-          lsSet("vsg_sprint_verif", next);
-          setSyncMsg("💾 Saving…");
-          atSave(lsGet("vsg_sprint_checks"), lsGet("vsg_sprint_ts"), next, lsGet("vsg_sprint_scores"))
-            .then(ok => setSyncMsg(ok ? "☁️ Task verified ✓" : "⚠️ Cloud save failed — local OK"));
+      const isTaskVerified=(id,wk,ti)=>!!verifications[`${id}-${wk}-${ti}`];
+      const isMemberFullyVerified=(id,wk)=>WEEKS.find(w=>w.wk===wk).tasks.every((_,ti)=>isTaskVerified(id,wk,ti));
+      const verifyTask=(id,wk,ti)=>{
+        const k=`${id}-${wk}-${ti}`;
+        setVerifications(prev=>{
+          const next={...prev,[k]:new Date().toISOString()};lsSet("vsg_sprint_verif",next);setSyncMsg("💾 Saving…");
+          atSave(lsGet("vsg_sprint_checks"),lsGet("vsg_sprint_ts"),next,lsGet("vsg_sprint_scores")).then(ok=>setSyncMsg(ok?"☁️ Task verified ✓":"⚠️ Cloud save failed — local OK"));
           return next;
         });
       };
-      const unverifyTask = (id, wk, ti) => {
-        const k = `${id}-${wk}-${ti}`;
-        setVerifications(prev => {
-          const next = { ...prev }; delete next[k];
-          lsSet("vsg_sprint_verif", next);
-          atSave(lsGet("vsg_sprint_checks"), lsGet("vsg_sprint_ts"), next, lsGet("vsg_sprint_scores"))
-            .then(ok => setSyncMsg(ok ? "☁️ Unverified ✓" : "⚠️ Cloud save failed — local OK"));
-          return next;
-        });
+      const unverifyTask=(id,wk,ti)=>{
+        const k=`${id}-${wk}-${ti}`;
+        setVerifications(prev=>{const next={...prev};delete next[k];lsSet("vsg_sprint_verif",next);atSave(lsGet("vsg_sprint_checks"),lsGet("vsg_sprint_ts"),next,lsGet("vsg_sprint_scores")).then(ok=>setSyncMsg(ok?"☁️ Unverified ✓":"⚠️ Cloud save failed — local OK"));return next;});
       };
-
-      /* ── Save / Load JSON ── */
-      const saveProgress = () => {
-        const { checks:c, timestamps:t, verifications:v, scores:sc } = stateRef.current;
-        const data = { checks:c, timestamps:t, verifications:v, scores:sc, savedAt: new Date().toISOString(), version: "VSG-Sprint-v3" };
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement("a");
-        a.href = url; a.download = "VSG_Sprint_" + new Date().toISOString().slice(0,10) + ".json"; a.click();
-        URL.revokeObjectURL(url);
-        setSyncMsg("💾 File saved locally ✓");
+      const saveProgress=()=>{
+        const{checks:c,timestamps:t,verifications:v,scores:sc}=stateRef.current;
+        const data={checks:c,timestamps:t,verifications:v,scores:sc,savedAt:new Date().toISOString(),version:"VSG-Sprint-v3"};
+        const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+        const url=URL.createObjectURL(blob);const a=document.createElement("a");
+        a.href=url;a.download="VSG_Sprint_"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(url);setSyncMsg("💾 File saved locally ✓");
       };
-      const loadProgress = (e) => {
-        const file = e.target.files[0]; if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          try {
-            const data  = JSON.parse(ev.target.result);
-            const c     = data.checks || data;
-            const t     = data.timestamps || {};
-            const v     = data.verifications || {};
-            const sc    = data.scores || {};
-            setChecks(c); setTimestamps(t); setVerifications(v); setScores(sc);
-            lsSet("vsg_sprint_checks", c); lsSet("vsg_sprint_ts", t);
-            lsSet("vsg_sprint_verif", v);  lsSet("vsg_sprint_scores", sc);
+      const loadProgress=(e)=>{
+        const file=e.target.files[0];if(!file)return;
+        const reader=new FileReader();
+        reader.onload=(ev)=>{
+          try{
+            const data=JSON.parse(ev.target.result);
+            const c=data.checks||data;const t=data.timestamps||{};const v=data.verifications||{};const sc=data.scores||{};
+            setChecks(c);setTimestamps(t);setVerifications(v);setScores(sc);
+            lsSet("vsg_sprint_checks",c);lsSet("vsg_sprint_ts",t);lsSet("vsg_sprint_verif",v);lsSet("vsg_sprint_scores",sc);
             setSyncMsg("💾 Saving to cloud…");
-            atSave(c, t, v, sc).then(ok => setSyncMsg(ok ? "☁️ Loaded & synced ✓" : "⚠️ Loaded locally — cloud sync failed"));
+            atSave(c,t,v,sc).then(ok=>setSyncMsg(ok?"☁️ Loaded & synced ✓":"⚠️ Loaded locally — cloud sync failed"));
             alert("✅ Progress loaded successfully!");
-          } catch(err) { alert("❌ Invalid file."); }
-        };
-        reader.readAsText(file);
+          }catch(err){alert("❌ Invalid file.");}
+        };reader.readAsText(file);
       };
 
-      /* ── Derived stats ── */
-      const totalChecks   = Object.values(checks).filter(Boolean).length;
-      const totalPossible = TEAM.length * 16;
-      const teamPct       = Math.round((totalChecks / totalPossible) * 100);
-      const hasWeekComplete = (id) => WEEKS.some(w => w.tasks.every((_, ti) => checks[`${id}-${w.wk}-${ti}`]));
-      const wkCompleted   = TEAM.reduce((sum,m) =>
-        sum + WEEKS.find(w=>w.wk===activeWk).tasks.filter((_,ti)=>checks[`${m.id}-${activeWk}-${ti}`]).length, 0);
-      const wkTotal = TEAM.length * 4;
+      const totalChecks=Object.values(checks).filter(Boolean).length;
+      const totalPossible=TEAM.length*16;
+      const teamPct=Math.round((totalChecks/totalPossible)*100);
+      const hasWeekComplete=(id)=>WEEKS.some(w=>w.tasks.every((_,ti)=>checks[`${id}-${w.wk}-${ti}`]));
+      const wkCompleted=TEAM.reduce((sum,m)=>sum+WEEKS.find(w=>w.wk===activeWk).tasks.filter((_,ti)=>checks[`${m.id}-${activeWk}-${ti}`]).length,0);
+      const wkTotal=TEAM.length*4;
+      const getEarliestFinish=(id)=>{const ts=Object.keys(timestamps).filter(k=>k.startsWith(`${id}-`)&&checks[k]&&timestamps[k]).map(k=>timestamps[k]);return ts.length?ts.sort()[ts.length-1]:"9999";};
+      const championSort=(a,b)=>{const sd=getTotalScore(b.id)-getTotalScore(a.id);if(sd!==0)return sd;const td=getScore(b.id)-getScore(a.id);if(td!==0)return td;return getEarliestFinish(a.id).localeCompare(getEarliestFinish(b.id));};
+      const isEligible=(id)=>WEEKS.some(wk=>getWkTotalFromCriteria(id,wk.wk)>0&&wk.tasks.every((_,ti)=>checks[`${id}-${wk.wk}-${ti}`])&&isMemberFullyVerified(id,wk.wk));
+      const rankedAll=[...TEAM].filter(m=>isEligible(m.id)).sort(championSort);
+      const champion1=rankedAll[0]||null;const champion2=rankedAll[1]||null;const champion3=rankedAll[2]||null;
+      const getWeekChampion=(wk)=>{
+        const wkRanked=TEAM.map(m=>{const done=WEEKS.find(w=>w.wk===wk).tasks.filter((_,ti)=>checks[`${m.id}-${wk}-${ti}`]).length;return{m,s:getWkTotalFromCriteria(m.id,wk),done};})
+          .filter(x=>x.s>0&&x.done===4)
+          .sort((a,b)=>{if(b.s!==a.s)return b.s-a.s;if(b.done!==a.done)return b.done-a.done;
+            const aTs=Object.keys(timestamps).filter(k=>k.startsWith(`${a.m.id}-${wk}-`)&&checks[k]).map(k=>timestamps[k]).sort().pop()||"9999";
+            const bTs=Object.keys(timestamps).filter(k=>k.startsWith(`${b.m.id}-${wk}-`)&&checks[k]).map(k=>timestamps[k]).sort().pop()||"9999";
+            return aTs.localeCompare(bTs);});
+        return wkRanked[0]||null;
+      };
+      const ranked=[...TEAM].map(m=>({...m,score:getScore(m.id)})).sort((a,b)=>b.score-a.score);
+      const wk=WEEKS.find(w=>w.wk===activeWk);
 
-      /* ── Champion ranking ── */
-      const getEarliestFinish = (id) => {
-        const ts = Object.keys(timestamps).filter(k=>k.startsWith(`${id}-`)&&checks[k]&&timestamps[k]).map(k=>timestamps[k]);
-        return ts.length ? ts.sort()[ts.length-1] : "9999";
+      const s={
+        wrap:{fontFamily:"'Segoe UI',Arial,sans-serif",background:"#C7F068",minHeight:"100vh",color:"#1a2332"},
+        hdr:{background:N,position:"relative",overflow:"hidden"},
+        hdrDeco:{position:"absolute",top:-60,right:-80,width:280,height:280,background:"rgba(255,255,255,.03)",borderRadius:"50%",pointerEvents:"none"},
+        hdrInner:{maxWidth:960,margin:"0 auto",padding:"22px 24px 18px",display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:12,position:"relative"},
+        brand:{fontSize:10,fontWeight:600,letterSpacing:"0.18em",textTransform:"uppercase",color:"rgba(255,255,255,.5)",marginBottom:4},
+        hdrTtl:{fontSize:26,fontWeight:800,color:"#fff",lineHeight:1.1,margin:0},
+        hdrSub:{fontSize:12.5,color:"rgba(255,255,255,.6)",marginTop:3,fontStyle:"italic"},
+        bar:{height:4,background:ORANGE,position:"relative"},
+        barGlow:{position:"absolute",left:0,top:0,width:80,height:4,background:ORANGE_LT},
+        hdrRight:{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:8,flexShrink:0},
+        progBox:{textAlign:"right"},
+        progLbl:{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:"rgba(255,255,255,.45)",marginBottom:2},
+        progPct:{fontSize:32,fontWeight:800,color:ORANGE_LT,lineHeight:1},
+        progSub:{fontSize:11,color:"rgba(255,255,255,.4)"},
+        main:{maxWidth:960,margin:"0 auto",padding:"16px 24px 40px"},
+        card:{background:"#fff",borderRadius:10,border:"1px solid #e2e8f0",padding:"12px 14px"},
+        cardLbl:{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:"#94a3b8",marginBottom:4},
+        cardVal:{fontSize:22,fontWeight:800,color:N,lineHeight:1},
+        cardSub:{fontSize:10,color:"#94a3b8",marginTop:2},
+        wkBand:{background:"#fff",borderRadius:10,border:"1px solid #e2e8f0",padding:"12px 18px",marginBottom:8,display:"flex",alignItems:"center",gap:14},
+        wkEmoji:{fontSize:22},
+        wkName:{fontSize:15,fontWeight:800,color:N},
+        wkTheme:{fontSize:12,color:"#94a3b8",marginTop:1},
+        miles:{display:"flex",gap:7,flexWrap:"wrap",marginLeft:"auto"},
+        mileTag:{fontSize:11,fontWeight:600,padding:"4px 11px",borderRadius:20,background:"#f1f5f9",color:"#475569",border:"1px solid #e2e8f0"},
+        lbRow:()=>({display:"flex",alignItems:"center",gap:12,padding:"12px 16px",background:"#fff",borderRadius:9,border:"1px solid #e2e8f0",marginBottom:7}),
+        rank:{fontSize:13,fontWeight:800,color:"#94a3b8",width:20,textAlign:"center",flexShrink:0},
+        av:(color)=>({width:38,height:38,borderRadius:"50%",background:color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:13,fontWeight:800,flexShrink:0}),
+        mName:{fontSize:14,fontWeight:700,color:N},
+        badge:(bg,col)=>({fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:bg,color:col}),
+        barWrap:{flex:1,height:6,background:"#f1f5f9",borderRadius:3,overflow:"hidden"},
+        barFill:(score,color)=>({height:"100%",borderRadius:3,background:color,width:`${(score/16)*100}%`}),
+        scoreLbl:{fontSize:13,fontWeight:800,color:N,width:38,textAlign:"right",flexShrink:0},
+        grid:{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12},
+        gridCard:{background:"#fff",borderRadius:10,border:"1px solid #e2e8f0",padding:"16px",overflow:"hidden"},
+        gcTop:{display:"flex",alignItems:"center",gap:10,marginBottom:10},
+        gcMission:{fontSize:11.5,color:"#64748b",fontStyle:"italic",marginBottom:10,lineHeight:1.4},
+        wkBar:{marginBottom:6},
+        wkBarLbl:{display:"flex",justifyContent:"space-between",fontSize:10.5,color:"#94a3b8",fontWeight:600,marginBottom:3},
+        wkBarBg:{height:4,background:"#f1f5f9",borderRadius:2,overflow:"hidden"},
+        wkBarFl:(pct,color)=>({height:"100%",width:`${pct}%`,background:color,borderRadius:2}),
+        ttCard:{background:"#fff",borderRadius:10,border:"1px solid #e2e8f0",padding:"16px 18px",marginBottom:9},
+        ttHdr:{display:"flex",alignItems:"center",gap:10,marginBottom:10,cursor:"pointer"},
+        ttAvRow:{display:"flex",alignItems:"center",gap:10,flex:1},
+        ttTasks:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7},
+        ttTask:(done)=>({display:"flex",alignItems:"center",gap:8,padding:"9px 12px",borderRadius:7,background:done?"#f0fdf4":"#f8fafc",border:`1px solid ${done?"#bbf7d0":"#e2e8f0"}`,cursor:"pointer"}),
+        ttChk:(done)=>({width:16,height:16,borderRadius:4,border:`2px solid ${done?"#16a34a":"#cbd5e1"}`,background:done?"#16a34a":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}),
+        ttTxt:(done)=>({fontSize:12.5,fontWeight:500,color:done?"#166534":"#475569",textDecoration:done?"line-through":"none"}),
       };
-      const championSort = (a, b) => {
-        const scoreDiff = getTotalScore(b.id) - getTotalScore(a.id);
-        if (scoreDiff !== 0) return scoreDiff;
-        const taskDiff  = getScore(b.id) - getScore(a.id);
-        if (taskDiff  !== 0) return taskDiff;
-        return getEarliestFinish(a.id).localeCompare(getEarliestFinish(b.id));
-      };
-      const isEligible = (id) => WEEKS.some(wk =>
-        getWkTotalFromCriteria(id, wk.wk) > 0 &&
-        wk.tasks.every((_, ti) => checks[`${id}-${wk.wk}-${ti}`]) &&
-        isMemberFullyVerified(id, wk.wk)
+
+      const GroupDivider=({groupId})=>(
+        <div style={{display:"flex",alignItems:"center",gap:10,margin:"14px 0 8px",padding:"6px 14px",background:`${GROUP_COLORS[groupId]}18`,borderRadius:8,border:`1.5px solid ${GROUP_COLORS[groupId]}40`}}>
+          <span style={{fontSize:13,fontWeight:800,color:GROUP_COLORS[groupId]}}>{GROUP_LABELS[groupId]}</span>
+          <span style={{fontSize:11,color:"#94a3b8",fontWeight:500}}>{TEAM.filter(m=>m.group===groupId).map(m=>`${m.seq} ${m.name}`).join(" · ")}</span>
+        </div>
       );
-      const rankedAll      = [...TEAM].filter(m => isEligible(m.id)).sort(championSort);
-      const champion1      = rankedAll[0] || null;
-      const champion2      = rankedAll[1] || null;
-      const champion3      = rankedAll[2] || null;
-
-      const getWeekChampion = (wk) => {
-        const wkRanked = TEAM.map(m => {
-          const done = WEEKS.find(w=>w.wk===wk).tasks.filter((_,ti)=>checks[`${m.id}-${wk}-${ti}`]).length;
-          return { m, s: getWkTotalFromCriteria(m.id, wk), done };
-        })
-        .filter(x => x.s > 0 && x.done === 4)
-        .sort((a, b) => {
-          if (b.s !== a.s) return b.s - a.s;
-          if (b.done !== a.done) return b.done - a.done;
-          const aTs = Object.keys(timestamps).filter(k=>k.startsWith(`${a.m.id}-${wk}-`)&&checks[k]).map(k=>timestamps[k]).sort().pop()||"9999";
-          const bTs = Object.keys(timestamps).filter(k=>k.startsWith(`${b.m.id}-${wk}-`)&&checks[k]).map(k=>timestamps[k]).sort().pop()||"9999";
-          return aTs.localeCompare(bTs);
-        });
-        return wkRanked[0] || null;
-      };
-
-      const ranked = [...TEAM].map(m => ({ ...m, score: getScore(m.id) })).sort((a,b) => b.score - a.score);
-      const wk     = WEEKS.find(w => w.wk === activeWk);
-
-      /* ── Styles ── */
-      const s = {
-        wrap:    { fontFamily:"'Segoe UI',Arial,sans-serif", background:"#C7F068", minHeight:"100vh", color:"#1a2332" },
-        hdr:     { background:NAVY, position:"relative", overflow:"hidden" },
-        hdrDeco: { position:"absolute", top:-60, right:-80, width:280, height:280, background:"rgba(255,255,255,.03)", borderRadius:"50%", pointerEvents:"none" },
-        hdrInner:{ maxWidth:960, margin:"0 auto", padding:"22px 24px 18px", display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:12, position:"relative" },
-        brand:   { fontSize:10, fontWeight:600, letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(255,255,255,.5)", marginBottom:4 },
-        hdrTtl:  { fontSize:26, fontWeight:800, color:"#fff", lineHeight:1.1, margin:0 },
-        hdrSub:  { fontSize:12.5, color:"rgba(255,255,255,.6)", marginTop:3, fontStyle:"italic" },
-        bar:     { height:4, background:ORANGE, position:"relative" },
-        barGlow: { position:"absolute", left:0, top:0, width:80, height:4, background:ORANGE_LT },
-        hdrRight:{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:8, flexShrink:0 },
-        progBox: { textAlign:"right" },
-        progLbl: { fontSize:10, fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(255,255,255,.45)", marginBottom:2 },
-        progPct: { fontSize:32, fontWeight:800, color:ORANGE_LT, lineHeight:1 },
-        progSub: { fontSize:11, color:"rgba(255,255,255,.4)" },
-        main:    { maxWidth:960, margin:"0 auto", padding:"16px 24px 40px" },
-        card:    { background:"#fff", borderRadius:10, border:"1px solid #e2e8f0", padding:"12px 14px" },
-        cardLbl: { fontSize:10, fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:"#94a3b8", marginBottom:4 },
-        cardVal: { fontSize:22, fontWeight:800, color:NAVY, lineHeight:1 },
-        cardSub: { fontSize:10, color:"#94a3b8", marginTop:2 },
-        wkBand:  { background:"#fff", borderRadius:10, border:"1px solid #e2e8f0", padding:"12px 18px", marginBottom:8, display:"flex", alignItems:"center", gap:14 },
-        wkEmoji: { fontSize:22 },
-        wkName:  { fontSize:15, fontWeight:800, color:NAVY },
-        wkTheme: { fontSize:12, color:"#94a3b8", marginTop:1 },
-        miles:   { display:"flex", gap:7, flexWrap:"wrap", marginLeft:"auto" },
-        mileTag: { fontSize:11, fontWeight:600, padding:"4px 11px", borderRadius:20, background:"#f1f5f9", color:"#475569", border:"1px solid #e2e8f0" },
-        lbRow:   () => ({ display:"flex", alignItems:"center", gap:12, padding:"12px 16px", background:"#fff", borderRadius:9, border:"1px solid #e2e8f0", marginBottom:7 }),
-        rank:    { fontSize:13, fontWeight:800, color:"#94a3b8", width:20, textAlign:"center", flexShrink:0 },
-        av:      (color) => ({ width:38, height:38, borderRadius:"50%", background:color, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:13, fontWeight:800, flexShrink:0 }),
-        mName:   { fontSize:14, fontWeight:700, color:NAVY },
-        badge:   (bg,col) => ({ fontSize:11, fontWeight:700, padding:"2px 9px", borderRadius:20, background:bg, color:col }),
-        barWrap: { flex:1, height:6, background:"#f1f5f9", borderRadius:3, overflow:"hidden" },
-        barFill: (score,color) => ({ height:"100%", borderRadius:3, background:color, width:`${(score/16)*100}%` }),
-        scoreLbl:{ fontSize:13, fontWeight:800, color:NAVY, width:38, textAlign:"right", flexShrink:0 },
-        grid:    { display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12 },
-        gridCard:{ background:"#fff", borderRadius:10, border:"1px solid #e2e8f0", padding:"16px", overflow:"hidden" },
-        gcTop:   { display:"flex", alignItems:"center", gap:10, marginBottom:10 },
-        gcMission:{ fontSize:11.5, color:"#64748b", fontStyle:"italic", marginBottom:10, lineHeight:1.4 },
-        wkBar:   { marginBottom:6 },
-        wkBarLbl:{ display:"flex", justifyContent:"space-between", fontSize:10.5, color:"#94a3b8", fontWeight:600, marginBottom:3 },
-        wkBarBg: { height:4, background:"#f1f5f9", borderRadius:2, overflow:"hidden" },
-        wkBarFl: (pct,color) => ({ height:"100%", width:`${pct}%`, background:color, borderRadius:2 }),
-        ttCard:  { background:"#fff", borderRadius:10, border:"1px solid #e2e8f0", padding:"16px 18px", marginBottom:9 },
-        ttHdr:   { display:"flex", alignItems:"center", gap:10, marginBottom:10, cursor:"pointer" },
-        ttAvRow: { display:"flex", alignItems:"center", gap:10, flex:1 },
-        ttTasks: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:7 },
-        ttTask:  (done) => ({ display:"flex", alignItems:"center", gap:8, padding:"9px 12px", borderRadius:7, background:done?"#f0fdf4":"#f8fafc", border:`1px solid ${done?"#bbf7d0":"#e2e8f0"}`, cursor:"pointer" }),
-        ttChk:   (done) => ({ width:16, height:16, borderRadius:4, border:`2px solid ${done?"#16a34a":"#cbd5e1"}`, background:done?"#16a34a":"transparent", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }),
-        ttTxt:   (done) => ({ fontSize:12.5, fontWeight:500, color:done?"#166534":"#475569", textDecoration:done?"line-through":"none" }),
-      };
-
-      /* ── Group header row ── */
-      const GroupDivider = ({ groupId }) => (
-        <div style={{display:"flex",alignItems:"center",gap:10,margin:"14px 0 8px",padding:"6px 14px",
-          background:`${GROUP_COLORS[groupId]}18`,borderRadius:8,border:`1.5px solid ${GROUP_COLORS[groupId]}40`}}>
-          <span style={{fontSize:13,fontWeight:800,color:GROUP_COLORS[groupId]}}>
-            {GROUP_LABELS[groupId]}
-          </span>
-          <span style={{fontSize:11,color:"#94a3b8",fontWeight:500}}>
-            {TEAM.filter(m=>m.group===groupId).map(m=>`${m.seq} ${m.name}`).join(" · ")}
-          </span>
+      const WinnerCard=({rank,member,rankLabel,rankColor,rankBg,trophyEmoji})=>(
+        <div style={{...s.card,border:`2px solid ${rankColor}`,background:rankBg}}>
+          <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:rankColor,marginBottom:4}}>{trophyEmoji} {rankLabel}</div>
+          {member?(<>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:2}}>
+              <div style={{width:28,height:28,borderRadius:"50%",background:member.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:11,fontWeight:800,flexShrink:0}}>{member.initials}</div>
+              <div style={{fontSize:17,fontWeight:800,color:N,lineHeight:1}}>{member.name}</div>
+            </div>
+            <div style={{fontSize:10,color:"#94a3b8",marginTop:2}}>{member.role} · {member.seq}</div>
+            <div style={{fontSize:13,fontWeight:800,color:rankColor,marginTop:3}}>{getTotalScore(member.id)}<span style={{fontSize:10,color:"#94a3b8",fontWeight:500}}>/100 pts</span></div>
+          </>):(<div style={{fontSize:16,fontWeight:800,color:"#94a3b8",lineHeight:1}}>—</div>)}
+          {!member&&<div style={{fontSize:10,color:"#94a3b8",marginTop:2}}>set scores to rank</div>}
         </div>
       );
 
-      /* ── Winner card component ── */
-      const WinnerCard = ({ rank, member, rankLabel, rankColor, rankBg, trophyEmoji }) => (
-        <div style={{...s.card, border:`2px solid ${rankColor}`, background:rankBg}}>
-          <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:rankColor,marginBottom:4}}>
-            {trophyEmoji} {rankLabel}
-          </div>
-          {member ? (
-            <>
-              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:2}}>
-                <div style={{width:28,height:28,borderRadius:"50%",background:member.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:11,fontWeight:800,flexShrink:0}}>{member.initials}</div>
-                <div style={{fontSize:17,fontWeight:800,color:NAVY,lineHeight:1}}>{member.name}</div>
-              </div>
-              <div style={{fontSize:10,color:"#94a3b8",marginTop:2}}>{member.role} · {member.seq}</div>
-              <div style={{fontSize:13,fontWeight:800,color:rankColor,marginTop:3}}>{getTotalScore(member.id)}<span style={{fontSize:10,color:"#94a3b8",fontWeight:500}}>/100 pts</span></div>
-            </>
-          ) : (
-            <div style={{fontSize:16,fontWeight:800,color:"#94a3b8",lineHeight:1}}>—</div>
-          )}
-          {!member && <div style={{fontSize:10,color:"#94a3b8",marginTop:2}}>set scores to rank</div>}
-        </div>
-      );
-
-      return (
+      return(
         <div style={s.wrap}>
-          {/* HEADER */}
           <div style={s.hdr}>
             <div style={s.hdrDeco}/>
             <div style={s.hdrInner}>
@@ -627,109 +366,65 @@
                   <div style={{fontSize:10,color:"rgba(255,255,255,.5)",marginTop:4,fontStyle:"italic"}}>{syncMsg}</div>
                 </div>
                 <div style={{display:"flex",gap:6,alignItems:"center",flexWrap:"nowrap"}}>
-                  <a href="https://vsg-crm-form.netlify.app/" target="_blank" rel="noopener noreferrer"
-                    style={{background:"#e85d1a",color:"#fff",border:"none",borderRadius:8,padding:"7px 12px",fontSize:11,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:5,textDecoration:"none",whiteSpace:"nowrap"}}>
-                    <span style={{fontSize:12}}>📋</span> Submit WF Request
-                  </a>
-                  <button onClick={saveProgress}
-                    style={{background:"#166534",color:"#fff",border:"none",borderRadius:8,padding:"7px 12px",fontSize:11,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:5,whiteSpace:"nowrap"}}>
-                    💾 Save Progress
-                  </button>
-                  <label style={{background:"#1e40af",color:"#fff",border:"none",borderRadius:8,padding:"7px 12px",fontSize:11,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:5,whiteSpace:"nowrap"}}>
-                    📂 Load Save
-                    <input type="file" accept=".json" onChange={loadProgress} style={{display:"none"}}/>
-                  </label>
+                  <a href="https://vsg-crm-form.netlify.app/" target="_blank" rel="noopener noreferrer" style={{background:"#e85d1a",color:"#fff",border:"none",borderRadius:8,padding:"7px 12px",fontSize:11,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:5,textDecoration:"none",whiteSpace:"nowrap"}}><span style={{fontSize:12}}>📋</span> Submit WF Request</a>
+                  <button onClick={saveProgress} style={{background:"#166534",color:"#fff",border:"none",borderRadius:8,padding:"7px 12px",fontSize:11,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:5,whiteSpace:"nowrap"}}>💾 Save Progress</button>
+                  <label style={{background:"#1e40af",color:"#fff",border:"none",borderRadius:8,padding:"7px 12px",fontSize:11,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:5,whiteSpace:"nowrap"}}>📂 Load Save<input type="file" accept=".json" onChange={loadProgress} style={{display:"none"}}/></label>
                 </div>
               </div>
             </div>
             <div style={s.bar}><div style={s.barGlow}/></div>
           </div>
 
-          {/* SYNC TOAST */}
-          <div style={{position:"fixed",bottom:20,right:20,background:"#1a3a5c",color:"#fff",padding:"8px 16px",borderRadius:20,fontSize:12,fontWeight:600,zIndex:9999,boxShadow:"0 4px 12px rgba(0,0,0,.3)"}}>
-            {syncMsg}
-          </div>
+          <div style={{position:"fixed",bottom:20,right:20,background:N,color:"#fff",padding:"8px 16px",borderRadius:20,fontSize:12,fontWeight:600,zIndex:9999,boxShadow:"0 4px 12px rgba(0,0,0,.3)"}}>{syncMsg}</div>
 
-          {/* MAIN */}
           <div style={s.main}>
-
-            {/* ── Admin Bar ── */}
             <div style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:8,marginBottom:10,flexWrap:"wrap"}}>
               {adminUnlocked
-                ? <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
-                    <span style={{fontSize:11,color:"#166534",fontWeight:600,background:"#dcfce7",padding:"4px 12px",borderRadius:20}}>🔓 Admin Mode Active</span>
-                    <button onClick={()=>setAdminUnlocked(false)} style={{fontSize:11,fontWeight:600,background:"#f1f5f9",color:"#64748b",border:"1px solid #e2e8f0",borderRadius:20,padding:"4px 12px",cursor:"pointer"}}>🔒 Lock Admin</button>
-                  </div>
-                : <button onClick={unlockAdmin} style={{fontSize:11,fontWeight:600,background:"#f1f5f9",color:"#64748b",border:"1px solid #e2e8f0",borderRadius:20,padding:"4px 12px",cursor:"pointer"}}>🔒 Admin Login</button>
-              }
+                ?<div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
+                  <span style={{fontSize:11,color:"#166534",fontWeight:600,background:"#dcfce7",padding:"4px 12px",borderRadius:20}}>🔓 Admin Mode Active</span>
+                  <button onClick={()=>setAdminUnlocked(false)} style={{fontSize:11,fontWeight:600,background:"#f1f5f9",color:"#64748b",border:"1px solid #e2e8f0",borderRadius:20,padding:"4px 12px",cursor:"pointer"}}>🔒 Lock Admin</button>
+                </div>
+                :<button onClick={unlockAdmin} style={{fontSize:11,fontWeight:600,background:"#f1f5f9",color:"#64748b",border:"1px solid #e2e8f0",borderRadius:20,padding:"4px 12px",cursor:"pointer"}}>🔒 Admin Login</button>}
             </div>
 
-            {/* ── Per-Week Reset Panel (admin only) ── */}
-            {adminUnlocked && (
+            {adminUnlocked&&(
               <div style={{background:"#fff",border:"2px solid #fed7aa",borderRadius:12,padding:"12px 16px",marginBottom:12}}>
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
                   <span style={{fontSize:13,fontWeight:800,color:"#9a3412"}}>⚙️ Admin Reset Controls</span>
                   <span style={{fontSize:11,color:"#92400e",background:"#fff7ed",padding:"2px 10px",borderRadius:20,border:"1px solid #fed7aa"}}>Only resets the selected week — other weeks are safe</span>
                 </div>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
-                  {WEEKS.map(w => {
-                    const wkColors = {1:"#e85d1a",2:"#166534",3:"#1e40af",4:"#7c3aed"};
-                    const col = wkColors[w.wk];
-                    const disabled = w.wk === 4 ? false : false; // all weeks accessible in admin
-                    return (
-                      <div key={w.wk} style={{border:`1.5px solid ${col}30`,borderRadius:10,padding:"10px 12px",background:`${col}08`}}>
-                        <div style={{fontSize:12,fontWeight:800,color:col,marginBottom:8}}>{w.emoji} {w.label.split(": ")[1]}</div>
-                        <button onClick={()=>resetWeekTasks(w.wk)}
-                          style={{width:"100%",marginBottom:5,fontSize:11,fontWeight:700,background:"#fee2e2",color:"#dc2626",border:"1px solid #fca5a5",borderRadius:8,padding:"5px 8px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
-                          🔄 Reset Wk{w.wk} Tasks
-                        </button>
-                        <button onClick={()=>resetWeekVerifications(w.wk)}
-                          style={{width:"100%",fontSize:11,fontWeight:700,background:"#fef3c7",color:"#b45309",border:"1px solid #fcd34d",borderRadius:8,padding:"5px 8px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
-                          🔓 Reset Wk{w.wk} Verified
-                        </button>
-                      </div>
-                    );
+                  {WEEKS.map(w=>{
+                    const wkColors={1:"#e85d1a",2:"#166534",3:"#1e40af",4:"#7c3aed"};const col=wkColors[w.wk];
+                    return(<div key={w.wk} style={{border:`1.5px solid ${col}30`,borderRadius:10,padding:"10px 12px",background:`${col}08`}}>
+                      <div style={{fontSize:12,fontWeight:800,color:col,marginBottom:8}}>{w.emoji} {w.label.split(": ")[1]}</div>
+                      <button onClick={()=>resetWeekTasks(w.wk)} style={{width:"100%",marginBottom:5,fontSize:11,fontWeight:700,background:"#fee2e2",color:"#dc2626",border:"1px solid #fca5a5",borderRadius:8,padding:"5px 8px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>🔄 Reset Wk{w.wk} Tasks</button>
+                      <button onClick={()=>resetWeekVerifications(w.wk)} style={{width:"100%",fontSize:11,fontWeight:700,background:"#fef3c7",color:"#b45309",border:"1px solid #fcd34d",borderRadius:8,padding:"5px 8px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>🔓 Reset Wk{w.wk} Verified</button>
+                    </div>);
                   })}
                 </div>
                 <div style={{marginTop:10,paddingTop:8,borderTop:"1px solid #fed7aa",display:"flex",gap:8,alignItems:"center"}}>
                   <span style={{fontSize:10,color:"#92400e",fontWeight:600}}>⚠️ Nuclear options (resets ALL weeks):</span>
-                  <button onClick={resetTasks}         style={{fontSize:10,fontWeight:700,background:"#fee2e2",color:"#dc2626",border:"1px solid #fca5a5",borderRadius:20,padding:"3px 10px",cursor:"pointer"}}>🔄 Reset ALL Tasks</button>
+                  <button onClick={resetTasks} style={{fontSize:10,fontWeight:700,background:"#fee2e2",color:"#dc2626",border:"1px solid #fca5a5",borderRadius:20,padding:"3px 10px",cursor:"pointer"}}>🔄 Reset ALL Tasks</button>
                   <button onClick={resetVerifications} style={{fontSize:10,fontWeight:700,background:"#fef3c7",color:"#b45309",border:"1px solid #fcd34d",borderRadius:20,padding:"3px 10px",cursor:"pointer"}}>🔓 Reset ALL Verified</button>
                 </div>
               </div>
             )}
 
-            {/* ── Stats Row 1: general ── */}
             <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:8}}>
-              {[
-                { lbl:"Team Members",             val:9,                                           sub:"3 groups · active" },
-                { lbl:`Wk ${activeWk} Completed`, val:`${wkCompleted}/${wkTotal}`,                 sub:"tasks this week" },
-                { lbl:"✅ Verified",              val:`${TEAM.filter(m=>isMemberFullyVerified(m.id,activeWk)).length}/9`, sub:`all 4 tasks · Wk ${activeWk}` },
-              ].map((c,i) => (
-                <div key={i} style={s.card}>
-                  <div style={s.cardLbl}>{c.lbl}</div>
-                  <div style={s.cardVal}>{c.val}</div>
-                  <div style={s.cardSub}>{c.sub}</div>
-                </div>
+              {[{lbl:"Team Members",val:9,sub:"3 groups · active"},{lbl:`Wk ${activeWk} Completed`,val:`${wkCompleted}/${wkTotal}`,sub:"tasks this week"},{lbl:"✅ Verified",val:`${TEAM.filter(m=>isMemberFullyVerified(m.id,activeWk)).length}/9`,sub:`all 4 tasks · Wk ${activeWk}`}].map((c,i)=>(
+                <div key={i} style={s.card}><div style={s.cardLbl}>{c.lbl}</div><div style={s.cardVal}>{c.val}</div><div style={s.cardSub}>{c.sub}</div></div>
               ))}
             </div>
 
-            {/* ── Stats Row 2: Winners podium ── */}
             <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:12}}>
-              <WinnerCard rank={1} member={champion1}
-                rankLabel="Champion"   trophyEmoji="🥇"
-                rankColor="#e85d1a"    rankBg="#fff7ed" />
-              <WinnerCard rank={2} member={champion2}
-                rankLabel="2nd Winner" trophyEmoji="🥈"
-                rankColor="#1e40af"    rankBg="#eff6ff" />
-              <WinnerCard rank={3} member={champion3}
-                rankLabel="3rd Winner" trophyEmoji="🥉"
-                rankColor="#166534"    rankBg="#f0fdf4" />
+              <WinnerCard rank={1} member={champion1} rankLabel="Champion" trophyEmoji="🥇" rankColor="#e85d1a" rankBg="#fff7ed"/>
+              <WinnerCard rank={2} member={champion2} rankLabel="2nd Winner" trophyEmoji="🥈" rankColor="#1e40af" rankBg="#eff6ff"/>
+              <WinnerCard rank={3} member={champion3} rankLabel="3rd Winner" trophyEmoji="🥉" rankColor="#166534" rankBg="#f0fdf4"/>
             </div>
 
-            {/* ── Champion Rules ── */}
             <details style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:10,padding:"10px 16px",marginBottom:12,cursor:"pointer"}}>
-              <summary style={{fontSize:13,fontWeight:700,color:"#1a3a5c",listStyle:"none",display:"flex",alignItems:"center",gap:8}}>
+              <summary style={{fontSize:13,fontWeight:700,color:N,listStyle:"none",display:"flex",alignItems:"center",gap:8}}>
                 <span>📋 Champion Rules &amp; Scoring Framework</span>
                 <span style={{fontSize:11,color:"#94a3b8",marginLeft:"auto"}}>▸ click to expand</span>
               </summary>
@@ -747,15 +442,9 @@
                 <div style={{background:"#dbeafe",borderRadius:8,padding:"9px 11px"}}><div style={{fontSize:11,fontWeight:800,color:"#1e40af",marginBottom:3}}>🥈 Rule 2 — Tasks Done</div><div style={{fontSize:10,color:"#1e3a8a"}}>If tied → most tasks completed (out of 16) wins</div></div>
                 <div style={{background:"#dcfce7",borderRadius:8,padding:"9px 11px"}}><div style={{fontSize:11,fontWeight:800,color:"#166534",marginBottom:3}}>🥉 Rule 3 — Earliest Finish</div><div style={{fontSize:10,color:"#14532d"}}>If still tied → finished last task earliest wins</div></div>
               </div>
-              <div style={{fontSize:11,fontWeight:700,color:"#1a3a5c",marginBottom:6}}>5-Tier Scale (proportional to each week max):</div>
+              <div style={{fontSize:11,fontWeight:700,color:N,marginBottom:6}}>5-Tier Scale (proportional to each week max):</div>
               <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
-                {[
-                  {label:"🏆 Outstanding",range:"90–100%",color:"#166534",bg:"#dcfce7"},
-                  {label:"🌟 Above Average",range:"70–89%",color:"#1e40af",bg:"#dbeafe"},
-                  {label:"✅ Satisfactory",range:"50–69%",color:"#92400e",bg:"#fef3c7"},
-                  {label:"⚠️ Needs Improvement",range:"30–49%",color:"#c2410c",bg:"#ffedd5"},
-                  {label:"❌ Unsatisfactory",range:"0–29%",color:"#991b1b",bg:"#fee2e2"},
-                ].map((t,i)=>(
+                {[{label:"🏆 Outstanding",range:"90–100%",color:"#166534",bg:"#dcfce7"},{label:"🌟 Above Average",range:"70–89%",color:"#1e40af",bg:"#dbeafe"},{label:"✅ Satisfactory",range:"50–69%",color:"#92400e",bg:"#fef3c7"},{label:"⚠️ Needs Improvement",range:"30–49%",color:"#c2410c",bg:"#ffedd5"},{label:"❌ Unsatisfactory",range:"0–29%",color:"#991b1b",bg:"#fee2e2"}].map((t,i)=>(
                   <div key={i} style={{background:t.bg,border:`1px solid ${t.color}`,borderRadius:8,padding:"6px 9px",flex:1,minWidth:100}}>
                     <div style={{fontSize:10,fontWeight:800,color:t.color}}>{t.label}</div>
                     <div style={{fontSize:9,fontWeight:700,color:t.color}}>{t.range} of week max</div>
@@ -764,455 +453,284 @@
               </div>
             </details>
 
-            {/* ── Week Tabs ── */}
             <div style={{display:"flex",gap:8,marginBottom:8,width:"100%"}}>
-              {WEEKS.map((w,wi) => {
+              {WEEKS.map((w,wi)=>{
                 const WK_DATES=["Wk21 · May 18–24","Wk22 · May 25–31","Wk23 · Jun 1–7","Wk24 · Jun 8–14"];
-                const on       = activeWk === w.wk;
-                const disabled = w.wk === 4 && !adminUnlocked;
-                return (
-                  <button key={w.wk}
-                    onClick={disabled ? unlockAdmin : ()=>setActiveWk(w.wk)}
-                    title={disabled ? "🔒 Wk4 requires Admin Login" : ""}
-                    style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
-                      padding:"10px 8px",borderRadius:20,flex:1,height:64,
-                      border:`1.5px solid ${disabled?"#e2e8f0":on?ORANGE:"#e2e8f0"}`,
-                      background:disabled?"#f8fafc":on?ORANGE:"#fff",
-                      color:disabled?"#cbd5e1":on?"#fff":"#64748b",
-                      cursor:disabled?"not-allowed":"pointer",
-                      opacity:disabled?0.6:1}}>
-                    <span style={{fontSize:13,fontWeight:700}}>{disabled?"🔒":w.emoji} {w.label}</span>
-                    <span style={{fontSize:11,fontWeight:500,opacity:.8,marginTop:2}}>
-                      {disabled ? "Admin only" : WK_DATES[wi]}
-                    </span>
-                    {!disabled && (() => { const wc=getWeekChampion(w.wk); return wc?<span style={{fontSize:10,fontWeight:700,color:on?"#fff":"#e85d1a",marginTop:1}}>🏆 {wc.m.name} ({wc.s}/{WK_MAX[w.wk]})</span>:null; })()}
-                  </button>
-                );
+                const on=activeWk===w.wk;const disabled=w.wk===4&&!adminUnlocked;
+                return(<button key={w.wk} onClick={disabled?unlockAdmin:()=>setActiveWk(w.wk)} title={disabled?"🔒 Wk4 requires Admin Login":""}
+                  style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"10px 8px",borderRadius:20,flex:1,height:64,
+                    border:`1.5px solid ${disabled?"#e2e8f0":on?ORANGE:"#e2e8f0"}`,background:disabled?"#f8fafc":on?ORANGE:"#fff",
+                    color:disabled?"#cbd5e1":on?"#fff":"#64748b",cursor:disabled?"not-allowed":"pointer",opacity:disabled?0.6:1}}>
+                  <span style={{fontSize:13,fontWeight:700}}>{disabled?"🔒":w.emoji} {w.label}</span>
+                  <span style={{fontSize:11,fontWeight:500,opacity:.8,marginTop:2}}>{disabled?"Admin only":WK_DATES[wi]}</span>
+                  {!disabled&&(()=>{const wc=getWeekChampion(w.wk);return wc?<span style={{fontSize:10,fontWeight:700,color:on?"#fff":"#e85d1a",marginTop:1}}>🏆 {wc.m.name} ({wc.s}/{WK_MAX[w.wk]})</span>:null;})()}
+                </button>);
               })}
             </div>
 
-
-            {/* ── Week Band ── */}
             <div style={s.wkBand}>
               <span style={s.wkEmoji}>{wk.emoji}</span>
-              <div>
-                <div style={s.wkName}>WEEK {wk.wk} — {wk.label.split(": ")[1]}</div>
-                <div style={s.wkTheme}>{wk.theme}</div>
-              </div>
-              <div style={s.miles}>
-                {wk.milestones.map((m,i) => <span key={i} style={s.mileTag}>{m}</span>)}
-              </div>
+              <div><div style={s.wkName}>WEEK {wk.wk} — {wk.label.split(": ")[1]}</div><div style={s.wkTheme}>{wk.theme}</div></div>
+              <div style={s.miles}>{wk.milestones.map((m,i)=><span key={i} style={s.mileTag}>{m}</span>)}</div>
             </div>
 
-            {/* ── View Toggle ── */}
             <div style={{display:"flex",gap:8,marginBottom:14,width:"100%"}}>
-              {[["leaderboard","🏆 Leaderboard"],["teamgrid","👥 Team Grid"],["tasks","✅ Task Tracker"],["summary","📊 Summary"],["chart","📈 Scores"]].map(([v,lbl]) => (
-                <button key={v} onClick={()=>setView(v)}
-                  style={{flex:1,padding:"10px 8px",borderRadius:20,
-                    border:`1.5px solid ${view===v?"#1a3a5c":"#e2e8f0"}`,
-                    background:view===v?"#1a3a5c":"#fff",
-                    color:view===v?"#fff":"#64748b",
-                    fontSize:13,fontWeight:700,cursor:"pointer"}}>
-                  {lbl}
-                </button>
+              {[["leaderboard","🏆 Leaderboard"],["teamgrid","👥 Team Grid"],["tasks","✅ Task Tracker"],["summary","📊 Summary"],["chart","📈 Scores"]].map(([v,lbl])=>(
+                <button key={v} onClick={()=>setView(v)} style={{flex:1,padding:"10px 8px",borderRadius:20,border:`1.5px solid ${view===v?"#1a3a5c":"#e2e8f0"}`,background:view===v?"#1a3a5c":"#fff",color:view===v?"#fff":"#64748b",fontSize:13,fontWeight:700,cursor:"pointer"}}>{lbl}</button>
               ))}
             </div>
 
             {/* ══ LEADERBOARD ══ */}
-            {view==="leaderboard" && (
-              <div>
-                {[1,2,3].map(grp => {
-                  const grpMembers = ranked.filter(m => m.group === grp);
-                  return (
-                    <div key={grp}>
-                      <GroupDivider groupId={grp}/>
-                      {grpMembers.map((m) => {
-                        const globalRank = ranked.findIndex(r=>r.id===m.id);
-                        const bdg = getBadge(m.score);
-                        return (
-                          <div key={m.id} style={s.lbRow()}>
-                            <div style={s.rank}>{globalRank===0?"🥇":globalRank===1?"🥈":globalRank===2?"🥉":globalRank+1}</div>
-                            <div style={s.av(m.color)}>{m.initials}</div>
-                            <div style={{flex:1,minWidth:0}}>
-                              <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
-                                <span style={s.mName}>{m.name}</span>
-                                <span style={{fontSize:10,background:"#f1f5f9",color:"#64748b",padding:"2px 7px",borderRadius:20,fontWeight:600}}>{m.seq}</span>
-                                <span style={{fontSize:11,background:"#f1f5f9",color:"#64748b",padding:"2px 8px",borderRadius:20,fontWeight:600}}>{m.role}</span>
-                                <span style={s.badge(bdg.bg,bdg.color)}>{bdg.emoji} {bdg.label}</span>
-                                {hasWeekComplete(m.id) && <span style={{fontSize:11,fontWeight:700,background:"#fef3c7",color:"#92400e",padding:"2px 9px",borderRadius:20}}>🏆 Champion</span>}
-                              </div>
-                              <div style={{fontSize:11,color:"#94a3b8",marginTop:2}}>{m.mission}</div>
-                              <div style={{marginTop:8}}>
-                                {WEEKS.map(w => {
-                                  const wScore = w.tasks.filter((_,ti)=>checks[`${m.id}-${w.wk}-${ti}`]).length;
-                                  return (
-                                    <div key={w.wk} style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
-                                      <span style={{fontSize:10,color:"#94a3b8",width:55}}>{w.label.split(":")[0]}</span>
-                                      <div style={s.barWrap}><div style={s.barFill(wScore/4*16,m.color)}/></div>
-                                      <span style={{fontSize:10,color:"#94a3b8",width:24,textAlign:"right"}}>{wScore}/4</span>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                            <div style={s.scoreLbl}>{m.score}<span style={{fontSize:10,color:"#94a3b8"}}>/16</span></div>
-                          </div>
-                        );
-                      })}
+            {view==="leaderboard"&&(
+              <div>{[1,2,3].map(grp=>{
+                const grpMembers=ranked.filter(m=>m.group===grp);
+                return(<div key={grp}><GroupDivider groupId={grp}/>{grpMembers.map((m)=>{
+                  const globalRank=ranked.findIndex(r=>r.id===m.id);const bdg=getBadge(m.score);
+                  return(<div key={m.id} style={s.lbRow()}>
+                    <div style={s.rank}>{globalRank===0?"🥇":globalRank===1?"🥈":globalRank===2?"🥉":globalRank+1}</div>
+                    <div style={s.av(m.color)}>{m.initials}</div>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
+                        <span style={s.mName}>{m.name}</span>
+                        <span style={{fontSize:10,background:"#f1f5f9",color:"#64748b",padding:"2px 7px",borderRadius:20,fontWeight:600}}>{m.seq}</span>
+                        <span style={{fontSize:11,background:"#f1f5f9",color:"#64748b",padding:"2px 8px",borderRadius:20,fontWeight:600}}>{m.role}</span>
+                        <span style={s.badge(bdg.bg,bdg.color)}>{bdg.emoji} {bdg.label}</span>
+                        {hasWeekComplete(m.id)&&<span style={{fontSize:11,fontWeight:700,background:"#fef3c7",color:"#92400e",padding:"2px 9px",borderRadius:20}}>🏆 Champion</span>}
+                      </div>
+                      <div style={{fontSize:11,color:"#94a3b8",marginTop:2}}>{m.mission}</div>
+                      <div style={{marginTop:8}}>{WEEKS.map(w=>{const wScore=w.tasks.filter((_,ti)=>checks[`${m.id}-${w.wk}-${ti}`]).length;return(<div key={w.wk} style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><span style={{fontSize:10,color:"#94a3b8",width:55}}>{w.label.split(":")[0]}</span><div style={s.barWrap}><div style={s.barFill(wScore/4*16,m.color)}/></div><span style={{fontSize:10,color:"#94a3b8",width:24,textAlign:"right"}}>{wScore}/4</span></div>);})}</div>
                     </div>
-                  );
-                })}
-              </div>
+                    <div style={s.scoreLbl}>{m.score}<span style={{fontSize:10,color:"#94a3b8"}}>/16</span></div>
+                  </div>);
+                })}</div>);
+              })}</div>
             )}
 
             {/* ══ TEAM GRID ══ */}
-            {view==="teamgrid" && (
-              <div>
-                {[1,2,3].map(grp => {
-                  const grpMembers = TEAM.filter(m=>m.group===grp);
-                  return (
-                    <div key={grp}>
-                      <GroupDivider groupId={grp}/>
-                      <div style={s.grid}>
-                        {grpMembers.map(m => {
-                          const score = getScore(m.id);
-                          const bdg   = getBadge(score);
-                          return (
-                            <div key={m.id} style={s.gridCard}>
-                              <div style={s.gcTop}>
-                                <div style={s.av(m.color)}>{m.initials}</div>
-                                <div style={{flex:1}}>
-                                  <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
-                                    <span style={{fontWeight:800,fontSize:14,color:NAVY}}>{m.name}</span>
-                                    <span style={{fontSize:10,background:"#f1f5f9",color:"#64748b",padding:"2px 7px",borderRadius:20,fontWeight:600}}>{m.seq}</span>
-                                    <span style={{fontSize:10,background:"#f1f5f9",color:"#64748b",padding:"2px 7px",borderRadius:20,fontWeight:600}}>{m.role}</span>
-                                  </div>
-                                  <span style={s.badge(bdg.bg,bdg.color)}>{bdg.emoji} {bdg.label}</span>
-                                  {hasWeekComplete(m.id) && <span style={{fontSize:10,fontWeight:700,background:"#fef3c7",color:"#92400e",padding:"2px 7px",borderRadius:20,marginLeft:4}}>🏆</span>}
-                                </div>
-                                <div style={{fontSize:18,fontWeight:800,color:m.color}}>{score}<span style={{fontSize:11,color:"#94a3b8"}}>/16</span></div>
-                              </div>
-                              <div style={s.gcMission}>📌 {m.mission}</div>
-                              {WEEKS.map(w => {
-                                const ws = w.tasks.filter((_,ti)=>checks[`${m.id}-${w.wk}-${ti}`]).length;
-                                return (
-                                  <div key={w.wk} style={s.wkBar}>
-                                    <div style={s.wkBarLbl}><span>{w.label}</span><span>{ws}/4</span></div>
-                                    <div style={s.wkBarBg}><div style={s.wkBarFl((ws/4)*100,m.color)}/></div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          );
-                        })}
+            {view==="teamgrid"&&(
+              <div>{[1,2,3].map(grp=>{
+                const grpMembers=TEAM.filter(m=>m.group===grp);
+                return(<div key={grp}><GroupDivider groupId={grp}/><div style={s.grid}>{grpMembers.map(m=>{
+                  const score=getScore(m.id);const bdg=getBadge(score);
+                  return(<div key={m.id} style={s.gridCard}>
+                    <div style={s.gcTop}>
+                      <div style={s.av(m.color)}>{m.initials}</div>
+                      <div style={{flex:1}}>
+                        <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
+                          <span style={{fontWeight:800,fontSize:14,color:N}}>{m.name}</span>
+                          <span style={{fontSize:10,background:"#f1f5f9",color:"#64748b",padding:"2px 7px",borderRadius:20,fontWeight:600}}>{m.seq}</span>
+                          <span style={{fontSize:10,background:"#f1f5f9",color:"#64748b",padding:"2px 7px",borderRadius:20,fontWeight:600}}>{m.role}</span>
+                        </div>
+                        <span style={s.badge(bdg.bg,bdg.color)}>{bdg.emoji} {bdg.label}</span>
+                        {hasWeekComplete(m.id)&&<span style={{fontSize:10,fontWeight:700,background:"#fef3c7",color:"#92400e",padding:"2px 7px",borderRadius:20,marginLeft:4}}>🏆</span>}
                       </div>
+                      <div style={{fontSize:18,fontWeight:800,color:m.color}}>{score}<span style={{fontSize:11,color:"#94a3b8"}}>/16</span></div>
                     </div>
-                  );
-                })}
-              </div>
+                    <div style={s.gcMission}>📌 {m.mission}</div>
+                    {WEEKS.map(w=>{const ws=w.tasks.filter((_,ti)=>checks[`${m.id}-${w.wk}-${ti}`]).length;return(<div key={w.wk} style={s.wkBar}><div style={s.wkBarLbl}><span>{w.label}</span><span>{ws}/4</span></div><div style={s.wkBarBg}><div style={s.wkBarFl((ws/4)*100,m.color)}/></div></div>);})}
+                  </div>);
+                })}</div></div>);
+              })}</div>
             )}
 
             {/* ══ TASK TRACKER ══ */}
-            {view==="tasks" && (
-              <div>
-                {[1,2,3].map(grp => {
-                  const grpMembers = TEAM.filter(m=>m.group===grp);
-                  return (
-                    <div key={grp}>
-                      <GroupDivider groupId={grp}/>
-                      {grpMembers.map(m => {
-                        const isOpen  = selected === m.id;
-                        const score   = getScore(m.id);
-                        const wkScore = wk.tasks.filter((_,ti)=>checks[`${m.id}-${activeWk}-${ti}`]).length;
-                        return (
-                          <div key={m.id} style={s.ttCard}>
-                            <div style={s.ttHdr} onClick={()=>setSelected(isOpen?null:m.id)}>
-                              <div style={s.ttAvRow}>
-                                <div style={s.av(m.color)}>{m.initials}</div>
-                                <div>
-                                  <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
-                                    <span style={{fontWeight:800,fontSize:14,color:NAVY}}>{m.name}</span>
-                                    <span style={{fontSize:10,background:"#f1f5f9",color:"#64748b",padding:"2px 7px",borderRadius:20,fontWeight:600}}>{m.seq}</span>
-                                    <span style={{fontSize:11,background:"#f1f5f9",color:"#64748b",padding:"2px 8px",borderRadius:20,fontWeight:600}}>{m.role}</span>
-                                  </div>
-                                  <div style={{fontSize:11,color:"#94a3b8",marginTop:1}}>{m.mission}</div>
-                                </div>
+            {view==="tasks"&&(
+              <div>{[1,2,3].map(grp=>{
+                const grpMembers=TEAM.filter(m=>m.group===grp);
+                return(<div key={grp}><GroupDivider groupId={grp}/>{grpMembers.map(m=>{
+                  const isOpen=selected===m.id;const score=getScore(m.id);const wkScore=wk.tasks.filter((_,ti)=>checks[`${m.id}-${activeWk}-${ti}`]).length;
+                  return(<div key={m.id} style={s.ttCard}>
+                    <div style={s.ttHdr} onClick={()=>setSelected(isOpen?null:m.id)}>
+                      <div style={s.ttAvRow}>
+                        <div style={s.av(m.color)}>{m.initials}</div>
+                        <div>
+                          <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
+                            <span style={{fontWeight:800,fontSize:14,color:N}}>{m.name}</span>
+                            <span style={{fontSize:10,background:"#f1f5f9",color:"#64748b",padding:"2px 7px",borderRadius:20,fontWeight:600}}>{m.seq}</span>
+                            <span style={{fontSize:11,background:"#f1f5f9",color:"#64748b",padding:"2px 8px",borderRadius:20,fontWeight:600}}>{m.role}</span>
+                          </div>
+                          <div style={{fontSize:11,color:"#94a3b8",marginTop:1}}>{m.mission}</div>
+                        </div>
+                      </div>
+                      <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
+                        {getWkTotalFromCriteria(m.id,activeWk)>0&&(<div style={{textAlign:"center"}}><div style={{fontSize:9,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",marginBottom:2}}>Score Wk{activeWk}</div><div style={{fontSize:15,fontWeight:800,color:ORANGE}}>{getWkTotalFromCriteria(m.id,activeWk)}/{WK_MAX[activeWk]}</div></div>)}
+                        <div style={{textAlign:"center"}}><div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.08em"}}>This week</div><div style={{fontSize:16,fontWeight:800,color:m.color}}>{wkScore}/4</div></div>
+                        <div style={{textAlign:"center"}}><div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.08em"}}>Total</div><div style={{fontSize:16,fontWeight:800,color:N}}>{score}/16</div></div>
+                        <span style={{color:"#94a3b8",fontSize:16,transform:isOpen?"rotate(180deg)":"rotate(0)",display:"inline-block"}}>▾</span>
+                      </div>
+                    </div>
+                    {isOpen&&(<div>
+                      {adminUnlocked&&(<div style={{background:"#f8fafc",border:"1.5px solid #e2e8f0",borderRadius:8,padding:"10px 14px",marginBottom:10}}>
+                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+                          <span style={{fontSize:11,fontWeight:800,color:N}}>📋 Evaluation Criteria — Wk{activeWk} (max {WK_MAX[activeWk]} pts)</span>
+                          <span style={{fontSize:12,fontWeight:900,color:ORANGE,background:"#fff7ed",padding:"3px 12px",borderRadius:20,border:"1.5px solid "+ORANGE}}>
+                            Total: {getWkTotalFromCriteria(m.id,activeWk)}/{WK_MAX[activeWk]}
+                            {(()=>{const t=WK_TIERS[activeWk].find(t=>getWkTotalFromCriteria(m.id,activeWk)>=t.min&&getWkTotalFromCriteria(m.id,activeWk)<=t.max);return t?` · ${t.label}`:""})()}
+                          </span>
+                        </div>
+                        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
+                          {WK_CRITERIA[activeWk].map((c,ci)=>(
+                            <div key={ci} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:6,padding:"7px 10px"}}>
+                              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                                <span style={{fontSize:11,fontWeight:700,color:N}}>{ci+1}. {c.label}</span>
+                                <select value={getCriterionScore(m.id,activeWk,ci)} onChange={e=>setCriterionScore(m.id,activeWk,ci,e.target.value)} onClick={e=>e.stopPropagation()} style={{fontSize:12,fontWeight:700,color:N,border:"1.5px solid #e2e8f0",borderRadius:6,padding:"2px 5px",background:"#fff",cursor:"pointer",minWidth:70}}>
+                                  {Array.from({length:c.pts+1},(_,n)=>(<option key={n} value={n}>{n===0?`0/${c.pts}`:`${n}/${c.pts}`}</option>))}
+                                </select>
                               </div>
-                              <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
-                                {getWkTotalFromCriteria(m.id,activeWk) > 0 && (
-                                  <div style={{textAlign:"center"}}>
-                                    <div style={{fontSize:9,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",marginBottom:2}}>Score Wk{activeWk}</div>
-                                    <div style={{fontSize:15,fontWeight:800,color:ORANGE}}>{getWkTotalFromCriteria(m.id,activeWk)}/{WK_MAX[activeWk]}</div>
+                              <div style={{fontSize:9.5,lineHeight:1.5}}>
+                                {c.desc.map(([score,en,vi],di)=>(
+                                  <div key={di} style={{marginBottom:3,paddingLeft:4,borderLeft:"2px solid #e2e8f0"}}>
+                                    <span style={{fontWeight:700,color:N,marginRight:5}}>{score}</span>
+                                    <span style={{color:"#374151"}}>{en}</span>
+                                    <div style={{color:"#6b7280",fontStyle:"italic",paddingLeft:30}}>{vi}</div>
                                   </div>
-                                )}
-                                <div style={{textAlign:"center"}}>
-                                  <div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.08em"}}>This week</div>
-                                  <div style={{fontSize:16,fontWeight:800,color:m.color}}>{wkScore}/4</div>
-                                </div>
-                                <div style={{textAlign:"center"}}>
-                                  <div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.08em"}}>Total</div>
-                                  <div style={{fontSize:16,fontWeight:800,color:NAVY}}>{score}/16</div>
-                                </div>
-                                <span style={{color:"#94a3b8",fontSize:16,transform:isOpen?"rotate(180deg)":"rotate(0)",display:"inline-block"}}>▾</span>
+                                ))}
                               </div>
                             </div>
-                            {isOpen && (
-                              <div>
-                                {/* Evaluation Criteria Panel */}
-                                {adminUnlocked && (
-                                  <div style={{background:"#f8fafc",border:"1.5px solid #e2e8f0",borderRadius:8,padding:"10px 14px",marginBottom:10}}>
-                                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
-                                      <span style={{fontSize:11,fontWeight:800,color:NAVY}}>📋 Evaluation Criteria — Wk{activeWk} (max {WK_MAX[activeWk]} pts)</span>
-                                      <span style={{fontSize:12,fontWeight:900,color:ORANGE,background:"#fff7ed",padding:"3px 12px",borderRadius:20,border:"1.5px solid "+ORANGE}}>
-                                        Total: {getWkTotalFromCriteria(m.id,activeWk)}/{WK_MAX[activeWk]}
-                                        {(()=>{const t=WK_TIERS[activeWk].find(t=>getWkTotalFromCriteria(m.id,activeWk)>=t.min&&getWkTotalFromCriteria(m.id,activeWk)<=t.max);return t?` · ${t.label}`:""})()}
-                                      </span>
-                                    </div>
-                                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
-                                      {WK_CRITERIA[activeWk].map((c,ci)=>(
-                                        <div key={ci} style={{background:"#fff",border:"1px solid #e2e8f0",borderRadius:6,padding:"7px 10px"}}>
-                                          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-                                            <span style={{fontSize:11,fontWeight:700,color:NAVY}}>{ci+1}. {c.label}</span>
-                                            <select value={getCriterionScore(m.id,activeWk,ci)}
-                                              onChange={e=>setCriterionScore(m.id,activeWk,ci,e.target.value)}
-                                              onClick={e=>e.stopPropagation()}
-                                              style={{fontSize:12,fontWeight:700,color:NAVY,border:"1.5px solid #e2e8f0",borderRadius:6,padding:"2px 5px",background:"#fff",cursor:"pointer",minWidth:70}}>
-                                              {Array.from({length:c.pts+1},(_,n)=>(
-                                                <option key={n} value={n}>{n===0?`0/${c.pts}`:`${n}/${c.pts}`}</option>
-                                              ))}
-                                            </select>
-                                          </div>
-                                          <div style={{fontSize:9.5,lineHeight:1.5}}>
-                                            {c.desc.map(([score,en,vi],di)=>(
-                                              <div key={di} style={{marginBottom:3,paddingLeft:4,borderLeft:`2px solid #e2e8f0`}}>
-                                                <span style={{fontWeight:700,color:"#1a3a5c",marginRight:5}}>{score}</span>
-                                                <span style={{color:"#374151"}}>{en}</span>
-                                                <div style={{color:"#6b7280",fontStyle:"italic",paddingLeft:30}}>{vi}</div>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                    <div style={{marginTop:7,display:"flex",gap:4,flexWrap:"wrap"}}>
-                                      {WK_TIERS[activeWk].map((t,ti)=>(
-                                        <span key={ti} style={{fontSize:9,fontWeight:700,color:t.color,background:t.bg,padding:"2px 8px",borderRadius:20}}>
-                                          {t.label}: {t.min}{t.min===t.max?"":"-"+t.max}pts
-                                        </span>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-                                {!adminUnlocked && (
-                                  <div style={{background:"#f8fafc",border:"1px solid #e2e8f0",borderRadius:8,padding:"8px 14px",marginBottom:10}}>
-                                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                                      <span style={{fontSize:11,fontWeight:700,color:"#94a3b8"}}>📋 Evaluation Criteria — Wk{activeWk}</span>
-                                      {getWkTotalFromCriteria(m.id,activeWk)>0 &&
-                                        <span style={{fontSize:12,fontWeight:900,color:ORANGE}}>Score: {getWkTotalFromCriteria(m.id,activeWk)}/{WK_MAX[activeWk]}</span>}
-                                    </div>
-                                  </div>
-                                )}
-                                <div style={s.ttTasks}>
-                                  {wk.tasks.map((task,ti) => {
-                                    const done   = !!checks[`${m.id}-${activeWk}-${ti}`];
-                                    const locked  = activeWk === 4 && !adminUnlocked;
-                                    const ts_key  = `${m.id}-${activeWk}-${ti}`;
-                                    return (
-                                      <div key={ti}
-                                        style={{...s.ttTask(done),opacity:locked?0.5:1,cursor:locked?"not-allowed":"pointer",background:locked?"#f8fafc":done?"#f0fdf4":"#f8fafc"}}
-                                        onClick={locked?undefined:()=>toggle(m.id,activeWk,ti)}>
-                                        <div style={s.ttChk(done)}>
-                                          {locked
-                                            ? <span style={{fontSize:10}}>🔒</span>
-                                            : done && <span style={{color:"#fff",fontSize:10,fontWeight:700}}>✓</span>}
-                                        </div>
-                                        <div style={{flex:1}}>
-                                          <span style={s.ttTxt(done)}>
-                                            <span style={{fontWeight:700,color:done?"#166534":locked?"#94a3b8":"#1a3a5c",marginRight:4}}>{ti+1}.</span>{task}
-                                          </span>
-                                          {done && timestamps[ts_key] && (
-                                            <div style={{fontSize:10,color:"#16a34a",marginTop:2,fontWeight:500}}>
-                                              ✓ {new Date(timestamps[ts_key]).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}
-                                            </div>
-                                          )}
-                                          {locked && <div style={{fontSize:10,color:"#94a3b8",marginTop:2}}>🔒 Requires Chavis verification</div>}
-                                        </div>
-                                        <div style={{flexShrink:0,marginLeft:6}} onClick={e=>e.stopPropagation()}>
-                                          {isTaskVerified(m.id,activeWk,ti)
-                                            ? <div style={{background:"#dcfce7",border:"1px solid #16a34a",borderRadius:6,padding:"3px 7px",textAlign:"center",minWidth:78}}>
-                                                <div style={{fontSize:9,fontWeight:700,color:"#166534"}}>✅ Chavis</div>
-                                                <div style={{fontSize:8,color:"#16a34a",whiteSpace:"nowrap"}}>{new Date(verifications[`${m.id}-${activeWk}-${ti}`]).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>
-                                                <div style={{fontSize:8,color:"#94a3b8",cursor:"pointer",textDecoration:"underline"}} onClick={()=>unverifyTask(m.id,activeWk,ti)}>undo</div>
-                                              </div>
-                                            : <button onClick={adminUnlocked?()=>verifyTask(m.id,activeWk,ti):unlockAdmin}
-                                                style={{background:adminUnlocked?"#1a3a5c":"#64748b",color:"#fff",border:"none",borderRadius:6,padding:"4px 8px",fontSize:9,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>
-                                                {adminUnlocked?"🔏 Verify":"🔒"}
-                                              </button>
-                                          }
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
+                          ))}
+                        </div>
+                        <div style={{marginTop:7,display:"flex",gap:4,flexWrap:"wrap"}}>
+                          {WK_TIERS[activeWk].map((t,ti)=>(<span key={ti} style={{fontSize:9,fontWeight:700,color:t.color,background:t.bg,padding:"2px 8px",borderRadius:20}}>{t.label}: {t.min}{t.min===t.max?"":"-"+t.max}pts</span>))}
+                        </div>
+                      </div>)}
+                      {!adminUnlocked&&(<div style={{background:"#f8fafc",border:"1px solid #e2e8f0",borderRadius:8,padding:"8px 14px",marginBottom:10}}>
+                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                          <span style={{fontSize:11,fontWeight:700,color:"#94a3b8"}}>📋 Evaluation Criteria — Wk{activeWk}</span>
+                          {getWkTotalFromCriteria(m.id,activeWk)>0&&<span style={{fontSize:12,fontWeight:900,color:ORANGE}}>Score: {getWkTotalFromCriteria(m.id,activeWk)}/{WK_MAX[activeWk]}</span>}
+                        </div>
+                      </div>)}
+                      <div style={s.ttTasks}>
+                        {wk.tasks.map((task,ti)=>{
+                          const done=!!checks[`${m.id}-${activeWk}-${ti}`];const locked=activeWk===4&&!adminUnlocked;const ts_key=`${m.id}-${activeWk}-${ti}`;
+                          return(<div key={ti} style={{...s.ttTask(done),opacity:locked?0.5:1,cursor:locked?"not-allowed":"pointer",background:locked?"#f8fafc":done?"#f0fdf4":"#f8fafc"}} onClick={locked?undefined:()=>toggle(m.id,activeWk,ti)}>
+                            <div style={s.ttChk(done)}>{locked?<span style={{fontSize:10}}>🔒</span>:done&&<span style={{color:"#fff",fontSize:10,fontWeight:700}}>✓</span>}</div>
+                            <div style={{flex:1}}>
+                              <span style={s.ttTxt(done)}><span style={{fontWeight:700,color:done?"#166534":locked?"#94a3b8":N,marginRight:4}}>{ti+1}.</span>{task}</span>
+                              {done&&timestamps[ts_key]&&<div style={{fontSize:10,color:"#16a34a",marginTop:2,fontWeight:500}}>✓ {new Date(timestamps[ts_key]).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>}
+                              {locked&&<div style={{fontSize:10,color:"#94a3b8",marginTop:2}}>🔒 Requires Chavis verification</div>}
+                            </div>
+                            <div style={{flexShrink:0,marginLeft:6}} onClick={e=>e.stopPropagation()}>
+                              {isTaskVerified(m.id,activeWk,ti)
+                                ?<div style={{background:"#dcfce7",border:"1px solid #16a34a",borderRadius:6,padding:"3px 7px",textAlign:"center",minWidth:78}}>
+                                  <div style={{fontSize:9,fontWeight:700,color:"#166534"}}>✅ Chavis</div>
+                                  <div style={{fontSize:8,color:"#16a34a",whiteSpace:"nowrap"}}>{new Date(verifications[`${m.id}-${activeWk}-${ti}`]).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>
+                                  <div style={{fontSize:8,color:"#94a3b8",cursor:"pointer",textDecoration:"underline"}} onClick={()=>unverifyTask(m.id,activeWk,ti)}>undo</div>
                                 </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                })}
-              </div>
+                                :<button onClick={adminUnlocked?()=>verifyTask(m.id,activeWk,ti):unlockAdmin} style={{background:adminUnlocked?"#1a3a5c":"#64748b",color:"#fff",border:"none",borderRadius:6,padding:"4px 8px",fontSize:9,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>{adminUnlocked?"🔏 Verify":"🔒"}</button>}
+                            </div>
+                          </div>);
+                        })}
+                      </div>
+                    </div>)}
+                  </div>);
+                })}</div>);
+              })}</div>
             )}
 
             {/* ══ SCORES CHART ══ */}
-            {view==="chart" && (
+            {view==="chart"&&(
               <div>
                 <div style={{background:"#fff",borderRadius:10,border:"1px solid #e2e8f0",padding:"16px 20px",marginBottom:14}}>
 
-                  {/* ── Chart mode toggle: This Week vs All Weeks ── */}
-                  {(() => {
-                    // chartMode stored in state — we piggyback on a local var via closure trick
-                    // We'll use a data attribute on the wrapper to track mode; simplest: add chartMode to App state
-                    return null;
-                  })()}
-
-                  {/* Header */}
+                  {/* Header with NEW buttons */}
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10,gap:12,flexWrap:"wrap"}}>
                     <div>
-                      <div style={{fontSize:16,fontWeight:800,color:NAVY}}>
-                        📈 {chartMode==="week"
-                          ? `${wk.emoji} ${wk.label} — Scores (max ${WK_MAX[activeWk]} pts)`
+                      <div style={{fontSize:16,fontWeight:800,color:N}}>
+                        📈 {scoreMode==="weekly"
+                          ? `${wk.emoji} ${wk.label} — Weekly Scores (max ${WK_MAX[activeWk]} pts)`
                           : "Total Score — All Members"}
                       </div>
                       <div style={{fontSize:11,color:"#94a3b8",marginTop:2}}>
-                        {chartMode==="week"
+                        {scoreMode==="weekly"
                           ? `Showing Wk${activeWk} scores only · switch week tabs to compare · max ${WK_MAX[activeWk]} pts`
                           : "Wk1(15) + Wk2(40) + Wk3(30) + Wk4(15) = 100 pts · all weeks combined"}
                       </div>
                     </div>
                     <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6}}>
-                      {/* Mode toggle buttons */}
+                      {/* Weekly scores / Total score toggle */}
                       <div style={{display:"flex",gap:4,background:"#f1f5f9",borderRadius:10,padding:3}}>
-                        <button onClick={()=>setChartMode("week")}
+                        <button onClick={()=>setScoreMode("weekly")}
                           style={{fontSize:11,fontWeight:700,padding:"5px 12px",borderRadius:8,border:"none",cursor:"pointer",
-                            background:chartMode==="week"?ORANGE:"transparent",
-                            color:chartMode==="week"?"#fff":"#64748b"}}>
-                          {wk.emoji} This Week
+                            background:scoreMode==="weekly"?ORANGE:"transparent",
+                            color:scoreMode==="weekly"?"#fff":"#64748b"}}>
+                          {wk.emoji} Weekly scores
                         </button>
-                        <button onClick={()=>setChartMode("total")}
+                        <button onClick={()=>setScoreMode("total")}
                           style={{fontSize:11,fontWeight:700,padding:"5px 12px",borderRadius:8,border:"none",cursor:"pointer",
-                            background:chartMode==="total"?NAVY:"transparent",
-                            color:chartMode==="total"?"#fff":"#64748b"}}>
-                          📊 All Weeks
+                            background:scoreMode==="total"?N:"transparent",
+                            color:scoreMode==="total"?"#fff":"#64748b"}}>
+                          📊 Total score
                         </button>
                       </div>
-                      {/* Champion badge */}
-                      {chartMode==="total" && champion1 && (
+                      {/* Sort toggle */}
+                      <div style={{display:"flex",gap:4,alignItems:"center"}}>
+                        <span style={{fontSize:10,color:"#94a3b8",fontWeight:600}}>Sort:</span>
+                        <button onClick={()=>setScoreSort("desc")}
+                          style={{fontSize:10,fontWeight:700,padding:"3px 10px",borderRadius:6,border:"1px solid #d0d0d0",cursor:"pointer",
+                            background:scoreSort==="desc"?"#e07b2a":"#fff",color:scoreSort==="desc"?"#fff":"#555"}}>
+                          ↓ Highest first
+                        </button>
+                        <button onClick={()=>setScoreSort("asc")}
+                          style={{fontSize:10,fontWeight:700,padding:"3px 10px",borderRadius:6,border:"1px solid #d0d0d0",cursor:"pointer",
+                            background:scoreSort==="asc"?"#e07b2a":"#fff",color:scoreSort==="asc"?"#fff":"#555"}}>
+                          ↑ Lowest first
+                        </button>
+                      </div>
+                      {/* Leader badge */}
+                      {scoreMode==="total"&&champion1&&(
                         <div style={{textAlign:"right"}}>
-                          <div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase"}}>🥇 Champion</div>
+                          <div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase"}}>🥇 WK4 Leader</div>
                           <div style={{fontSize:15,fontWeight:800,color:ORANGE}}>{champion1.name} · {getTotalScore(champion1.id)}/100</div>
                         </div>
                       )}
-                      {chartMode==="week" && (() => { const wc=getWeekChampion(activeWk); return wc ? (
-                        <div style={{textAlign:"right"}}>
-                          <div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase"}}>🥇 Wk{activeWk} Leader</div>
-                          <div style={{fontSize:15,fontWeight:800,color:ORANGE}}>{wc.m.name} · {wc.s}/{WK_MAX[activeWk]}</div>
-                        </div>
-                      ) : null; })()}
+                      {scoreMode==="weekly"&&(()=>{const wc=getWeekChampion(activeWk);return wc?(<div style={{textAlign:"right"}}><div style={{fontSize:10,color:"#94a3b8",fontWeight:600,textTransform:"uppercase"}}>🥇 Wk{activeWk} Leader</div><div style={{fontSize:15,fontWeight:800,color:ORANGE}}>{wc.m.name} · {wc.s}/{WK_MAX[activeWk]}</div></div>):null;})()}
                     </div>
                   </div>
 
-                  {/* Bar Chart */}
+                  {/* Bar Chart — sorted by scoreMode + scoreSort */}
                   <div style={{display:"flex",alignItems:"flex-end",gap:6,height:240,padding:"30px 0 0",borderBottom:"2px solid #e2e8f0",marginTop:4}}>
-                    {TEAM.map(m => {
-                      const score   = chartMode==="week" ? getWkTotalFromCriteria(m.id,activeWk) : getTotalScore(m.id);
-                      const maxPts  = chartMode==="week" ? WK_MAX[activeWk] : 100;
-                      const barH    = Math.max((score/maxPts)*160, score>0?12:0);
-                      const tiers   = chartMode==="week" ? WK_TIERS[activeWk] : [
-                        {min:90,color:"#166534"},{min:70,color:"#1e40af"},{min:50,color:"#92400e"},{min:30,color:"#c2410c"},{min:0,color:"#94a3b8"}
-                      ];
-                      const tierColor = (tiers.find(t=>score>=(t.min/( chartMode==="week"?1:1 )))|| tiers[tiers.length-1]).color;
-                      // for week mode use WK_TIERS pct
-                      const pctScore = score/maxPts*100;
-                      const tierCol  = chartMode==="week"
-                        ? (WK_TIERS[activeWk].find(t=>score>=t.min&&score<=t.max)||{color:"#94a3b8"}).color
-                        : pctScore>=90?"#166534":pctScore>=70?"#1e40af":pctScore>=50?"#92400e":pctScore>=30?"#c2410c":"#94a3b8";
-
-                      // For week mode: rank by wk score
-                      const wkRanked = chartMode==="week"
-                        ? [...TEAM].sort((a,b)=>getWkTotalFromCriteria(b.id,activeWk)-getWkTotalFromCriteria(a.id,activeWk))
-                        : null;
-                      const wkRank   = wkRanked ? wkRanked.findIndex(x=>x.id===m.id) : -1;
-                      const isTop1   = chartMode==="week" ? wkRank===0 && score>0 : champion1?.id===m.id;
-                      const isTop2   = chartMode==="week" ? wkRank===1 && score>0 : champion2?.id===m.id;
-                      const isTop3   = chartMode==="week" ? wkRank===2 && score>0 : champion3?.id===m.id;
-
-                      return (
-                        <div key={m.id} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}>
-                          <div style={{width:"100%",height:160,display:"flex",flexDirection:"column",justifyContent:"flex-end",position:"relative"}}>
-                            {/* Medal */}
-                            {(isTop1||isTop2||isTop3) && (
-                              <div style={{position:"absolute",bottom:barH+4,left:"50%",transform:"translateX(-50%)",fontSize:13,lineHeight:1}}>
-                                {isTop1?"🏆":isTop2?"🥈":"🥉"}
-                              </div>
-                            )}
-                            {/* Score badge */}
-                            {score > 0 && (
-                              <div style={{
-                                position:"absolute",
-                                bottom: barH + ((isTop1||isTop2||isTop3)?20:4),
-                                left:"50%",transform:"translateX(-50%)",
-                                fontSize:11,fontWeight:900,color:"#fff",
-                                background:isTop1?ORANGE:tierCol,
-                                padding:"1px 6px",borderRadius:6,
-                                whiteSpace:"nowrap",
-                                boxShadow:"0 1px 3px rgba(0,0,0,.25)",
-                              }}>
-                                {score}<span style={{fontSize:8,opacity:.8}}>/{maxPts}</span>
-                              </div>
-                            )}
-                            {/* Bar */}
-                            <div style={{
-                              width:"100%",height:`${barH}px`,
-                              background:isTop1?ORANGE:m.color,
-                              borderRadius:"5px 5px 0 0",
-                              transition:"height .4s ease",
-                              boxShadow:isTop1?`0 0 0 2px ${ORANGE}`:isTop2?"0 0 0 2px #1e40af":isTop3?"0 0 0 2px #166534":"none",
-                            }}/>
-                          </div>
-                          <div style={{width:30,height:30,borderRadius:"50%",background:m.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:9,fontWeight:800,flexShrink:0}}>{m.initials}</div>
-                          <div style={{fontSize:9,fontWeight:700,color:NAVY,textAlign:"center",lineHeight:1.2}}>{m.name}</div>
-                          <div style={{fontSize:8,color:"#94a3b8",textAlign:"center"}}>{m.seq}</div>
+                    {[...TEAM].sort((a,b)=>{
+                      const sa=scoreMode==="weekly"?getWkTotalFromCriteria(a.id,activeWk):getTotalScore(a.id);
+                      const sb=scoreMode==="weekly"?getWkTotalFromCriteria(b.id,activeWk):getTotalScore(b.id);
+                      return scoreSort==="desc"?sb-sa:sa-sb;
+                    }).map(m=>{
+                      const score=scoreMode==="weekly"?getWkTotalFromCriteria(m.id,activeWk):getTotalScore(m.id);
+                      const maxPts=scoreMode==="weekly"?WK_MAX[activeWk]:100;
+                      const barH=Math.max((score/maxPts)*160,score>0?12:0);
+                      const pctScore=score/maxPts*100;
+                      const tierCol=scoreMode==="weekly"
+                        ?(WK_TIERS[activeWk].find(t=>score>=t.min&&score<=t.max)||{color:"#94a3b8"}).color
+                        :pctScore>=90?"#166534":pctScore>=70?"#1e40af":pctScore>=50?"#92400e":pctScore>=30?"#c2410c":"#94a3b8";
+                      const wkRanked=scoreMode==="weekly"?[...TEAM].sort((a,b)=>getWkTotalFromCriteria(b.id,activeWk)-getWkTotalFromCriteria(a.id,activeWk)):null;
+                      const wkRank=wkRanked?wkRanked.findIndex(x=>x.id===m.id):-1;
+                      const isTop1=scoreMode==="weekly"?wkRank===0&&score>0:champion1?.id===m.id;
+                      const isTop2=scoreMode==="weekly"?wkRank===1&&score>0:champion2?.id===m.id;
+                      const isTop3=scoreMode==="weekly"?wkRank===2&&score>0:champion3?.id===m.id;
+                      return(<div key={m.id} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}>
+                        <div style={{width:"100%",height:160,display:"flex",flexDirection:"column",justifyContent:"flex-end",position:"relative"}}>
+                          {(isTop1||isTop2||isTop3)&&<div style={{position:"absolute",bottom:barH+4,left:"50%",transform:"translateX(-50%)",fontSize:13,lineHeight:1}}>{isTop1?"🏆":isTop2?"🥈":"🥉"}</div>}
+                          {score>0&&<div style={{position:"absolute",bottom:barH+((isTop1||isTop2||isTop3)?20:4),left:"50%",transform:"translateX(-50%)",fontSize:11,fontWeight:900,color:"#fff",background:isTop1?ORANGE:tierCol,padding:"1px 6px",borderRadius:6,whiteSpace:"nowrap",boxShadow:"0 1px 3px rgba(0,0,0,.25)"}}>{score}<span style={{fontSize:8,opacity:.8}}>/{maxPts}</span></div>}
+                          <div style={{width:"100%",height:`${barH}px`,background:isTop1?ORANGE:m.color,borderRadius:"5px 5px 0 0",transition:"height .4s ease",boxShadow:isTop1?`0 0 0 2px ${ORANGE}`:isTop2?"0 0 0 2px #1e40af":isTop3?"0 0 0 2px #166534":"none"}}/>
                         </div>
-                      );
+                        <div style={{width:30,height:30,borderRadius:"50%",background:m.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:9,fontWeight:800,flexShrink:0}}>{m.initials}</div>
+                        <div style={{fontSize:9,fontWeight:700,color:N,textAlign:"center",lineHeight:1.2}}>{m.name}</div>
+                        <div style={{fontSize:8,color:"#94a3b8",textAlign:"center"}}>{m.seq}</div>
+                      </div>);
                     })}
                   </div>
 
-                  {/* Tier legend — adapts to mode */}
+                  {/* Tier legend */}
                   <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:10,flexWrap:"wrap"}}>
-                    {chartMode==="week"
-                      ? WK_TIERS[activeWk].map((t,i)=>(
-                          <span key={i} style={{fontSize:9,fontWeight:700,color:t.color,background:t.bg,padding:"2px 8px",borderRadius:20}}>
-                            {t.label} {t.min}{t.min===t.max?"":"-"+t.max}pts
-                          </span>
-                        ))
-                      : [{min:90,max:100,label:"🏆 Outstanding",col:"#166534",bg:"#dcfce7"},
-                         {min:70,max:89, label:"🌟 Above Avg",  col:"#1e40af",bg:"#dbeafe"},
-                         {min:50,max:69, label:"✅ Satisfactory",col:"#92400e",bg:"#fef3c7"},
-                         {min:30,max:49, label:"⚠️ Needs Impr.",col:"#c2410c",bg:"#ffedd5"},
-                         {min:0, max:29, label:"❌ Unsatisfactory",col:"#991b1b",bg:"#fee2e2"},
-                        ].map((t,i)=>(
-                          <span key={i} style={{fontSize:9,fontWeight:700,color:t.col,background:t.bg,padding:"2px 8px",borderRadius:20}}>
-                            {t.label} {t.min}–{t.max}
-                          </span>
-                        ))
+                    {scoreMode==="weekly"
+                      ?WK_TIERS[activeWk].map((t,i)=>(<span key={i} style={{fontSize:9,fontWeight:700,color:t.color,background:t.bg,padding:"2px 8px",borderRadius:20}}>{t.label} {t.min}{t.min===t.max?"":"-"+t.max}pts</span>))
+                      :[{min:90,max:100,label:"🏆 Outstanding",col:"#166534",bg:"#dcfce7"},{min:70,max:89,label:"🌟 Above Avg",col:"#1e40af",bg:"#dbeafe"},{min:50,max:69,label:"✅ Satisfactory",col:"#92400e",bg:"#fef3c7"},{min:30,max:49,label:"⚠️ Needs Impr.",col:"#c2410c",bg:"#ffedd5"},{min:0,max:29,label:"❌ Unsatisfactory",col:"#991b1b",bg:"#fee2e2"}].map((t,i)=>(<span key={i} style={{fontSize:9,fontWeight:700,color:t.col,background:t.bg,padding:"2px 8px",borderRadius:20}}>{t.label} {t.min}–{t.max}</span>))
                     }
                   </div>
                 </div>
+
                 {/* Score breakdown table */}
                 <div style={{background:"#fff",borderRadius:10,border:"1px solid #e2e8f0",overflow:"hidden"}}>
-                  <div style={{background:NAVY,padding:"10px 16px"}}>
+                  <div style={{background:N,padding:"10px 16px"}}>
                     <span style={{fontSize:13,fontWeight:800,color:"#fff"}}>Score Breakdown per Member</span>
                     <span style={{fontSize:11,color:"rgba(255,255,255,.6)",marginLeft:8}}>All 4 weeks · Max 100pts</span>
                   </div>
@@ -1221,44 +739,28 @@
                       <tr style={{background:"#f8fafc"}}>
                         <th style={{padding:"8px 12px",textAlign:"left",color:"#64748b",fontWeight:700,borderBottom:"1px solid #e2e8f0"}}>Member</th>
                         {WEEKS.map(w=><th key={w.wk} style={{padding:"8px 8px",textAlign:"center",color:"#64748b",fontWeight:600,borderBottom:"1px solid #e2e8f0",fontSize:11}}>{w.emoji} Wk{w.wk}<br/><span style={{fontSize:9,color:"#94a3b8"}}>{WK_MAX[w.wk]}pts</span></th>)}
-                        <th style={{padding:"8px 12px",textAlign:"center",color:NAVY,fontWeight:800,borderBottom:"1px solid #e2e8f0"}}>TOTAL /100</th>
+                        <th style={{padding:"8px 12px",textAlign:"center",color:N,fontWeight:800,borderBottom:"1px solid #e2e8f0"}}>TOTAL /100</th>
                         <th style={{padding:"8px 12px",textAlign:"center",color:"#64748b",fontWeight:700,borderBottom:"1px solid #e2e8f0"}}>Tier</th>
                       </tr>
                     </thead>
                     <tbody>
                       {[...TEAM].sort((a,b)=>getTotalScore(b.id)-getTotalScore(a.id)).map((m,ri)=>{
-                        const total = getTotalScore(m.id);
-                        const tier  = [{min:90,label:"🏆 Outstanding",col:"#166534",bg:"#dcfce7"},
-                                       {min:70,label:"🌟 Above Average",col:"#1e40af",bg:"#dbeafe"},
-                                       {min:50,label:"✅ Satisfactory",col:"#92400e",bg:"#fef3c7"},
-                                       {min:30,label:"⚠️ Needs Impr.",col:"#c2410c",bg:"#ffedd5"},
-                                       {min:0, label:"❌ Unsatisfactory",col:"#991b1b",bg:"#fee2e2"}].find(t=>total>=t.min);
-                        return (
-                          <tr key={m.id} style={{background:ri%2===0?"#fff":"#f8fafc",borderBottom:"1px solid #f1f5f9"}}>
-                            <td style={{padding:"8px 12px"}}>
-                              <div style={{display:"flex",alignItems:"center",gap:8}}>
-                                <div style={{width:26,height:26,borderRadius:"50%",background:m.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:9,fontWeight:800}}>{m.initials}</div>
-                                <div>
-                                  <div style={{fontWeight:700,color:NAVY,fontSize:12}}>{m.name}{champion1?.id===m.id?" 🥇":champion2?.id===m.id?" 🥈":champion3?.id===m.id?" 🥉":""}</div>
-                                  <div style={{fontSize:10,color:"#94a3b8"}}>{m.seq} · {m.role}</div>
-                                </div>
+                        const total=getTotalScore(m.id);
+                        const tier=[{min:90,label:"🏆 Outstanding",col:"#166534",bg:"#dcfce7"},{min:70,label:"🌟 Above Average",col:"#1e40af",bg:"#dbeafe"},{min:50,label:"✅ Satisfactory",col:"#92400e",bg:"#fef3c7"},{min:30,label:"⚠️ Needs Impr.",col:"#c2410c",bg:"#ffedd5"},{min:0,label:"❌ Unsatisfactory",col:"#991b1b",bg:"#fee2e2"}].find(t=>total>=t.min);
+                        return(<tr key={m.id} style={{background:ri%2===0?"#fff":"#f8fafc",borderBottom:"1px solid #f1f5f9"}}>
+                          <td style={{padding:"8px 12px"}}>
+                            <div style={{display:"flex",alignItems:"center",gap:8}}>
+                              <div style={{width:26,height:26,borderRadius:"50%",background:m.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:9,fontWeight:800}}>{m.initials}</div>
+                              <div>
+                                <div style={{fontWeight:700,color:N,fontSize:12}}>{m.name}{champion1?.id===m.id?" 🥇":champion2?.id===m.id?" 🥈":champion3?.id===m.id?" 🥉":""}</div>
+                                <div style={{fontSize:10,color:"#94a3b8"}}>{m.seq} · {m.role}</div>
                               </div>
-                            </td>
-                            {WEEKS.map(w=>{
-                              const ws = getWkTotalFromCriteria(m.id,w.wk);
-                              const wm = WK_MAX[w.wk];
-                              return <td key={w.wk} style={{padding:"6px 8px",textAlign:"center"}}>
-                                {ws>0?<span style={{fontSize:13,fontWeight:800,color:ws>=(wm*0.9)?ORANGE:NAVY}}>{ws}/{wm}</span>:<span style={{color:"#e2e8f0"}}>—</span>}
-                              </td>;
-                            })}
-                            <td style={{padding:"6px 12px",textAlign:"center"}}>
-                              <span style={{fontSize:15,fontWeight:900,color:total>0?ORANGE:"#e2e8f0"}}>{total>0?`${total}/100`:"—"}</span>
-                            </td>
-                            <td style={{padding:"6px 12px",textAlign:"center"}}>
-                              {total>0&&tier?<span style={{fontSize:11,fontWeight:700,color:tier.col,background:tier.bg,padding:"3px 10px",borderRadius:20}}>{tier.label}</span>:<span style={{color:"#e2e8f0"}}>—</span>}
-                            </td>
-                          </tr>
-                        );
+                            </div>
+                          </td>
+                          {WEEKS.map(w=>{const ws=getWkTotalFromCriteria(m.id,w.wk);const wm=WK_MAX[w.wk];return<td key={w.wk} style={{padding:"6px 8px",textAlign:"center"}}>{ws>0?<span style={{fontSize:13,fontWeight:800,color:ws>=(wm*0.9)?ORANGE:N}}>{ws}/{wm}</span>:<span style={{color:"#e2e8f0"}}>—</span>}</td>;})}
+                          <td style={{padding:"6px 12px",textAlign:"center"}}><span style={{fontSize:15,fontWeight:900,color:total>0?ORANGE:"#e2e8f0"}}>{total>0?`${total}/100`:"—"}</span></td>
+                          <td style={{padding:"6px 12px",textAlign:"center"}}>{total>0&&tier?<span style={{fontSize:11,fontWeight:700,color:tier.col,background:tier.bg,padding:"3px 10px",borderRadius:20}}>{tier.label}</span>:<span style={{color:"#e2e8f0"}}>—</span>}</td>
+                        </tr>);
                       })}
                     </tbody>
                   </table>
@@ -1267,86 +769,64 @@
             )}
 
             {/* ══ SUMMARY DASHBOARD ══ */}
-            {view==="summary" && (
-              <div>
-                {WEEKS.map(w => (
-                  <div key={w.wk} style={{background:"#fff",borderRadius:10,border:"1px solid #e2e8f0",marginBottom:14,overflow:"hidden"}}>
-                    <div style={{background:activeWk===w.wk?ORANGE:NAVY,padding:"10px 16px",display:"flex",alignItems:"center",gap:10}}>
-                      <span style={{fontSize:16}}>{w.emoji}</span>
-                      <span style={{fontSize:14,fontWeight:800,color:"#fff"}}>{w.label}</span>
-                      <span style={{fontSize:11,color:"rgba(255,255,255,.65)",marginLeft:4}}>{["Wk21 · May 18–24","Wk22 · May 25–31","Wk23 · Jun 1–7","Wk24 · Jun 8–14"][w.wk-1]}</span>
-                      <span style={{marginLeft:"auto",fontSize:11,fontWeight:700,color:"rgba(255,255,255,.9)"}}>
-                        ✅ {TEAM.filter(m=>isMemberFullyVerified(m.id,w.wk)).length}/9 fully verified
-                      </span>
-                    </div>
-                    <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-                      <thead>
-                        <tr style={{background:"#f8fafc"}}>
-                          <th style={{padding:"8px 12px",textAlign:"left",fontWeight:700,color:"#64748b",borderBottom:"1px solid #e2e8f0",width:160}}>Member</th>
-                          {w.tasks.map((t,ti)=>(
-                            <th key={ti} style={{padding:"7px 6px",textAlign:"center",fontWeight:600,color:"#64748b",borderBottom:"1px solid #e2e8f0",fontSize:10}}>{ti+1}. {t.length>16?t.slice(0,16)+"…":t}</th>
-                          ))}
-                          <th style={{padding:"7px 8px",textAlign:"center",fontWeight:700,color:NAVY,borderBottom:"1px solid #e2e8f0"}}>Score</th>
-                          <th style={{padding:"7px 8px",textAlign:"center",fontWeight:700,color:"#166534",borderBottom:"1px solid #e2e8f0"}}>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {TEAM.map((m,ri) => {
-                          const fullyVerif = isMemberFullyVerified(m.id, w.wk);
-                          return (
-                            <tr key={m.id} style={{background:ri%2===0?"#fff":"#f8fafc",borderBottom:"1px solid #f1f5f9"}}>
-                              <td style={{padding:"8px 12px"}}>
-                                <div style={{display:"flex",alignItems:"center",gap:7}}>
-                                  <div style={{width:24,height:24,borderRadius:"50%",background:m.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:9,fontWeight:800,flexShrink:0}}>{m.initials}</div>
-                                  <div>
-                                    <div style={{fontWeight:700,color:NAVY,fontSize:12}}>{m.name}</div>
-                                    <div style={{fontSize:10,color:"#94a3b8"}}>{m.seq} · {m.role}</div>
-                                  </div>
-                                </div>
-                              </td>
-                              {w.tasks.map((_,ti) => {
-                                const done  = !!checks[`${m.id}-${w.wk}-${ti}`];
-                                const verif = isTaskVerified(m.id, w.wk, ti);
-                                return (
-                                  <td key={ti} style={{padding:"6px 6px",textAlign:"center",background:verif?"#f0fdf4":done?"#f8fafc":"#fff"}}>
-                                    {done
-                                      ? <div>
-                                          <div style={{fontSize:12}}>{verif?"✅":"✔️"}</div>
-                                          {verif && <div style={{fontSize:10,color:"#16a34a",whiteSpace:"nowrap"}}>{new Date(verifications[`${m.id}-${w.wk}-${ti}`]).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>}
-                                          {!verif && <div style={{fontSize:8,color:"#f59e0b"}}>⏳</div>}
-                                          {getCriterionScore(m.id,w.wk,ti)>0&&<div style={{fontSize:13,fontWeight:800,color:"#e85d1a",marginTop:2}}>{getCriterionScore(m.id,w.wk,ti)}/{WK_CRITERIA[w.wk][ti]?.pts||0}pts</div>}
-                                        </div>
-                                      : <span style={{color:"#e2e8f0",fontSize:13}}>—</span>}
-                                  </td>
-                                );
-                              })}
-                              <td style={{padding:"6px 8px",textAlign:"center"}}>
-                                {(()=>{
-                                  const wkMax     = WK_MAX[w.wk];
-                                  const critTotal = getWkTotalFromCriteria(m.id, w.wk);
-                                  const tier      = WK_TIERS[w.wk].find(t=>critTotal>=t.min&&critTotal<=t.max);
-                                  const tasksDone = w.tasks.filter((_,ti)=>checks[`${m.id}-${w.wk}-${ti}`]).length;
-                                  return tasksDone > 0 && critTotal > 0
-                                    ? <div>
-                                        <span style={{fontSize:14,fontWeight:800,color:critTotal>=(wkMax*0.9)?ORANGE:NAVY}}>{critTotal}/{wkMax}</span>
-                                        {tier && <div style={{fontSize:9,color:tier.color,fontWeight:700,marginTop:1}}>{tier.label}</div>}
-                                      </div>
-                                    : <span style={{color:"#e2e8f0",fontSize:12}}>0/{wkMax}</span>;
-                                })()}
-                              </td>
-                              <td style={{padding:"6px 8px",textAlign:"center"}}>
-                                {fullyVerif
-                                  ? <span style={{fontSize:11,fontWeight:700,color:"#166534",background:"#dcfce7",padding:"2px 9px",borderRadius:20}}>✅ Done</span>
-                                  : <span style={{fontSize:11,color:"#94a3b8",background:"#f1f5f9",padding:"2px 9px",borderRadius:20}}>⏳ Pending</span>}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+            {view==="summary"&&(
+              <div>{WEEKS.map(w=>(
+                <div key={w.wk} style={{background:"#fff",borderRadius:10,border:"1px solid #e2e8f0",marginBottom:14,overflow:"hidden"}}>
+                  <div style={{background:activeWk===w.wk?ORANGE:N,padding:"10px 16px",display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontSize:16}}>{w.emoji}</span>
+                    <span style={{fontSize:14,fontWeight:800,color:"#fff"}}>{w.label}</span>
+                    <span style={{fontSize:11,color:"rgba(255,255,255,.65)",marginLeft:4}}>{["Wk21 · May 18–24","Wk22 · May 25–31","Wk23 · Jun 1–7","Wk24 · Jun 8–14"][w.wk-1]}</span>
+                    <span style={{marginLeft:"auto",fontSize:11,fontWeight:700,color:"rgba(255,255,255,.9)"}}>✅ {TEAM.filter(m=>isMemberFullyVerified(m.id,w.wk)).length}/9 fully verified</span>
                   </div>
-                ))}
-              </div>
+                  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+                    <thead>
+                      <tr style={{background:"#f8fafc"}}>
+                        <th style={{padding:"8px 12px",textAlign:"left",fontWeight:700,color:"#64748b",borderBottom:"1px solid #e2e8f0",width:160}}>Member</th>
+                        {w.tasks.map((t,ti)=>(<th key={ti} style={{padding:"7px 6px",textAlign:"center",fontWeight:600,color:"#64748b",borderBottom:"1px solid #e2e8f0",fontSize:10}}>{ti+1}. {t.length>16?t.slice(0,16)+"…":t}</th>))}
+                        <th style={{padding:"7px 8px",textAlign:"center",fontWeight:700,color:N,borderBottom:"1px solid #e2e8f0"}}>Score</th>
+                        <th style={{padding:"7px 8px",textAlign:"center",fontWeight:700,color:"#166534",borderBottom:"1px solid #e2e8f0"}}>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {TEAM.map((m,ri)=>{
+                        const fullyVerif=isMemberFullyVerified(m.id,w.wk);
+                        return(<tr key={m.id} style={{background:ri%2===0?"#fff":"#f8fafc",borderBottom:"1px solid #f1f5f9"}}>
+                          <td style={{padding:"8px 12px"}}>
+                            <div style={{display:"flex",alignItems:"center",gap:7}}>
+                              <div style={{width:24,height:24,borderRadius:"50%",background:m.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:9,fontWeight:800,flexShrink:0}}>{m.initials}</div>
+                              <div><div style={{fontWeight:700,color:N,fontSize:12}}>{m.name}</div><div style={{fontSize:10,color:"#94a3b8"}}>{m.seq} · {m.role}</div></div>
+                            </div>
+                          </td>
+                          {w.tasks.map((_,ti)=>{
+                            const done=!!checks[`${m.id}-${w.wk}-${ti}`];const verif=isTaskVerified(m.id,w.wk,ti);
+                            return(<td key={ti} style={{padding:"6px 6px",textAlign:"center",background:verif?"#f0fdf4":done?"#f8fafc":"#fff"}}>
+                              {done?<div>
+                                <div style={{fontSize:12}}>{verif?"✅":"✔️"}</div>
+                                {verif&&<div style={{fontSize:10,color:"#16a34a",whiteSpace:"nowrap"}}>{new Date(verifications[`${m.id}-${w.wk}-${ti}`]).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>}
+                                {!verif&&<div style={{fontSize:8,color:"#f59e0b"}}>⏳</div>}
+                                {getCriterionScore(m.id,w.wk,ti)>0&&<div style={{fontSize:13,fontWeight:800,color:"#e85d1a",marginTop:2}}>{getCriterionScore(m.id,w.wk,ti)}/{WK_CRITERIA[w.wk][ti]?.pts||0}pts</div>}
+                              </div>:<span style={{color:"#e2e8f0",fontSize:13}}>—</span>}
+                            </td>);
+                          })}
+                          <td style={{padding:"6px 8px",textAlign:"center"}}>
+                            {(()=>{
+                              const wkMax=WK_MAX[w.wk];const critTotal=getWkTotalFromCriteria(m.id,w.wk);
+                              const tier=WK_TIERS[w.wk].find(t=>critTotal>=t.min&&critTotal<=t.max);
+                              const tasksDone=w.tasks.filter((_,ti)=>checks[`${m.id}-${w.wk}-${ti}`]).length;
+                              return tasksDone>0&&critTotal>0
+                                ?<div><span style={{fontSize:14,fontWeight:800,color:critTotal>=(wkMax*0.9)?ORANGE:N}}>{critTotal}/{wkMax}</span>{tier&&<div style={{fontSize:9,color:tier.color,fontWeight:700,marginTop:1}}>{tier.label}</div>}</div>
+                                :<span style={{color:"#e2e8f0",fontSize:12}}>0/{wkMax}</span>;
+                            })()}
+                          </td>
+                          <td style={{padding:"6px 8px",textAlign:"center"}}>
+                            {fullyVerif?<span style={{fontSize:11,fontWeight:700,color:"#166534",background:"#dcfce7",padding:"2px 9px",borderRadius:20}}>✅ Done</span>:<span style={{fontSize:11,color:"#94a3b8",background:"#f1f5f9",padding:"2px 9px",borderRadius:20}}>⏳ Pending</span>}
+                          </td>
+                        </tr>);
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ))}</div>
             )}
 
           </div>
@@ -1354,7 +834,7 @@
       );
     }
 
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
   </script>
 </body>
 </html>
